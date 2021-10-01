@@ -156,6 +156,13 @@ function GM:PlayerLoadout( ply )
       -- give default items
       GiveLoadoutItems(ply)
 
+      if CountTraitors() == 1 and ply:IsActiveTraitor() then      
+
+         ply:GiveEquipmentItem(2)
+         ply:ConCommand("ttt_radar_scan")
+   
+      end
+
       -- hand out weaponry
       GiveLoadoutWeapons(ply)
 

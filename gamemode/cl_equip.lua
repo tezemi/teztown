@@ -457,6 +457,7 @@ local function ReceiveEquipment()
    if not IsValid(ply) then return end
 
    ply.equipment_items = net.ReadUInt(16)
+   ply.disg_players = net.ReadTable()
 end
 net.Receive("TTT_Equipment", ReceiveEquipment)
 

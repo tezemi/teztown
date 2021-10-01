@@ -82,7 +82,8 @@ end
 -- We do this instead of an NW var in order to limit the info to just this ply
 function plymeta:SendEquipment()
    net.Start("TTT_Equipment")
-      net.WriteUInt(self.equipment_items, 16)
+   net.WriteUInt(self.equipment_items, 16)
+   net.WriteTable(player.GetAll())
    net.Send(self)
 end
 
@@ -354,3 +355,65 @@ end
 function plymeta:GetAvoidDetective()
    return self:GetInfoNum("ttt_avoid_detective", 0) > 0
 end
+
+local DISGUISE_DIST = 256;
+function SetDisguise(ply, nick, model)
+
+   if (ply.originalModel == nil) then
+
+      ply.originalModel = ply:GetModel();
+
+   end   
+   
+   ply:EmitSound("ambient/energy/whiteflash.wav", DISGUISE_DIST, 100, 1, CHAN_AUTO, CHAN_AUTO, 0,  0);
+   ply:SetModel(model);
+   ply:SetNWString("disguised_player", nick);
+
+end
+
+function RemoveDisguise(ply)
+
+   if (ply:GetNWString("disguised_player", "nil") ~= "nil")  then
+
+      ply:EmitSound("ambient/energy/whiteflash.wav", DISGUISE_DIST, 100, 1, CHAN_AUTO, CHAN_AUTO, 0,  0);
+      ply:SetModel(ply.originalModel);
+      ply:SetNWString("disguised_player", "nil");
+      ply.originalModel = nil;
+
+   end
+
+end
+
+function RemoveDisguiseSilent(ply)
+
+   if (ply:GetNWString("disguised_player", "nil") ~= "nil")  then
+
+      ply:SetModel(ply.originalModel);
+      ply:SetNWString("disguised_player", "nil");
+      ply.originalModel = nil;
+
+   end
+
+end
+
+local function UpdateDisguise(len, ply)
+
+   if (IsValid(ply) and ply:HasEquipmentItem(TTT_Disguise)) then
+
+      local nick = net.ReadString();
+      local model = net.ReadString();
+
+      if (ply:Nick() == nick) then     -- Remove disguise
+
+         RemoveDisguise(ply);
+
+      else                             -- Set disguise
+
+         SetDisguise(ply, nick, model);
+
+      end
+
+   end
+
+end
+net.Receive("TTT_Disguise", UpdateDisguise)

@@ -29,8 +29,9 @@ EQUIP_NONE     = 0
 EQUIP_ARMOR    = 1
 EQUIP_RADAR    = 2
 EQUIP_DISGUISE = 4
+EQUIP_HUSH     = 8
 
-EQUIP_MAX      = 4
+EQUIP_MAX      = 8
 
 -- Icon doesn't have to be in this dir, but all default ones are in here
 local mat_dir = "vgui/ttt/"
@@ -98,6 +99,15 @@ EquipmentItems = {
          material = mat_dir .. "icon_disguise",
          name     = "item_disg",
          desc     = "item_disg_desc"
+      },
+
+      -- hush
+      {
+         id       = EQUIP_HUSH,
+         type     = "item_passive",
+         material = mat_dir .. "icon_hush",
+         name     = "Hush",
+         desc     = "Masks noises made by the wearer.\nThis includes things like footsteps, and also\nprevents killed players from dropping their\nweapons."
       }
    };
 };

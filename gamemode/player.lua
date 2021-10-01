@@ -63,6 +63,12 @@ function GM:PlayerSpawn(ply)
    -- Clear out stuff like whether we ordered guns or what bomb code we used
    ply:ResetRoundFlags()
 
+   if ply:GetNWString("disguised_player", "nil") ~= "nil" then
+
+      RemoveDisguiseSilent(ply);
+
+   end
+
    -- latejoiner, send him some info
    if GetRoundState() == ROUND_ACTIVE then
       SendRoundState(GetRoundState(), ply)
@@ -250,12 +256,16 @@ end
 
 
 function GM:PlayerSetModel(ply)
-   local mdl = GAMEMODE.playermodel or "models/player/phoenix.mdl"
-   util.PrecacheModel(mdl)
-   ply:SetModel(mdl)
+   if (not CustomPlayerModelAddonInstalled() or ply:GetModel() == "models/player.mdl") then
 
-   -- Always clear color state, may later be changed in TTTPlayerSetColor
-   ply:SetColor(COLOR_WHITE)
+      local mdl = GAMEMODE.playermodel or "models/player/phoenix.mdl"
+      util.PrecacheModel(mdl)
+      ply:SetModel(mdl)
+   
+      -- Always clear color state, may later be changed in TTTPlayerSetColor
+      ply:SetColor(COLOR_WHITE)
+
+   end
 end
 
 
@@ -305,6 +315,12 @@ end
 
 function GM:KeyPress(ply, key)
    if not IsValid(ply) then return end
+
+   if ply:GetNWString("disguised_player", "nil") ~= "nil" and key == IN_ATTACK then
+
+      RemoveDisguise(ply);
+
+   end
 
    -- Spectator keys
    if ply:IsSpec() and not ply:GetRagdollSpec() then
@@ -405,6 +421,12 @@ function GM:KeyRelease(ply, key)
       end
    end
 
+end
+
+function GM:ShowSpare1(ply)
+   if CustomPlayerModelAddonInstalled() then
+      ply:ConCommand("playermodel_selector")
+   end
 end
 
 -- Normally all dead players are blocked from IN_USE on the server, meaning we
@@ -521,6 +543,16 @@ local function CheckCreditAward(victim, attacker)
 
 
    -- TRAITOR AWARD
+   local use_incremental_credits = GetConVar("ttt_incremental_credits");
+
+   if use_incremental_credits:GetBool() and attacker:IsPlayer() then
+
+      attacker:AddCredits(1)
+
+      return
+
+   end
+
    if (not victim:IsTraitor()) and (not GAMEMODE.AwardedCredits or GetConVar("ttt_credits_award_repeat"):GetBool()) then
       local inno_alive = 0
       local inno_dead = 0
@@ -572,6 +604,12 @@ end
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
    if ply:IsSpec() then return end
 
+   if ply:GetNWString("disguised_player", "nil") ~= "nil" then
+
+      RemoveDisguise(ply);
+
+   end
+
    -- Experimental: Fire a last shot if ironsighting and not headshot
    if GetConVar("ttt_dyingshot"):GetBool() then
       local wep = ply:GetActiveWeapon()
@@ -589,9 +627,11 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
    end
 
    -- Drop all weapons
-   for k, wep in ipairs(ply:GetWeapons()) do
-      WEPS.DropNotifiedWeapon(ply, wep, true) -- with ammo in them
-      wep:DampenDrop()
+   if (IsValid(attacker) and attacker:IsPlayer() and not attacker:HasEquipmentItem(EQUIP_HUSH)) then
+      for k, wep in ipairs(ply:GetWeapons()) do
+         WEPS.DropNotifiedWeapon(ply, wep, true) -- with ammo in them
+         wep:DampenDrop()
+      end
    end
 
    if IsValid(ply.hat) then
@@ -632,9 +672,8 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
    -- headshots, knife damage, and weapons tagged as silent all prevent death
    -- sound from occurring
-   if not (ply.was_headshot or
-           dmginfo:IsDamageType(DMG_SLASH) or
-           (IsValid(killwep) and killwep.IsSilent)) then
+   -- also the hush equip
+   if not (ply.was_headshot or dmginfo:IsDamageType(DMG_SLASH) or (not IsValid(attacker) or attacker:HasEquipmentItem(EQUIP_HUSH)) or (IsValid(killwep) and killwep.IsSilent)) then
       PlayDeathSound(ply)
    end
 

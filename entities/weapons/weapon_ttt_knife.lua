@@ -12,7 +12,7 @@ if CLIENT then
 
    SWEP.EquipMenuData = {
       type = "item_weapon",
-      desc = "knife_desc"
+      desc = "If you stand alone as the traitor, this will instantly kill\nits target. Otherwise, it kills the victim instantly\nfrom behind.\nCan also be thrown for an instant kill."
    };
 
    SWEP.Icon                = "vgui/ttt/icon_knife"
@@ -29,7 +29,7 @@ SWEP.Primary.Damage         = 50
 SWEP.Primary.ClipSize       = -1
 SWEP.Primary.DefaultClip    = -1
 SWEP.Primary.Automatic      = true
-SWEP.Primary.Delay          = 1.1
+SWEP.Primary.Delay          = 1.4
 SWEP.Primary.Ammo           = "none"
 
 SWEP.Secondary.ClipSize     = -1
@@ -46,7 +46,7 @@ SWEP.WeaponID               = AMMO_KNIFE
 SWEP.IsSilent               = true
 
 -- Pull out faster than standard guns
-SWEP.DeploySpeed            = 2
+SWEP.DeploySpeed            = 1.5
 
 function SWEP:PrimaryAttack()
    self.Weapon:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
@@ -99,7 +99,16 @@ function SWEP:PrimaryAttack()
          -- account we do want to avoid rounding error strangeness caused by
          -- other damage scaling, causing a death when we don't expect one, so
          -- when the target's health is close to kill-point we just kill
-         if hitEnt:Health() < (self.Primary.Damage + 10) then
+         local attack_angle = self.Owner:GetAimVector():Angle().yaw - hitEnt:GetAimVector():Angle().yaw
+
+         local tCount = 0;
+         for i, v in pairs(player.GetAll()) do
+            if (v:IsTraitor()) then
+               tCount = tCount + 1;
+            end
+         end
+
+         if (tCount <= 1 or (hitEnt:Health() < (self.Primary.Damage + 10)) or (math.abs(attack_angle) < 90) or (math.abs(attack_angle) > 270)) then
             self:StabKill(tr, spos, sdest)
          else
             local dmg = DamageInfo()
@@ -219,7 +228,7 @@ function SWEP:SecondaryAttack()
          ang.p = -10 + ang.p * -((90 + 10) / 90)
       end
 
-      local vel = math.Clamp((90 - ang.p) * 5.5, 550, 800)
+      local vel = math.Clamp((90 - ang.p) * 5.5, 550, 1600)
 
       local vfw = ang:Forward()
       local vrt = ang:Right()
@@ -272,6 +281,7 @@ function SWEP:OnRemove()
 end
 
 if CLIENT then
+   --[[
    local T = LANG.GetTranslation
    function SWEP:DrawHUD()
       local tr = self:GetOwner():GetEyeTrace(MASK_SHOT)
@@ -297,6 +307,7 @@ if CLIENT then
 
       return self.BaseClass.DrawHUD(self)
    end
+   ]]
 end
 
 

@@ -1,0 +1,50 @@
+== Additions ==
+- Hush Equipment:                   A new passive items which silences your footsteps and all your kills.
+- Default Radar for Solo Traitors:  Solo traitors now receive the radar as a default item.
+
+== Changes ==
+- Incremental Credits:              Using this optional new system, traitors get a credit for themselves every time they get a kill.
+- Player Model Selector Support:    If the Enhanced Player Model Selector addon is installed, players can choose their player model with F3.
+- Insta-kill Knife:                 The solo traitor can get instant kills with the knife. Otherwise, the knife will instant kill on a backstab.
+- Improved Knife Throw:             The knife throws slightly force forcefully.
+- Improved Disguise:                You can now disguise as other players from the disguise menu, taking their player model and name. It is removed upon attacking, or dying.
+
+
+== Weapon Changes ==
+- Glock-18
+    + Now fires in three-shot bursts.
+    + Has increased firing delay.
+    + Removed headshot multiplier.
+    Gives the Glock a bit more of a utility, being a strong short-range pistol.
+
+- M16
+    + Significantly improved fire rate.
+    + Damage has been decreased.
+    + Clip size has been increased.
+    + Removed the zoom.
+    Standardizes the M16 a bit more, by making it more general purpose, as a rifle with decent damage, firing speed, and recoil, but not excelling in any aspect.
+
+- Silenced USP
+    + Improved fire rate.
+    + Slightly decreased damage.
+    + Reduced clip size.
+    An unpopular choice for traitors due to the punishingly bad fire rate, which often made it impossible to follow up any kind of damage.
+
+- SSG 08
+    + The fire rate has been slightly improved.
+    + No longer automatic.
+    Makes getting a body shot a bit less punishing.
+
+- XM1014
+    + The fire rate has been significantly increased.
+    + The damage has been significantly decreased.
+    Makes it more reflective of the weapon its based off of, while making room for the other shotgun. Now works like an auto shotgun, firing quickly but doing little damage.
+
+
+== New Weapons ==
+- M3:        High damage shotgun with a large spread and slow fire rate.
+- P228:      Fast-firing, but inaccurate pistol without a lot of ammo.
+- MP5:       Functions similarly to the MAC-10, but has increased accuracy, at the cost of lower damage, and slightly lower firing speed.
+- AK-47:     A high-damage, extremely accurate rifle, that has a high headshot multiplier, at the cost of having a low fire rate and extreme recoil.
+- IMI Galil: An inaccurate rifle with a fast fire rate and increased ammo capacity.
+- G3SG1:     A low damage auto-sniper that fires quickly, but has a normal headshot multiplier.

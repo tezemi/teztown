@@ -3,7 +3,7 @@ AddCSLuaFile()
 SWEP.HoldType              = "pistol"
 
 if CLIENT then
-   SWEP.PrintName          = "sipistol_name"
+   SWEP.PrintName          = "Silenced USP"
    SWEP.Slot               = 6
 
    SWEP.ViewModelFlip      = false
@@ -21,13 +21,13 @@ end
 SWEP.Base                  = "weapon_tttbase"
 
 SWEP.Primary.Recoil        = 1.35
-SWEP.Primary.Damage        = 28
-SWEP.Primary.Delay         = 0.38
+SWEP.Primary.Damage        = 20
+SWEP.Primary.Delay         = 0.2
 SWEP.Primary.Cone          = 0.02
-SWEP.Primary.ClipSize      = 20
+SWEP.Primary.ClipSize      = 12
 SWEP.Primary.Automatic     = true
-SWEP.Primary.DefaultClip   = 20
-SWEP.Primary.ClipMax       = 60
+SWEP.Primary.DefaultClip   = 12
+SWEP.Primary.ClipMax       = 24
 SWEP.Primary.Ammo          = "Pistol"
 SWEP.Primary.Sound         = Sound( "Weapon_USP.SilencedShot" )
 SWEP.Primary.SoundLevel    = 50

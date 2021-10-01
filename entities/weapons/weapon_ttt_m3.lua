@@ -5,7 +5,7 @@ DEFINE_BASECLASS "weapon_tttbase"
 SWEP.HoldType              = "shotgun"
 
 if CLIENT then
-   SWEP.PrintName          = "XM1014"
+   SWEP.PrintName          = "M3"
    SWEP.Slot               = 2
 
    SWEP.ViewModelFlip      = false
@@ -21,15 +21,15 @@ SWEP.Kind                  = WEAPON_HEAVY
 SWEP.WeaponID              = AMMO_SHOTGUN
 
 SWEP.Primary.Ammo          = "Buckshot"
-SWEP.Primary.Damage        = 5
-SWEP.Primary.Cone          = 0.082
-SWEP.Primary.Delay         = 0.25
+SWEP.Primary.Damage        = 16
+SWEP.Primary.Cone          = 0.156
+SWEP.Primary.Delay         = 1
 SWEP.Primary.ClipSize      = 8
 SWEP.Primary.ClipMax       = 24
 SWEP.Primary.DefaultClip   = 8
-SWEP.Primary.Automatic     = true
+SWEP.Primary.Automatic     = false
 SWEP.Primary.NumShots      = 8
-SWEP.Primary.Sound         = Sound( "Weapon_XM1014.Single" )
+SWEP.Primary.Sound         = Sound( "Weapon_M3.Single" )
 SWEP.Primary.Recoil        = 7
 
 SWEP.AutoSpawnable         = true
@@ -37,8 +37,8 @@ SWEP.Spawnable             = true
 SWEP.AmmoEnt               = "item_box_buckshot_ttt"
 
 SWEP.UseHands              = true
-SWEP.ViewModel             = "models/weapons/cstrike/c_shot_xm1014.mdl"
-SWEP.WorldModel            = "models/weapons/w_shot_xm1014.mdl"
+SWEP.ViewModel             = "models/weapons/cstrike/c_shot_m3super90.mdl"
+SWEP.WorldModel            = "models/weapons/w_shot_m3super90.mdl"
 
 SWEP.IronSightsPos         = Vector(-6.881, -9.214, 2.66)
 SWEP.IronSightsAng         = Vector(-0.101, -0.7, -0.201)
