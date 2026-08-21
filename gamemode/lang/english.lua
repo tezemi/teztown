@@ -77,8 +77,8 @@ L.equip_title     = "Equipment"
 L.equip_tabtitle  = "Order Equipment"
 
 L.equip_status    = "Ordering status"
-L.equip_cost      = "You have {num} credit(s) remaining."
-L.equip_help_cost = "Every piece of equipment you buy costs 1 credit."
+L.equip_cost      = "This item costs {price} credit(s). You have {num}."
+L.equip_help_cost = "Some equipment costs more than 1 credit to buy."
 
 L.equip_help_carry = "You can only buy things for which you have room."
 L.equip_carry      = "You can carry this equipment."
@@ -377,6 +377,13 @@ L.defib_already_reviving = "This corpse is already being revived!"
 L.defib_charging         = "Charging the defibrillator..."
 L.defib_used             = "You revived {player}!"
 L.defib_revived          = "You were revived by {player}!"
+
+-- Silenced Sniper
+L.sisniper_name          = "Silenced Sniper"
+L.sisniper_desc          = [[
+A G3SG1 fitted with a suppressor.
+
+Hits hard, fires quiet. Costs 2 credits.]]
 
 -- Visualizer
 L.vis_name        = "Visualizer"

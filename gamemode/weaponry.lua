@@ -156,13 +156,6 @@ function GM:PlayerLoadout( ply )
       -- give default items
       GiveLoadoutItems(ply)
 
-      if CountTraitors() == 1 and ply:IsActiveTraitor() then      
-
-         ply:GiveEquipmentItem(2)
-         ply:ConCommand("ttt_radar_scan")
-   
-      end
-
       -- hand out weaponry
       GiveLoadoutWeapons(ply)
 
@@ -343,13 +336,10 @@ local function OrderEquipment(ply, cmd, args)
 
    if not (ply:IsActiveTraitor() or ply:IsActiveDetective()) then return end
 
-   -- no credits, can't happen when buying through menu as button will be off
-   if ply:GetCredits() < 1 then return end
-
    -- it's an item if the arg is an id instead of an ent name
    local id = args[1]
    local is_item = tonumber(id)
-   
+
    if not hook.Run("TTTCanOrderEquipment", ply, id, is_item) then return end
 
    -- we use weapons.GetStored to save time on an unnecessary copy, we will not
@@ -365,6 +355,10 @@ local function OrderEquipment(ply, cmd, args)
 
    local received = false
 
+   -- items/weapons default to costing 1 credit unless they set their own
+   -- Price (weapons) / price (equip items in equip_items_shd.lua)
+   local price = 1
+
    if is_item then
       id = tonumber(id)
 
@@ -375,6 +369,11 @@ local function OrderEquipment(ply, cmd, args)
          print(ply, "tried to buy item not buyable for his class:", id)
          return
       end
+
+      price = allowed.price or 1
+
+      -- no credits, can't happen when buying through menu as button will be off
+      if ply:GetCredits() < price then return end
 
       -- ownership check and finalise
       if id and EQUIP_NONE < id then
@@ -389,6 +388,11 @@ local function OrderEquipment(ply, cmd, args)
          print(ply, "tried to buy weapon his role is not permitted to buy")
          return
       end
+
+      price = swep_table.Price or 1
+
+      -- no credits, can't happen when buying through menu as button will be off
+      if ply:GetCredits() < price then return end
 
       -- if we have a pending order because we are in a confined space, don't
       -- start a new one
@@ -407,7 +411,7 @@ local function OrderEquipment(ply, cmd, args)
    end
 
    if received then
-      ply:SubtractCredits(1)
+      ply:SubtractCredits(price)
       LANG.Msg(ply, "buy_received")
 
       ply:AddBought(id)

@@ -39,6 +39,7 @@ SWEP.Secondary.Ammo          = "none"
 SWEP.Kind                    = WEAPON_EQUIP
 SWEP.CanBuy                  = {ROLE_TRAITOR, ROLE_DETECTIVE}
 SWEP.WeaponID                = AMMO_DEFIB
+SWEP.Price                   = 2
 
 SWEP.LimitedStock            = true -- only buyable once
 SWEP.NoSights                = true

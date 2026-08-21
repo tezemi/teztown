@@ -16,6 +16,11 @@ SWEP.Kind = WEAPON_NONE
 -- (just setting to nil here to document its existence, don't make this buyable)
 SWEP.CanBuy = nil
 
+-- How many credits this weapon costs to buy. Defaults to 1 if left nil. Set
+-- to a higher value for a stronger/rarer buyable weapon.
+--   Example: SWEP.Price = 3
+SWEP.Price = nil
+
 if CLIENT then
    -- If this is a buyable weapon (ie. CanBuy is not nil) EquipMenuData must be
    -- a table containing some information to show in the Equipment Menu. See

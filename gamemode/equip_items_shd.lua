@@ -13,6 +13,10 @@
 --
 -- Note that for existing items you can just do:
 --   table.insert(EquipmentItems[ROLE_DETECTIVE], GetEquipmentItem(ROLE_TRAITOR, EQUIP_ARMOR))
+--
+-- Each item may optionally set a "price" field (number of credits it costs).
+-- If omitted, it defaults to 1 credit, same as before this field existed.
+--   Example: { id = EQUIP_ARMOR, price = 2, ... }
 
 
 -- Special equipment bitflags. Every unique piece of equipment needs its own

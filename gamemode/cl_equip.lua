@@ -21,6 +21,7 @@ function GetEquipmentForRole(role)
                id       = WEPS.GetClass(v),
                name     = v.PrintName or "Unnamed",
                limited  = v.LimitedStock,
+               price    = v.Price or 1,
                kind     = v.Kind or WEAPON_NONE,
                slot     = (v.Slot or 0) + 1,
                material = v.Icon or "vgui/ttt/icon_id",
@@ -77,7 +78,8 @@ local function PreqLabels(parent, x, y)
    tbl.credits:SetPos(x, y)
    tbl.credits.Check = function(s, sel)
                           local credits = LocalPlayer():GetCredits()
-                          return credits > 0, GetPTranslation("equip_cost", {num = credits})
+                          local price = (sel and sel.price) or 1
+                          return credits >= price, GetPTranslation("equip_cost", {price = price, num = credits})
                        end
 
    tbl.owned = vgui.Create("DLabel", parent)
@@ -280,7 +282,7 @@ local function TraitorMenuPopup()
       ic:SetTooltip(tip)
 
       -- If we cannot order this item, darken it
-      if ((not can_order) or
+      if ((credits < (item.price or 1)) or
           -- already owned
           table.HasValue(owned_ids, item.id) or
           (tonumber(item.id) and ply:HasEquipmentItem(tonumber(item.id))) or
