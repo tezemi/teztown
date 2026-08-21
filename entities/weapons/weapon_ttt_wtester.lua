@@ -38,11 +38,11 @@ SWEP.Secondary.Automatic   = false
 SWEP.Secondary.Ammo        = "none"
 SWEP.Secondary.Delay       = 2
 
-SWEP.Kind                  = WEAPON_ROLE
-SWEP.CanBuy                = nil -- no longer a buyable thing
+SWEP.Kind                  = WEAPON_EQUIP2
+SWEP.CanBuy                = {ROLE_DETECTIVE} -- only detectives can buy
 SWEP.WeaponID              = AMMO_WTESTER
 
-SWEP.InLoadoutFor          = {ROLE_DETECTIVE}
+SWEP.InLoadoutFor          = {}
 
 --SWEP.AllowDrop = false
 SWEP.AutoSpawnable         = false
