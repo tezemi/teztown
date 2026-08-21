@@ -351,6 +351,18 @@ L.c4_disarm_other = "Cut a safe wire to disarm the bomb. It will explode if you 
 L.c4_status_armed    = "ARMED"
 L.c4_status_disarmed = "DISARMED"
 
+-- Suicide Bomb
+L.suicidebomb_name          = "Suicide Bomb"
+L.suicidebomb_desc          = [[
+Arm the vest with primary fire.
+
+After a short fuse it detonates, killing
+you and anyone nearby. Once armed, it
+cannot be stopped.]]
+
+L.suicidebomb_help_primary  = "{primaryfire} to arm the bomb"
+L.suicidebomb_armed         = "The bomb is armed. Carry the flame!"
+
 -- Visualizer
 L.vis_name        = "Visualizer"
 L.vis_hint        = "Press {usekey} to pick up (Detectives only)."

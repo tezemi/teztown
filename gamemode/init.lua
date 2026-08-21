@@ -159,6 +159,10 @@ util.AddNetworkString("TTT_FlareScorch")
 util.AddNetworkString("TTT_Radar")
 util.AddNetworkString("TTT_Spectate")
 util.AddNetworkString("TTT_Disguise")
+util.AddNetworkString("TTT_SuicideBombArm")
+
+-- Custom content clients need in order to hear it
+resource.AddFile("sound/ttt/kirk.wav")
 
 ---- Round mechanics
 function GM:Initialize()
