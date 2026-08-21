@@ -8,6 +8,7 @@ AddCSLuaFile("cl_hudpickup.lua")
 AddCSLuaFile("cl_keys.lua")
 AddCSLuaFile("cl_wepswitch.lua")
 AddCSLuaFile("cl_awards.lua")
+AddCSLuaFile("cl_hiddenscore.lua")
 AddCSLuaFile("cl_scoring_events.lua")
 AddCSLuaFile("cl_scoring.lua")
 AddCSLuaFile("cl_popups.lua")
@@ -797,6 +798,10 @@ function EndRound(type)
    KARMA.RoundEnd()
 
    -- now handle potentially error prone scoring stuff
+
+   -- turn this round's running damage totals into log events before the
+   -- log gets streamed out and reset
+   SCORE:HandleDamageSummary()
 
    -- register an end of round event
    SCORE:RoundComplete(type)

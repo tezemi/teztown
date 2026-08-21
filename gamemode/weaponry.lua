@@ -416,6 +416,8 @@ local function OrderEquipment(ply, cmd, args)
 
       ply:AddBought(id)
 
+      SCORE:HandlePurchase(ply)
+
       timer.Simple(0.5,
                    function()
                       if not IsValid(ply) then return end

@@ -848,6 +848,13 @@ L.report_save_result = "The Event Log has been saved to:"
 L.hilite_win_traitors = "THE TRAITORS WIN"
 L.hilite_win_innocent = "THE INNOCENT WIN"
 
+-- MVP end screen
+L.report_mvp_title    = "MVP"
+L.report_mvp_none     = "Nobody really did anything interesting this round. Oh well!"
+L.report_mvp_noawards = "Didn't really do anything that great, to be honest."
+L.report_mvp_noaward  = "No awards, sorry!"
+L.report_mvp_fullreport = "Full Report"
+
 L.hilite_players1 = "{numplayers} players took part, {numtraitors} were traitors"
 L.hilite_players2 = "{numplayers} players took part, one of them the traitor"
 
@@ -998,78 +1005,6 @@ L.aw_hed2_text  = "removed the brains from {num} heads for a closer examination.
 L.aw_hed3_title = "Videogames Made Me Do It"
 L.aw_hed3_text  = "applied their murder simulation training and headshotted {num} foes."
 
-L.aw_cbr1_title = "Thunk Thunk Thunk"
-L.aw_cbr1_text  = "has a mean swing with the crowbar, as {num} victims found out."
-
-L.aw_cbr2_title = "Freeman"
-L.aw_cbr2_text  = "covered their crowbar in the brains of no less than {num} people."
-
-L.aw_pst1_title = "Persistent Little Bugger"
-L.aw_pst1_text  = "scored {num} kills using the pistol. Then they went on to hug someone to death."
-
-L.aw_pst2_title = "Small Caliber Slaughter"
-L.aw_pst2_text  = "killed a small army of {num} with a pistol. Presumably installed a tiny shotgun inside the barrel."
-
-L.aw_sgn1_title = "Easy Mode"
-L.aw_sgn1_text  = "applies the buckshot where it hurts, murdering {num} targets."
-
-L.aw_sgn2_title = "A Thousand Little Pellets"
-L.aw_sgn2_text  = "didn't really like their buckshot, so they gave it all away. {num} recipients did not live to enjoy it."
-
-L.aw_rfl1_title = "Point and Click"
-L.aw_rfl1_text  = "shows all you need for {num} kills is a rifle and a steady hand."
-
-L.aw_rfl2_title = "I Can See Your Head From Here"
-L.aw_rfl2_text  = "knows their rifle. Now {num} other people know the rifle too."
-
-L.aw_dgl1_title = "It's Like A Tiny Rifle"
-L.aw_dgl1_text  = "is getting the hang of the Desert Eagle and killed {num} people."
-
-L.aw_dgl2_title = "Eagle Master"
-L.aw_dgl2_text  = "blew away {num} people with the deagle."
-
-L.aw_mac1_title = "Pray and Slay"
-L.aw_mac1_text  = "killed {num} people with the MAC10, but won't say how much ammo they needed."
-
-L.aw_mac2_title = "Mac and Cheese"
-L.aw_mac2_text  = "wonders what would happen if they could wield two MAC10s. {num} times two?"
-
-L.aw_sip1_title = "Be Quiet"
-L.aw_sip1_text  = "shut {num} people up with the silenced pistol."
-
-L.aw_sip2_title = "Silenced Assassin"
-L.aw_sip2_text  = "killed {num} people who did not hear themselves die."
-
-L.aw_knf1_title = "Knife Knowing You"
-L.aw_knf1_text  = "stabbed someone in the face over the internet."
-
-L.aw_knf2_title = "Where Did You Get That From?"
-L.aw_knf2_text  = "was not a Traitor, but still killed someone with a knife."
-
-L.aw_knf3_title = "Such A Knife Man"
-L.aw_knf3_text  = "found {num} knives lying around, and made use of them."
-
-L.aw_knf4_title = "World's Knifest Man"
-L.aw_knf4_text  = "killed {num} people with a knife. Don't ask me how."
-
-L.aw_flg1_title = "To The Rescue"
-L.aw_flg1_text  = "used their flares to signal for {num} deaths."
-
-L.aw_flg2_title = "Flare Indicates Fire"
-L.aw_flg2_text  = "taught {num} men about the danger of wearing flammable clothing."
-
-L.aw_hug1_title = "A H.U.G.E Spread"
-L.aw_hug1_text  = "was in tune with their H.U.G.E, somehow managing to make their bullets hit {num} people."
-
-L.aw_hug2_title = "A Patient Para"
-L.aw_hug2_text  = "just kept firing, and saw their H.U.G.E patience rewarded with {num} kills."
-
-L.aw_msx1_title = "Putt Putt Putt"
-L.aw_msx1_text  = "picked off {num} people with the M16."
-
-L.aw_msx2_title = "Mid-range Madness"
-L.aw_msx2_text  = "knows how to take down targets with the M16, scoring {num} kills."
-
 L.aw_tkl1_title = "Made An Oopsie"
 L.aw_tkl1_text  = "had their finger slip just when they were aiming at a buddy."
 
@@ -1080,7 +1015,7 @@ L.aw_tkl3_title = "Karma-conscious"
 L.aw_tkl3_text  = "couldn't stop after killing two teammates. Three is their lucky number."
 
 L.aw_tkl4_title = "Teamkiller"
-L.aw_tkl4_text  = "murdered the entirety of their team. OMGBANBANBAN."
+L.aw_tkl4_text  = "murdered the entirety of their team. RDM RDM RDM RDM RDM RDM!!!!!"
 
 L.aw_tkl5_title = "Roleplayer"
 L.aw_tkl5_text  = "was roleplaying a madman, honest. That's why they killed most of their team."
@@ -1091,32 +1026,20 @@ L.aw_tkl6_text  = "couldn't figure out which side they were on, and killed over 
 L.aw_tkl7_title = "Redneck"
 L.aw_tkl7_text  = "protected their turf real good by killing over a quarter of their teammates."
 
-L.aw_brn1_title = "Like Grandma Used To Make Them"
-L.aw_brn1_text  = "fried several people to a nice crisp."
-
-L.aw_brn2_title = "Pyroid"
-L.aw_brn2_text  = "was heard cackling loudly after burning one of their many victims."
-
-L.aw_brn3_title = "Pyrrhic Burnery"
-L.aw_brn3_text  = "burned them all, but is now all out of incendiary grenades! How will they cope!?"
-
-L.aw_fnd1_title = "Coroner"
-L.aw_fnd1_text  = "found {num} bodies lying around."
-
-L.aw_fnd2_title = "Gotta Catch Em All"
-L.aw_fnd2_text  = "found {num} corpses for their collection."
-
-L.aw_fnd3_title = "Death Scent"
-L.aw_fnd3_text  = "keeps stumbling on random corpses, {num} times this round."
-
-L.aw_crd1_title = "Recycler"
-L.aw_crd1_text  = "scrounged up {num} leftover credits from corpses."
-
 L.aw_tod1_title = "Pyrrhic Victory"
 L.aw_tod1_text  = "died only seconds before their team won the round."
 
 L.aw_tod2_title = "I Hate This Game"
 L.aw_tod2_text  = "died right after the start of the round."
+
+L.aw_spd1_title = "Big Spender"
+L.aw_spd1_text  = "went on a shopping spree, placing {num} orders this round."
+
+L.aw_carr1_title = "Carried"
+L.aw_carr1_text  = "didn't land a single kill or point of damage, yet somehow ended up on the winning side."
+
+L.aw_slow1_title = "Slow Day"
+L.aw_slow1_text  = "went the whole round without dealing damage, taking damage, or finding a body. Nothing to see here."
 
 
 --- New and modified pieces of text are placed below this point, marked with the

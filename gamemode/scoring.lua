@@ -8,6 +8,13 @@ local pairs = pairs
 SCORE = SCORE or {}
 SCORE.Events = SCORE.Events or {}
 
+-- Running per-round totals, not logged per-instance (that'd be a lot of
+-- events for something like bullet damage) -- summarized into one
+-- EVENT_DAMAGE per player who did/took any, via HandleDamageSummary() at
+-- round end. See TrackDamage below for what's counted.
+SCORE.DamageDealt = SCORE.DamageDealt or {}
+SCORE.DamageReceived = SCORE.DamageReceived or {}
+
 include("scoring_shd.lua")
 
 -- One might wonder why all the key names in the event tables are so annoyingly
@@ -142,6 +149,54 @@ function SCORE:HandleCreditFound(finder, found_nick, credits)
    self:AddEvent({id=EVENT_CREDITFOUND, ni=finder:Nick(), sid=finder:SteamID(), b=found_nick, cr=credits})
 end
 
+function SCORE:HandlePurchase(ply)
+   if not (IsValid(ply) and ply:IsPlayer()) then return end
+   self:AddEvent({id=EVENT_PURCHASE, sid=ply:SteamID(), ni=ply:Nick()})
+end
+
+-- Accumulates into DamageDealt/DamageReceived rather than logging an event
+-- per hit. attacker dealing damage to itself (eg. fall damage) only counts
+-- as damage received, not dealt -- "dealt damage" here means to someone
+-- else.
+function SCORE:TrackDamage(victim, attacker, amount)
+   if amount <= 0 then return end
+   if not (IsValid(victim) and victim:IsPlayer()) then return end
+
+   local vid = victim:SteamID()
+   self.DamageReceived[vid] = (self.DamageReceived[vid] or 0) + amount
+
+   if IsValid(attacker) and attacker:IsPlayer() and attacker != victim then
+      local aid = attacker:SteamID()
+      self.DamageDealt[aid] = (self.DamageDealt[aid] or 0) + amount
+   end
+end
+
+-- Call at round end, before RoundComplete/StreamToClients: turns the
+-- running DamageDealt/DamageReceived totals into one EVENT_DAMAGE per
+-- player who dealt or took any damage this round.
+function SCORE:HandleDamageSummary()
+   local sids = {}
+   for sid in pairs(self.DamageDealt) do sids[sid] = true end
+   for sid in pairs(self.DamageReceived) do sids[sid] = true end
+
+   for sid in pairs(sids) do
+      self:AddEvent({id = EVENT_DAMAGE, sid = sid,
+                      dealt = self.DamageDealt[sid] or 0,
+                      received = self.DamageReceived[sid] or 0})
+   end
+end
+
+-- Not a native engine hook name clash -- EntityTakeDamage is a real GMod
+-- hook, and GM:EntityTakeDamage (player.lua) already handles it; hook.Add
+-- callbacks for the same name run alongside it. This sees damage before
+-- that function's attacker re-attribution logic (barrels/traps/pushes), so
+-- edge cases can attribute to the raw rather than corrected attacker -- fine
+-- for what this feeds (flavor awards), not something kill scoring relies on.
+hook.Add("EntityTakeDamage", "SCORE_TrackDamage", function(ent, dmginfo)
+   if GetRoundState() != ROUND_ACTIVE then return end
+   SCORE:TrackDamage(ent, dmginfo:GetAttacker(), dmginfo:GetDamage())
+end)
+
 function SCORE:ApplyEventLogScores(wintype)
    local scores = {}
    local traitors = {}
@@ -201,6 +256,8 @@ end
 
 function SCORE:Reset()
    self.Events = {}
+   self.DamageDealt = {}
+   self.DamageReceived = {}
 end
 
 function SCORE:StreamToClients()

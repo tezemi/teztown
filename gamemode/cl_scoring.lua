@@ -30,6 +30,70 @@ surface.CreateFont("WinHuge", {
    extended = true
 })
 
+surface.CreateFont("MVPTitle", {
+   font = "Trebuchet24",
+   size = 34,
+   weight = 1000,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPName", {
+   font = "Trebuchet24",
+   size = 26,
+   weight = 900,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPAwardTitle", {
+   font = "Trebuchet24",
+   size = 22,
+   weight = 1000,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPAwardText", {
+   font = "Trebuchet24",
+   size = 20,
+   weight = 500,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPRowRank", {
+   font = "Trebuchet24",
+   size = 18,
+   weight = 900,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPRowName", {
+   font = "Trebuchet24",
+   size = 16,
+   weight = 700,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPRowAwardName", {
+   font = "Trebuchet24",
+   size = 15,
+   weight = 800,
+   shadow = true,
+   extended = true
+})
+
+surface.CreateFont("MVPRowAward", {
+   font = "Trebuchet24",
+   size = 15,
+   weight = 400,
+   shadow = true,
+   extended = true
+})
+
 -- so much text here I'm using shorter names than usual
 local T = LANG.GetTranslation
 local PT = LANG.GetParamTranslation
@@ -465,6 +529,330 @@ function CLSCORE:ShowPanel()
    dpanel:SetKeyboardInputEnabled(false)
 end
 
+-- Replacement end-of-round screen: transparent full-screen overlay, big win
+-- title, then just the MVP (highest HIDDENSCORE this round) with their
+-- avatar, name, and every award they picked up -- good or bad. Supersedes
+-- ShowPanel above, which is left in place (dead code, unused) rather than
+-- deleted in case any of it -- the event log tab/save-to-file especially --
+-- turns out to be wanted again later.
+function CLSCORE:ShowMVPPanel()
+   if IsValid(self.Panel) then
+      self:ClearPanel()
+   end
+
+   local title = self.WinTypes.Default
+   local events = self.Events
+
+   for i = #events, 1, -1 do
+      local e = events[i]
+      if e.id == EVENT_FINISH then
+         title = self.WinTypes[e.win]
+         break
+      end
+   end
+
+   -- Same determinism trick the old panel used: seed with round start/end so
+   -- every client's math.random() calls inside the AWARDS generators (used
+   -- for priority/tie-breaking, not for who wins an award) agree.
+   local starttime, endtime = HIDDENSCORE.GetRoundTimespan(events)
+   math.randomseed((starttime or 0) + (endtime or 0))
+
+   local hidden = HIDDENSCORE.Calculate(self.Events, self.Scores, self.Players, self.TraitorIDs, self.DetectiveIDs)
+
+   -- Everyone who scored, ranked highest first. ranked[1] is the MVP;
+   -- ranked[2..9] are the smaller list shown underneath.
+   local ranked = {}
+   for sid, score in pairs(hidden) do
+      table.insert(ranked, {sid = sid, score = score})
+   end
+   table.sort(ranked, function(a, b) return a.score > b.score end)
+
+   local mvp_sid = ranked[1] and ranked[1].sid
+
+   local function RoleString(sid)
+      if table.HasValue(self.TraitorIDs, sid) then return T("traitor")
+      elseif table.HasValue(self.DetectiveIDs, sid) then return T("detective")
+      else return T("innocent") end
+   end
+
+   -- Same role colours used elsewhere (eg. the role-highlighted portion of
+   -- the "you were killed by" chat message in cl_lang.lua).
+   local function RoleColor(sid)
+      if table.HasValue(self.TraitorIDs, sid) then return Color(220, 60, 60)
+      elseif table.HasValue(self.DetectiveIDs, sid) then return Color(80, 140, 255)
+      else return Color(80, 200, 80) end
+   end
+
+   -- Every award any player earned this round, computed once and grouped by
+   -- nick, rather than re-running all 26 AWARDS generators per player shown.
+   local awards_by_nick = {}
+   for k, afn in pairs(AWARDS) do
+      local a = afn(self.Events, self.Scores, self.Players, self.TraitorIDs, self.DetectiveIDs)
+      if ValidAward(a) then
+         awards_by_nick[a.nick] = awards_by_nick[a.nick] or {}
+         table.insert(awards_by_nick[a.nick], a)
+      end
+   end
+   for _, list in pairs(awards_by_nick) do
+      table.SortByMember(list, "priority")
+   end
+
+   local scrw, scrh = ScrW(), ScrH()
+
+   local dpanel = vgui.Create("DPanel")
+   dpanel:SetSize(scrw, scrh)
+   dpanel:SetPos(0, 0)
+   dpanel:SetPaintBackground(false)
+   dpanel.Paint = function(s, w, h)
+      draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 140))
+   end
+   dpanel:SetMouseInputEnabled(true)
+   dpanel:SetKeyboardInputEnabled(true)
+   dpanel.OnKeyCodePressed = util.BasicKeyHandler
+
+   -- DPanel has no Close()/DeleteOnClose (those are DFrame-only), but both
+   -- util.BasicKeyHandler (ESC) and the close button below call :Close(),
+   -- so give it one that just routes to the normal removal path.
+   dpanel.Close = function() self:ClearPanel() end
+
+   self.Panel = dpanel
+
+   -- Win title, same big-box style the old panel used
+   local titletext = T(title.Text or self.WinTypes.Default.Text)
+
+   surface.SetFont("WinHuge")
+   local tw, th = surface.GetTextSize(titletext)
+
+   local winx, winy = (scrw - tw) / 2, 50
+
+   local boxclr = title.BoxColor or self.WinTypes.Default.BoxColor
+   local winbox = vgui.Create("DPanel", dpanel)
+   winbox:SetPos(winx - 15, winy - 5)
+   winbox:SetSize(tw + 30, th + 10)
+   winbox.Paint = function(s, w, h)
+      draw.RoundedBox(8, 0, 0, w, h, boxclr)
+   end
+
+   local winlbl = vgui.Create("DLabel", dpanel) -- sibling after winbox, so it paints on top
+   winlbl:SetFont("WinHuge")
+   winlbl:SetText(titletext)
+   winlbl:SetTextColor(title.TextColor or self.WinTypes.Default.TextColor)
+   winlbl:SizeToContents()
+   winlbl:SetPos(winx, winy)
+
+   local y = winy + th + 40
+
+   if mvp_sid then
+      local nick = self.Players[mvp_sid] or "???"
+
+      local mvplbl = vgui.Create("DLabel", dpanel)
+      mvplbl:SetFont("MVPTitle")
+      mvplbl:SetText(T("report_mvp_title"))
+      mvplbl:SetTextColor(Color(255, 210, 0))
+      mvplbl:SizeToContents()
+      mvplbl:SetPos((scrw - mvplbl:GetWide()) / 2, y)
+      y = y + mvplbl:GetTall() + 10
+
+      local avatar_size = 128
+      local mvp_ply = player.GetBySteamID(mvp_sid)
+      if IsValid(mvp_ply) then
+         local avatar = vgui.Create("AvatarImage", dpanel)
+         avatar:SetSize(avatar_size, avatar_size)
+         avatar:SetPos((scrw - avatar_size) / 2, y)
+         avatar:SetPlayer(mvp_ply, 184)
+         y = y + avatar_size + 10
+      end
+
+      -- Two labels side by side rather than one, so the "(Role)" part can be
+      -- coloured differently from the name itself.
+      local namepart = nick .. " "
+      local rolepart = "(" .. RoleString(mvp_sid) .. ")"
+
+      surface.SetFont("MVPName")
+      local namew, nameh = surface.GetTextSize(namepart)
+      local rolew = surface.GetTextSize(rolepart)
+      local namex = (scrw - (namew + rolew)) / 2
+
+      local namelbl = vgui.Create("DLabel", dpanel)
+      namelbl:SetFont("MVPName")
+      namelbl:SetText(namepart)
+      namelbl:SetTextColor(COLOR_WHITE)
+      namelbl:SizeToContents()
+      namelbl:SetPos(namex, y)
+
+      local rolelbl = vgui.Create("DLabel", dpanel)
+      rolelbl:SetFont("MVPName")
+      rolelbl:SetText(rolepart)
+      rolelbl:SetTextColor(RoleColor(mvp_sid))
+      rolelbl:SizeToContents()
+      rolelbl:SetPos(namex + namew, y)
+
+      y = y + nameh + 20
+
+      -- Top 5 awards only, highest priority first.
+      local mvp_awards = awards_by_nick[nick] or {}
+
+      local list_w = 480
+      local shown = math.min(#mvp_awards, 5)
+      local awards_h = math.max(shown, 1) * 70
+      local scroll = vgui.Create("DScrollPanel", dpanel)
+      scroll:SetPos((scrw - list_w) / 2, y)
+      scroll:SetSize(list_w, awards_h)
+      y = y + awards_h + 20
+
+      if shown > 0 then
+         local ly = 0
+         for i = 1, shown do
+            local a = mvp_awards[i]
+
+            local titlelbl = vgui.Create("DLabel", scroll)
+            titlelbl:SetFont("MVPAwardTitle")
+            titlelbl:SetText(string.upper(a.title))
+            titlelbl:SetTextColor(COLOR_WHITE)
+            titlelbl:SizeToContents()
+            titlelbl:SetPos((list_w - titlelbl:GetWide()) / 2, ly)
+            ly = ly + titlelbl:GetTall() + 2
+
+            local textlbl = vgui.Create("DLabel", scroll)
+            textlbl:SetFont("MVPAwardText")
+            textlbl:SetText(a.text)
+            textlbl:SetTextColor(Color(255, 210, 60))
+            textlbl:SetContentAlignment(5)
+            textlbl:SizeToContents()
+            textlbl:SetPos((list_w - textlbl:GetWide()) / 2, ly)
+            ly = ly + textlbl:GetTall() + 14
+         end
+      else
+         local nonelbl = vgui.Create("DLabel", scroll)
+         nonelbl:SetFont("MVPAwardText")
+         nonelbl:SetText(T("report_mvp_noawards"))
+         nonelbl:SetTextColor(Color(255, 210, 60))
+         nonelbl:SizeToContents()
+         nonelbl:SetPos((list_w - nonelbl:GetWide()) / 2, 0)
+      end
+
+      -- Ranks #2-#9: a smaller row per player -- rank, avatar, name, best
+      -- (highest-priority) award, even if it's a bad one.
+      local row_w = 480
+      local row_h = 36
+      local rows_x = (scrw - row_w) / 2
+
+      for rank = 2, math.min(#ranked, 9) do
+         local entry = ranked[rank]
+         local rsid = entry.sid
+         local rnick = self.Players[rsid] or "???"
+
+         local row = vgui.Create("DPanel", dpanel)
+         row:SetPos(rows_x, y)
+         row:SetSize(row_w, row_h)
+         row:SetPaintBackground(false)
+
+         local ranklbl = vgui.Create("DLabel", row)
+         ranklbl:SetFont("MVPRowRank")
+         ranklbl:SetText("#" .. rank)
+         ranklbl:SetTextColor(COLOR_WHITE)
+         ranklbl:SetContentAlignment(4)
+         ranklbl:SetPos(0, 0)
+         ranklbl:SetSize(36, row_h)
+
+         local rply = player.GetBySteamID(rsid)
+         if IsValid(rply) then
+            local ravatar = vgui.Create("AvatarImage", row)
+            ravatar:SetSize(row_h, row_h)
+            ravatar:SetPos(40, 0)
+            ravatar:SetPlayer(rply, 64)
+         end
+
+         local rnamepart = rnick .. " "
+         local rrolepart = "(" .. RoleString(rsid) .. ")"
+
+         surface.SetFont("MVPRowName")
+         local rnamew = surface.GetTextSize(rnamepart)
+
+         local rnamelbl = vgui.Create("DLabel", row)
+         rnamelbl:SetFont("MVPRowName")
+         rnamelbl:SetText(rnamepart)
+         rnamelbl:SetTextColor(COLOR_WHITE)
+         rnamelbl:SetContentAlignment(4)
+         rnamelbl:SetPos(40 + row_h + 10, 0)
+         rnamelbl:SetSize(rnamew, row_h)
+
+         local rrolelbl = vgui.Create("DLabel", row)
+         rrolelbl:SetFont("MVPRowName")
+         rrolelbl:SetText(rrolepart)
+         rrolelbl:SetTextColor(RoleColor(rsid))
+         rrolelbl:SetContentAlignment(4)
+         rrolelbl:SetPos(40 + row_h + 10 + rnamew, 0)
+         rrolelbl:SetSize(180 - rnamew, row_h)
+
+         local best = (awards_by_nick[rnick] or {})[1]
+         local award_x = 40 + row_h + 10 + 180
+
+         if best then
+            -- "Award Name - description", name white+bold, description gold.
+            local awnamepart = string.upper(best.title) .. " - "
+
+            surface.SetFont("MVPRowAwardName")
+            local awnamew = surface.GetTextSize(awnamepart)
+
+            local awnamelbl = vgui.Create("DLabel", row)
+            awnamelbl:SetFont("MVPRowAwardName")
+            awnamelbl:SetText(awnamepart)
+            awnamelbl:SetTextColor(COLOR_WHITE)
+            awnamelbl:SetContentAlignment(4)
+            awnamelbl:SetPos(award_x, 0)
+            awnamelbl:SetSize(awnamew, row_h)
+
+            local awdesclbl = vgui.Create("DLabel", row)
+            awdesclbl:SetFont("MVPRowAward")
+            awdesclbl:SetText(best.text)
+            awdesclbl:SetTextColor(Color(255, 210, 60))
+            awdesclbl:SetContentAlignment(4)
+            awdesclbl:SetPos(award_x + awnamew, 0)
+            awdesclbl:SetSize(row_w - (award_x + awnamew), row_h)
+         else
+            local rawardlbl = vgui.Create("DLabel", row)
+            rawardlbl:SetFont("MVPRowAward")
+            rawardlbl:SetText(T("report_mvp_noaward"))
+            rawardlbl:SetTextColor(Color(160, 160, 160))
+            rawardlbl:SetContentAlignment(4)
+            rawardlbl:SetPos(award_x, 0)
+            rawardlbl:SetSize(row_w - award_x, row_h)
+         end
+
+         y = y + row_h + 4
+      end
+   else
+      local nonelbl = vgui.Create("DLabel", dpanel)
+      nonelbl:SetFont("MVPName")
+      nonelbl:SetText(T("report_mvp_none"))
+      nonelbl:SetTextColor(COLOR_WHITE)
+      nonelbl:SizeToContents()
+      nonelbl:SetPos((scrw - nonelbl:GetWide()) / 2, y)
+   end
+
+   -- Close + full-report buttons, centered as a pair right below whatever
+   -- content came before (the players list, or the "no MVP" fallback).
+   local bw, bh, gap = 130, 25, 10
+   local by = y + 20
+   local bx = (scrw - (bw * 2 + gap)) / 2
+
+   local dbut = vgui.Create("DButton", dpanel)
+   dbut:SetSize(bw, bh)
+   dbut:SetPos(bx, by)
+   dbut:SetText(T("close"))
+   dbut.DoClick = function() dpanel:Close() end
+
+   local dbutold = vgui.Create("DButton", dpanel)
+   dbutold:SetSize(bw, bh)
+   dbutold:SetPos(bx + bw + gap, by)
+   dbutold:SetText(T("report_mvp_fullreport"))
+   dbutold.DoClick = function() self:ShowPanel() end
+
+   dpanel:MakePopup()
+   dpanel:SetKeyboardInputEnabled(false)
+end
+
 function CLSCORE:ClearPanel()
 
    if IsValid(self.Panel) then
@@ -529,37 +917,26 @@ function CLSCORE:Init(events)
    local traitors, detectives
    local scores, nicks = {}, {}
    
-   local game, selected, spawn = false, false, false
+   -- Used to bail out early once one of each event type had been seen, on
+   -- the assumption every EVENT_SPAWN would already be behind EVENT_SELECTED
+   -- and the round's EVENT_GAME(ROUND_ACTIVE) in the log. Not reliably true
+   -- -- eg. a bot/late joiner whose own spawn lands after that point would
+   -- get silently dropped from self.Players/self.Scores entirely, which is
+   -- why the MVP screen's ranked list could come up short. A full,
+   -- unconditional scan costs nothing (round event logs are tiny) and can't
+   -- miss anyone.
    for i = 1, #events do
       local e = events[i]
       if e.id == EVENT_GAME then
          if e.state == ROUND_ACTIVE then
             starttime = e.t
-
-            if selected and spawn then
-               break
-            end
-
-            game = true
          end
       elseif e.id == EVENT_SELECTED then
          traitors = e.traitor_ids
          detectives = e.detective_ids
-
-         if game and spawn then
-            break
-         end
-
-         selected = true
       elseif e.id == EVENT_SPAWN then
          scores[e.sid] = ScoreInit()
          nicks[e.sid] = e.ni
-
-         if game and selected then
-            break
-         end
-
-         spawn = true
       end
    end
 
@@ -580,7 +957,7 @@ function CLSCORE:ReportEvents(events)
    self:Reset()
 
    self:Init(events)
-   self:ShowPanel()
+   self:ShowMVPPanel()
 end
 
 function CLSCORE:Toggle()

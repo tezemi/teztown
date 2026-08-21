@@ -296,283 +296,6 @@ local function Headshots(events, scores, players, traitors)
    return award
 end
 
-local function UsedAmmoMost(events, ammotype)
-   local user = {}
-   for k, e in pairs(events) do
-      if e.id == EVENT_KILL and e.dmg.g == ammotype then
-         user[e.att.sid] = (user[e.att.sid] or 0) + 1
-      end
-   end
-
-   if table.IsEmpty(user) then return nil end
-
-   local m_id, m_num = FindHighest(user)
-
-   if not m_id then return nil end
-
-   return {sid=m_id, kills=m_num}
-end
-
-local function CrowbarUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_CROWBAR)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills + math.random(0, 4)}
-   local kills = most.kills
-   if kills > 1 and kills < 3 then
-      award.title = T("aw_cbr1_title")
-      award.text = PT("aw_cbr1_text", {num = kills})
-   elseif kills >= 3 then
-      award.title = T("aw_cbr2_title")
-      award.text = PT("aw_cbr2_text", {num = kills})
-      award.priority = kills + math.random(5, 10)
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function PistolUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_PISTOL)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_pst1_title")
-      award.text = PT("aw_pst1_text", {num = kills})
-   elseif kills >= 4 then
-      award.title = T("aw_pst2_title")
-      award.text = PT("aw_pst2_text", {num = kills})
-      award.priority = award.priority + math.random(0, 5)
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function ShotgunUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_SHOTGUN)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_sgn1_title")
-      award.text = PT("aw_sgn1_text", {num = kills})
-      award.priority = math.Round(kills / 2)
-   elseif kills >= 4 then
-      award.title = T("aw_sgn2_title")
-      award.text = PT("aw_sgn2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function RifleUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_RIFLE)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_rfl1_title")
-      award.text = PT("aw_rfl1_text", {num = kills})
-      award.priority = math.Round(kills / 2)
-   elseif kills >= 4 then
-      award.title = T("aw_rfl2_title")
-      award.text = PT("aw_rfl2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function DeagleUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_DEAGLE)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_dgl1_title")
-      award.text = PT("aw_dgl1_text", {num = kills})
-      award.priority = math.Round(kills / 2)
-   elseif kills >= 4 then
-      award.title = T("aw_dgl2_title")
-      award.text = PT("aw_dgl2_text", {num = kills})
-      award.priority = kills + math.random(2, 6)
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function MAC10User(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_MAC10)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_mac1_title")
-      award.text = PT("aw_mac1_text", {num = kills})
-      award.priority = math.Round(kills / 2)
-   elseif kills >= 4 then
-      award.title = T("aw_mac2_title")
-      award.text = PT("aw_mac2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function SilencedPistolUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_SIPISTOL)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 3 then
-      award.title = T("aw_sip1_title")
-      award.text = PT("aw_sip1_text", {num = kills})
-   elseif kills >= 3 then
-      award.title = T("aw_sip2_title")
-      award.text = PT("aw_sip2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function KnifeUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_KNIFE)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-
-   if kills == 1 then
-      if table.HasValue(traitors, most.sid) then
-         award.title = T("aw_knf1_title")
-         award.text = PT("aw_knf1_text", {num = kills})
-         award.priority = 0
-      else
-         award.title = T("aw_knf2_title")
-         award.text = PT("aw_knf2_text", {num = kills})
-         award.priority = 5
-      end
-   elseif kills > 1 and kills < 4 then
-      award.title = T("aw_knf3_title")
-      award.text = PT("aw_knf3_text", {num = kills})
-   elseif kills >= 4 then
-      award.title = T("aw_knf4_title")
-      award.text = PT("aw_knf4_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function FlareUser(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_FLARE)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 3 then
-      award.title = T("aw_flg1_title")
-      award.text = PT("aw_flg1_text", {num = kills})
-   elseif kills >= 3 then
-      award.title = T("aw_flg2_title")
-      award.text = PT("aw_flg2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function M249User(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_M249)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_hug1_title")
-      award.text = PT("aw_hug1_text", {num = kills})
-   elseif kills >= 4 then
-      award.title = T("aw_hug2_title")
-      award.text = PT("aw_hug2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function M16User(events, scores, players, traitors)
-   local most = UsedAmmoMost(events, AMMO_M16)
-   if not most then return nil end
-
-   local nick = players[most.sid]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=most.kills}
-   local kills = most.kills
-   if kills > 1 and kills < 4 then
-      award.title = T("aw_msx1_title")
-      award.text = PT("aw_msx1_text", {num = kills})
-   elseif kills >= 4 then
-      award.title = T("aw_msx2_title")
-      award.text = PT("aw_msx2_text", {num = kills})
-   else
-      return nil
-   end
-
-   return award
-end
-
 local function TeamKiller(events, scores, players, traitors)
    local num_traitors = table.Count(traitors)
    local num_inno = table.Count(players) - num_traitors
@@ -634,105 +357,6 @@ local function TeamKiller(events, scores, players, traitors)
    return award
 end
 
-local function Burner(events, scores, players, traitors)
-   local brn = {}
-   for k, e in pairs(events) do
-      if e.id == EVENT_KILL and is_dmg(e.dmg.t, DMG_BURN) then
-         brn[e.att.sid] = (brn[e.att.sid] or 0) + 1
-      end
-   end
-
-   if table.IsEmpty(brn) then return nil end
-
-   -- find the one with the most burnings
-   local m_id, m_num = FindHighest(brn)
-
-   if not m_id then return nil end
-
-   local nick = players[m_id]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=m_num * 2}
-   if m_num > 1 and m_num < 4 then
-      award.title = T("aw_brn1_title")
-      award.text =  T("aw_brn1_text")
-   elseif m_num >= 4 and m_num < 7 then
-      award.title = T("aw_brn2_title")
-      award.text =  T("aw_brn2_text")
-   elseif m_num >= 7 then
-      award.title = T("aw_brn3_title")
-      award.text =  T("aw_brn3_text")
-      award.priority = m_num + math.random(0, 4)
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function Coroner(events, scores, players, traitors)
-   local finders = {}
-   for k, e in pairs(events) do
-      if e.id == EVENT_BODYFOUND then
-         finders[e.sid] = (finders[e.sid] or 0) + 1
-      end
-   end
-
-   if table.IsEmpty(finders) then return end
-
-   local m_id, m_num = FindHighest(finders)
-
-   if not m_id then return nil end
-
-   local nick = players[m_id]
-   if not nick then return nil end
-
-   local award = {nick=nick, priority=m_num}
-   if m_num > 2 and m_num < 6 then
-      award.title =  T("aw_fnd1_title")
-      award.text =  PT("aw_fnd1_text", {num = m_num})
-   elseif m_num >= 6 and m_num < 10 then
-      award.title = T("aw_fnd2_title")
-      award.text = PT("aw_fnd2_text", {num = m_num})
-   elseif m_num >= 10 then
-      award.title = T("aw_fnd3_title")
-      award.text = PT("aw_fnd3_text", {num = m_num})
-      award.priority = m_num + math.random(0, 4)
-   else
-      return nil
-   end
-
-   return award
-end
-
-local function CreditFound(events, scores, players, traitors)
-   local finders = {}
-   for k, e in pairs(events) do
-      if e.id == EVENT_CREDITFOUND then
-         finders[e.sid] = (finders[e.sid] or 0) + e.cr
-      end
-   end
-
-   if table.IsEmpty(finders) then return end
-
-   local m_id, m_num = FindHighest(finders)
-
-   if not m_id then return nil end
-
-   local nick = players[m_id]
-   if not nick then return nil end
-
-   local award = {nick=nick}
-   if m_num > 2 then
-      award.title = T("aw_crd1_title")
-      award.text = PT("aw_crd1_text", {num = m_num})
-      award.priority = m_num + math.random(0, m_num)
-   else
-      return nil
-   end
-
-   return award
-end
 
 local function TimeOfDeath(events, scores, players, traitors)
    local near = 10
@@ -773,6 +397,85 @@ local function TimeOfDeath(events, scores, players, traitors)
 end
 
 
+-- Most purchases this round, minimum 3. Relies on EVENT_PURCHASE, logged by
+-- SCORE:HandlePurchase (weaponry.lua) whenever an order goes through.
+local function BigSpender(events, scores, players, traitors)
+   local buys = {}
+   for k, e in pairs(events) do
+      if e.id == EVENT_PURCHASE then
+         buys[e.sid] = (buys[e.sid] or 0) + 1
+      end
+   end
+
+   if table.IsEmpty(buys) then return nil end
+
+   local m_id, m_num = FindHighest(buys)
+   if not m_id or m_num < 3 then return nil end
+
+   local nick = players[m_id]
+   if not nick then return nil end
+
+   return {nick = nick, title = T("aw_spd1_title"), text = PT("aw_spd1_text", {num = m_num}), priority = m_num}
+end
+
+-- A traitor on the winning traitor team who scored no kills (of either
+-- side) and dealt no damage all round. Relies on EVENT_DAMAGE, logged once
+-- per player at round end by SCORE:HandleDamageSummary.
+local function Carried(events, scores, players, traitors)
+   local win = nil
+   for i = #events, 1, -1 do
+      if events[i].id == EVENT_FINISH then
+         win = events[i].win
+         break
+      end
+   end
+   if win != WIN_TRAITOR then return nil end
+
+   local dealt = {}
+   for k, e in pairs(events) do
+      if e.id == EVENT_DAMAGE then
+         dealt[e.sid] = e.dealt
+      end
+   end
+
+   for _, sid in ipairs(traitors) do
+      local s = scores[sid]
+      if s and s.traitors == 0 and s.innos == 0 and (dealt[sid] or 0) == 0 then
+         local nick = players[sid]
+         if nick then
+            return {nick = nick, title = T("aw_carr1_title"), text = T("aw_carr1_text"), priority = math.random(1, 5)}
+         end
+      end
+   end
+
+   return nil
+end
+
+-- A plain innocent (not traitor, not detective) who dealt no damage,
+-- received no damage, and found no bodies this round.
+local function SlowDay(events, scores, players, traitors, detectives)
+   local dealt, received, found = {}, {}, {}
+   for k, e in pairs(events) do
+      if e.id == EVENT_DAMAGE then
+         dealt[e.sid] = e.dealt
+         received[e.sid] = e.received
+      elseif e.id == EVENT_BODYFOUND then
+         found[e.sid] = true
+      end
+   end
+
+   for sid, nick in pairs(players) do
+      if (not table.HasValue(traitors, sid)) and (not table.HasValue(detectives, sid)) then
+         if (dealt[sid] or 0) == 0 and (received[sid] or 0) == 0 and not found[sid] then
+            return {nick = nick, title = T("aw_slow1_title"), text = T("aw_slow1_text"), priority = math.random(-3, 2)}
+         end
+      end
+   end
+
+   return nil
+end
+
+
 -- New award functions must be added to this to be used by CLSCORE.
 -- Note that AWARDS is global. You can just go: table.insert(AWARDS, myawardfn) in your SWEPs.
-AWARDS = { FirstSuicide, ExplosiveGrant, ExplodedSelf, FirstBlood, AllKills, NumKills_Traitor, NumKills_Inno, FallDeath, Headshots, PistolUser, ShotgunUser, RifleUser, DeagleUser, MAC10User, CrowbarUser, TeamKiller, Burner, SilencedPistolUser, KnifeUser, FlareUser, Coroner, M249User, M16User, CreditFound, FallKill, TimeOfDeath }
+AWARDS = { FirstSuicide, ExplosiveGrant, ExplodedSelf, FirstBlood, AllKills, NumKills_Traitor, NumKills_Inno, FallDeath, Headshots, TeamKiller, FallKill, TimeOfDeath, BigSpender, Carried, SlowDay }
