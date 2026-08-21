@@ -256,7 +256,7 @@ end
 
 
 function GM:PlayerSetModel(ply)
-   if (not CustomPlayerModelAddonInstalled() or ply:GetModel() == "models/player.mdl") then
+   if (not CustomPlayerModelAddonInstalled() and ply:GetModel() == "models/player.mdl") then
 
       local mdl = GAMEMODE.playermodel or "models/player/phoenix.mdl"
       util.PrecacheModel(mdl)
