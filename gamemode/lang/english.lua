@@ -363,6 +363,21 @@ cannot be stopped.]]
 L.suicidebomb_help_primary  = "{primaryfire} to arm the bomb"
 L.suicidebomb_armed         = "The bomb is armed. Carry the flame!"
 
+-- Defibrillator
+L.defib_name             = "Defibrillator"
+L.defib_desc             = [[
+Use on a corpse to revive them.
+
+After a short jolt, the body will be
+brought back to life. Single use.]]
+
+L.defib_help_primary     = "{primaryfire} to use on a corpse"
+L.defib_no_target        = "You must aim at a corpse to use the defibrillator."
+L.defib_already_reviving = "This corpse is already being revived!"
+L.defib_charging         = "Charging the defibrillator..."
+L.defib_used             = "You revived {player}!"
+L.defib_revived          = "You were revived by {player}!"
+
 -- Visualizer
 L.vis_name        = "Visualizer"
 L.vis_hint        = "Press {usekey} to pick up (Detectives only)."

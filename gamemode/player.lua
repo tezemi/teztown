@@ -256,12 +256,20 @@ end
 
 
 function GM:PlayerSetModel(ply)
-   if (not CustomPlayerModelAddonInstalled() and ply:GetModel() == "models/player.mdl") then
+   -- Only trust the addon if it has actually given this player a real model;
+   -- being installed doesn't guarantee it assigned one (eg. disabled, or
+   -- HL2 content not mounted), which used to leave players on the grey
+   -- error/placeholder model with no ragdoll physics.
+   local has_custom_model = CustomPlayerModelAddonInstalled()
+                             and util.IsValidModel(ply:GetModel())
+                             and ply:GetModel() != "models/player.mdl"
+
+   if not has_custom_model then
 
       local mdl = GAMEMODE.playermodel or "models/player/phoenix.mdl"
       util.PrecacheModel(mdl)
       ply:SetModel(mdl)
-   
+
       -- Always clear color state, may later be changed in TTTPlayerSetColor
       ply:SetColor(COLOR_WHITE)
 

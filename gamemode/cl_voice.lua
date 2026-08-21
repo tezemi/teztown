@@ -633,7 +633,10 @@ function VOICE.Tick()
 
       if not VOICE.CanSpeak() then
          client.voice_battery = 0
-         RunConsoleCommand("-voicerecord")
+         -- Can't force-stop an in-progress transmission: the engine blocks
+         -- -voicerecord via RunConsoleCommand. They'll stop when they
+         -- release their real voice key; new attempts are already blocked
+         -- by the CanSpeak() check in PlayerBindPress.
       end
    elseif client.voice_battery < battery_max then
       client.voice_battery = client.voice_battery + GetRechargeRate()

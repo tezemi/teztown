@@ -910,8 +910,27 @@ function SelectRoles()
    if choice_count == 0 then return end
 
    -- first select traitors
-   local debug_me = true
    local ts = 0
+
+   -- honor any admin-set guarantees (see ttt_guarantee_traitor in
+   -- traitor_state.lua) before the random picks below. Each guarantee is
+   -- consumed here, whether or not the player was actually online to use it.
+   for sid in pairs(GuaranteedTraitors) do
+      GuaranteedTraitors[sid] = nil
+
+      if ts >= traitor_count then continue end
+
+      for k, pply in ipairs(choices) do
+         if IsValid(pply) and pply:SteamID() == sid then
+            pply:SetRole(ROLE_TRAITOR)
+
+            table.remove(choices, k)
+            ts = ts + 1
+            break
+         end
+      end
+   end
+
    while (ts < traitor_count) and (#choices >= 1) do
       -- select random index in choices table
       local pick = math.random(1, #choices)
@@ -921,18 +940,12 @@ function SelectRoles()
 
       -- make this guy traitor if he was not a traitor last time, or if he makes
       -- a roll
+      if IsValid(pply) and
+         ((not table.HasValue(prev_roles[ROLE_TRAITOR], pply)) or (math.random(1, 3) == 2)) then
+         pply:SetRole(ROLE_TRAITOR)
 
-      
-      if ((ts == 0 and pply:Nick() == "Tezemi") or not debug_me or ts > 0) then
-
-         if IsValid(pply) and
-            ((not table.HasValue(prev_roles[ROLE_TRAITOR], pply)) or (math.random(1, 3) == 2)) then
-            pply:SetRole(ROLE_TRAITOR)
-
-            table.remove(choices, pick)
-            ts = ts + 1
-         end
-
+         table.remove(choices, pick)
+         ts = ts + 1
       end
    end
 

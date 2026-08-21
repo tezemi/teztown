@@ -95,25 +95,11 @@ function GM:PlayerBindPress(ply, bind, pressed)
    end
 end
 
--- Note that for some reason KeyPress and KeyRelease are called multiple times
--- for the same key event in multiplayer.
-function GM:KeyPress(ply, key)
-   if not IsFirstTimePredicted() then return end
-   if not IsValid(ply) or ply != LocalPlayer() then return end
-
-   if key == IN_SPEED and ply:IsActiveTraitor() then
-      timer.Simple(0.05, function() RunConsoleCommand("+voicerecord") end)
-   end
-end
-
-function GM:KeyRelease(ply, key)
-   if not IsFirstTimePredicted() then return end
-   if not IsValid(ply) or ply != LocalPlayer() then return end
-
-   if key == IN_SPEED and ply:IsActiveTraitor() then
-      timer.Simple(0.05, function() RunConsoleCommand("-voicerecord") end)
-   end
-end
+-- Used to auto-open the mic on sprint via RunConsoleCommand("+voicerecord"),
+-- but the engine now blocks +/-voicerecord (and other input-simulating
+-- commands) from being triggered via RunConsoleCommand, with no scripted
+-- workaround. Traitor global-vs-local voice still works fine on its own via
+-- GM:PlayerStartVoice checking IN_SPEED when a real voice keypress starts.
 
 function GM:PlayerButtonUp(ply, btn)
    if not IsFirstTimePredicted() then return end

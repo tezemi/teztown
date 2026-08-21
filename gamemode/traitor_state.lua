@@ -1,3 +1,7 @@
+-- SteamIDs guaranteed to become Traitor at the next role selection. Set via
+-- ttt_guarantee_traitor, consumed by SelectRoles() in init.lua.
+GuaranteedTraitors = GuaranteedTraitors or {}
+
 function GetTraitors()
    local trs = {}
    for k,v in ipairs(player.GetAll()) do
@@ -152,6 +156,64 @@ local function force_detective(ply)
    SendFullStateUpdate()
 end
 concommand.Add("ttt_force_detective", force_detective, nil, nil, FCVAR_CHEAT)
+
+
+-- Case-insensitive substring match on nick, or an exact userid. Returns nil
+-- (with an explanation via out()) if there isn't exactly one match.
+local function FindTargetPlayer(str, out)
+   local byid = tonumber(str) and player.GetByID(tonumber(str))
+   if IsValid(byid) then return byid end
+
+   local matches = {}
+   local needle = string.lower(str)
+   for _, p in ipairs(player.GetAll()) do
+      if IsValid(p) and string.find(string.lower(p:Nick()), needle, 1, true) then
+         table.insert(matches, p)
+      end
+   end
+
+   if #matches == 1 then
+      return matches[1]
+   elseif #matches == 0 then
+      out("No player found matching '" .. str .. "'.")
+   else
+      out("'" .. str .. "' matches more than one player, be more specific.")
+   end
+
+   return nil
+end
+
+-- Admin-only, silent (server console feedback to the caller only, no
+-- broadcast). Guarantees a player will be picked as Traitor at the next role
+-- selection; see SelectRoles() in init.lua for where this is consumed.
+--   ttt_guarantee_traitor            guarantee yourself
+--   ttt_guarantee_traitor <target>   guarantee <target>
+--   ttt_guarantee_traitor <target> 0 clear <target>'s guarantee (use your
+--                                    own name to clear your own)
+local function guarantee_traitor(ply, cmd, args)
+   if IsValid(ply) and (not ply:IsSuperAdmin()) then return end
+
+   local out = IsValid(ply) and function(msg) ply:PrintMessage(HUD_PRINTCONSOLE, msg) end or print
+
+   local target = ply
+   if args[1] then
+      target = FindTargetPlayer(args[1], out)
+   end
+
+   if not IsValid(target) then
+      if not args[1] then out("Console must specify a target player.") end
+      return
+   end
+
+   if args[2] == "0" then
+      GuaranteedTraitors[target:SteamID()] = nil
+      out(target:Nick() .. " is no longer guaranteed Traitor next round.")
+   else
+      GuaranteedTraitors[target:SteamID()] = true
+      out(target:Nick() .. " is now guaranteed Traitor next round.")
+   end
+end
+concommand.Add("ttt_guarantee_traitor", guarantee_traitor)
 
 
 local function force_spectate(ply, cmd, arg)

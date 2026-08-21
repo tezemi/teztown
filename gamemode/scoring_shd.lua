@@ -148,6 +148,7 @@ AMMO_CSE = 70
 AMMO_DECOY = 71
 AMMO_GLOCK = 72
 AMMO_SUICIDEBOMB = 73
+AMMO_DEFIB = 74
 
 local WeaponNames = nil
 function GetWeaponClassNames()
