@@ -368,7 +368,7 @@ L.defib_name             = "Defibrillator"
 L.defib_desc             = [[
 Use on a corpse to revive them.
 
-After a short jolt, the body will be
+After a short jolt, the person will be
 brought back to life. Single use.]]
 
 L.defib_help_primary     = "{primaryfire} to use on a corpse"
@@ -384,6 +384,17 @@ L.sisniper_desc          = [[
 A G3SG1 fitted with a suppressor.
 
 Hits hard, fires quiet. Costs 2 credits.]]
+
+-- Eviscerator
+L.eviscerator_name       = "Eviscerator"
+L.eviscerator_desc       = [[
+Fires a single devastating blast in a cone
+in front of you, instantly killing and
+disintegrating everyone caught in it.
+
+One shot only. Costs 3 credits.]]
+
+L.eviscerator_help_primary = "{primaryfire} to fire"
 
 -- Visualizer
 L.vis_name        = "Visualizer"
