@@ -220,8 +220,17 @@ local bgcolor = {
    [ROLE_INNOCENT]  = Color(0, 50,  0, 200)
 };
 
+-- Text colour used for chat messages that relate to a particular role
+-- (raw role id string, as returned by GetRoleStringRaw), e.g. death messages.
+local rolecolor_text = {
+   innocent  = Color(80, 200, 80),
+   traitor   = Color(220, 60, 60),
+   detective = Color(80, 140, 255)
+};
+
 -- Table of styles that can take a string and display it in some position,
--- colour, etc.
+-- colour, etc. Styles are called as style(text, params), where params is
+-- the (untranslated) param table that was used to build the message, if any.
 LANG.Styles = {
    default = function(text)
                 MSTACK:AddMessage(text)
@@ -238,8 +247,26 @@ LANG.Styles = {
                    chat.AddText(COLOR_RED, text)
                 end,
 
+   chat_plain = function(text)
+                   chat.AddText(text)
+                end,
 
-   chat_plain = chat.AddText
+   -- Prints the message in normal chat text, but highlights just the {role}
+   -- portion in the colour for params.role_raw (see GetRoleStringRaw), e.g.
+   -- "You were killed by X, they were a Y!" with only "a Y" coloured.
+   chat_rolecolour = function(text, params, raw)
+                         local before, after = raw and string.match(raw, "^(.-){role}(.*)$")
+                         if not (before and params and params.role) then
+                            chat.AddText(text)
+                            return
+                         end
+
+                         local clr = rolecolor_text[params.role_raw] or COLOR_WHITE
+
+                         chat.AddText(COLOR_WHITE, interp(before, params),
+                                      clr, params.role,
+                                      COLOR_WHITE, interp(after, params))
+                      end
 };
 
 -- Table mapping message name => message style name. If no message style is
@@ -261,8 +288,8 @@ function LANG.SetStyle(name, style)
    LANG.MsgStyle[name] = style
 end
 
-function LANG.ShowStyledMsg(text, style)
-   style(text)
+function LANG.ShowStyledMsg(text, style, params, raw)
+   style(text, params, raw)
 end
 
 function LANG.ProcessMsg(name, params)
@@ -284,7 +311,7 @@ function LANG.ProcessMsg(name, params)
       text = interp(raw, params)
    end
 
-   LANG.ShowStyledMsg(text, LANG.GetStyle(name))
+   LANG.ShowStyledMsg(text, LANG.GetStyle(name), params, raw)
 end
 
 
@@ -353,6 +380,10 @@ local styledmessages = {
       "tele_no_mark_crouch",
 
       "drop_no_ammo"
+   },
+
+   chat_rolecolour = {
+      "death_killed_by"
    }
 };
 

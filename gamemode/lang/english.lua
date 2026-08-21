@@ -37,6 +37,13 @@ L.credit_tr_all    = "Traitors, you have been awarded {num} equipment credit(s) 
 
 L.credit_kill      = "You have received {num} credit(s) for killing a {role}."
 
+--- Death messages
+L.death_killed_by      = "You were killed by {killer}, they were {role}!"
+
+L.death_role_traitor   = "a traitor"
+L.death_role_detective = "a detective"
+L.death_role_innocent  = "innocent"
+
 --- Karma
 L.karma_dmg_full   = "Your Karma is {amount}, so you deal full damage this round!"
 L.karma_dmg_other  = "Your Karma is {amount}. As a result all damage you deal is reduced by {num}%"

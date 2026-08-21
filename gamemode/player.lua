@@ -654,6 +654,13 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
          attacker:RecordKill(ply)
 
          DamageLog(Format("KILL:\t %s [%s] killed %s [%s]", attacker:Nick(), attacker:GetRoleString(), ply:Nick(), ply:GetRoleString()))
+
+         if attacker != ply then
+            local role_raw = attacker:GetRoleStringRaw()
+            LANG.Msg(ply, "death_killed_by", {killer    = attacker:Nick(),
+                                               role      = LANG.NameParam("death_role_" .. role_raw),
+                                               role_raw  = role_raw})
+         end
       else
          DamageLog(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))
       end
@@ -673,7 +680,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
    -- headshots, knife damage, and weapons tagged as silent all prevent death
    -- sound from occurring
    -- also the hush equip
-   if not (ply.was_headshot or dmginfo:IsDamageType(DMG_SLASH) or (not IsValid(attacker) or attacker:HasEquipmentItem(EQUIP_HUSH)) or (IsValid(killwep) and killwep.IsSilent)) then
+   if not (ply.was_headshot or dmginfo:IsDamageType(DMG_SLASH) or (not IsValid(attacker) or not attacker:IsPlayer() or attacker:HasEquipmentItem(EQUIP_HUSH)) or (IsValid(killwep) and killwep.IsSilent)) then
       PlayDeathSound(ply)
    end
 
