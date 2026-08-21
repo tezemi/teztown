@@ -556,6 +556,25 @@ L.dna_menu_select = "SELECT SAMPLE"
 L.dna_help_primary   = "{primaryfire} to collect a DNA sample"
 L.dna_help_secondary = "{secondaryfire} to open scan controls"
 
+-- Lifesign scanner
+L.lifesign_name        = "Lifesign Scanner"
+L.lifesign_desc        = [[
+Scan a player to add them to your
+tracked list.
+
+You can see if tracked subjects are alive or dead.
+You'll be alerted if a tracked subject dies.]]
+
+L.lifesign_help_primary = "{primaryfire} to scan the player in front of you"
+
+L.lifesign_scanned      = "{player} added to your tracked list."
+L.lifesign_already      = "{player} is already on your tracked list."
+L.lifesign_limit        = "Tracked list is full. You cannot scan any more players."
+
+L.lifesign_hud_title    = "TRACKED SUBJECTS"
+L.lifesign_alive        = "ALIVE"
+L.lifesign_dead         = "DECEASED"
+
 -- Magneto stick
 L.magnet_name     = "Magneto-stick"
 L.magnet_help     = "{primaryfire} to attach body to surface."

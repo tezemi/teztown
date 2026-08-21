@@ -160,6 +160,7 @@ util.AddNetworkString("TTT_Radar")
 util.AddNetworkString("TTT_Spectate")
 util.AddNetworkString("TTT_Disguise")
 util.AddNetworkString("TTT_SuicideBombArm")
+util.AddNetworkString("TTT_LifesignUpdate")
 
 -- Custom content clients need in order to hear it
 resource.AddFile("sound/ttt/kirk.wav")
