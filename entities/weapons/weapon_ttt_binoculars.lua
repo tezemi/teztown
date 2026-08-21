@@ -38,7 +38,8 @@ SWEP.Secondary.Ammo         = "none"
 SWEP.Secondary.Delay        = 0.2
 
 SWEP.Kind                   = WEAPON_EQUIP2
-SWEP.CanBuy                 = {ROLE_DETECTIVE} -- only detectives can buy
+-- SWEP.CanBuy               = {ROLE_DETECTIVE} -- disabled: remove the CanBuy = nil line and uncomment this to re-enable
+SWEP.CanBuy                 = nil
 SWEP.WeaponID               = AMMO_BINOCULARS
 
 SWEP.AllowDrop              = true

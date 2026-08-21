@@ -2,6 +2,10 @@
 -- ttt_guarantee_traitor, consumed by SelectRoles() in init.lua.
 GuaranteedTraitors = GuaranteedTraitors or {}
 
+-- SteamIDs guaranteed to become Detective at the next role selection. Set via
+-- ttt_guarantee_detective, consumed by SelectRoles() in init.lua.
+GuaranteedDetectives = GuaranteedDetectives or {}
+
 function GetTraitors()
    local trs = {}
    for k,v in ipairs(player.GetAll()) do
@@ -214,6 +218,39 @@ local function guarantee_traitor(ply, cmd, args)
    end
 end
 concommand.Add("ttt_guarantee_traitor", guarantee_traitor)
+
+
+-- Admin-only, silent (server console feedback to the caller only, no
+-- broadcast). Guarantees a player will be picked as Detective at the next
+-- role selection; see SelectRoles() in init.lua for where this is consumed.
+--   ttt_guarantee_detective            guarantee yourself
+--   ttt_guarantee_detective <target>   guarantee <target>
+--   ttt_guarantee_detective <target> 0 clear <target>'s guarantee (use your
+--                                      own name to clear your own)
+local function guarantee_detective(ply, cmd, args)
+   if IsValid(ply) and (not ply:IsSuperAdmin()) then return end
+
+   local out = IsValid(ply) and function(msg) ply:PrintMessage(HUD_PRINTCONSOLE, msg) end or print
+
+   local target = ply
+   if args[1] then
+      target = FindTargetPlayer(args[1], out)
+   end
+
+   if not IsValid(target) then
+      if not args[1] then out("Console must specify a target player.") end
+      return
+   end
+
+   if args[2] == "0" then
+      GuaranteedDetectives[target:SteamID()] = nil
+      out(target:Nick() .. " is no longer guaranteed Detective next round.")
+   else
+      GuaranteedDetectives[target:SteamID()] = true
+      out(target:Nick() .. " is now guaranteed Detective next round.")
+   end
+end
+concommand.Add("ttt_guarantee_detective", guarantee_detective)
 
 
 local function force_spectate(ply, cmd, arg)

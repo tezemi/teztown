@@ -22,7 +22,8 @@ SWEP.Base                  = "weapon_tttbase"
 
 SWEP.Kind                  = WEAPON_EQUIP
 SWEP.WeaponID              = AMMO_STUN
-SWEP.CanBuy                = {ROLE_DETECTIVE}
+-- SWEP.CanBuy              = {ROLE_DETECTIVE} -- disabled: remove the CanBuy = nil line and uncomment this to re-enable
+SWEP.CanBuy                = nil
 SWEP.LimitedStock          = false
 SWEP.AmmoEnt               = "item_ammo_smg1_ttt"
 

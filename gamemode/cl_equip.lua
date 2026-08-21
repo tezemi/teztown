@@ -47,15 +47,6 @@ function GetEquipmentForRole(role)
          end
       end
 
-      -- mark custom items
-      for r, is in pairs(tbl) do
-         for _, i in pairs(is) do
-            if i and i.id then
-               i.custom = not table.HasValue(DefaultEquipment[r], i.id)
-            end
-         end
-      end
-
       Equipment = tbl
    end
 
@@ -227,23 +218,7 @@ local function TraitorMenuPopup()
 
       -- Create icon panel
       if item.material then
-         if item.custom then
-            -- Custom marker icon
-            ic = vgui.Create("LayeredIcon", dlist)
-
-            local marker = vgui.Create("DImage")
-            marker:SetImage("vgui/ttt/custom_marker")
-            marker.PerformLayout = function(s)
-                                      s:AlignBottom(2)
-                                      s:AlignRight(2)
-                                      s:SetSize(16, 16)
-                                   end
-            marker:SetTooltip(GetTranslation("equip_custom"))
-
-            ic:AddLayer(marker)
-
-            ic:EnableMousePassthrough(marker)
-         elseif not ItemIsWeapon(item) then
+         if not ItemIsWeapon(item) then
             ic = vgui.Create("SimpleIcon", dlist)
          else
             ic = vgui.Create("LayeredIcon", dlist)

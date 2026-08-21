@@ -954,6 +954,26 @@ function SelectRoles()
    -- traitor
    local ds = 0
    local min_karma = GetConVarNumber("ttt_detective_karma_min") or 0
+
+   -- honor any admin-set guarantees (see ttt_guarantee_detective in
+   -- traitor_state.lua) before the random picks below. Each guarantee is
+   -- consumed here, whether or not the player was actually online to use it.
+   for sid in pairs(GuaranteedDetectives) do
+      GuaranteedDetectives[sid] = nil
+
+      if ds >= det_count then continue end
+
+      for k, pply in ipairs(choices) do
+         if IsValid(pply) and pply:SteamID() == sid then
+            pply:SetRole(ROLE_DETECTIVE)
+
+            table.remove(choices, k)
+            ds = ds + 1
+            break
+         end
+      end
+   end
+
    while (ds < det_count) and (#choices >= 1) do
 
       -- sometimes we need all remaining choices to be detective to fill the

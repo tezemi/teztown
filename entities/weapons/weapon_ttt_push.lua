@@ -39,7 +39,8 @@ SWEP.Secondary.Delay       = 0.5
 SWEP.NoSights              = true
 
 SWEP.Kind                  = WEAPON_EQUIP2
-SWEP.CanBuy                = {ROLE_TRAITOR}
+-- SWEP.CanBuy              = {ROLE_TRAITOR} -- disabled: remove the CanBuy = nil line and uncomment this to re-enable
+SWEP.CanBuy                = nil
 SWEP.WeaponID              = AMMO_PUSH
 
 SWEP.UseHands              = true
