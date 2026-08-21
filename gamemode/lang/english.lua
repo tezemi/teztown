@@ -575,6 +575,15 @@ L.lifesign_hud_title    = "TRACKED SUBJECTS"
 L.lifesign_alive        = "ALIVE"
 L.lifesign_dead         = "DECEASED"
 
+-- Mystery Box
+L.mysterybox_name          = "Mystery Box"
+L.mysterybox_desc          = [[
+Throws a crate that breaks open after
+a short delay, releasing something
+unpredictable.]]
+
+L.mysterybox_help_primary  = "{primaryfire} to throw the box"
+
 -- Magneto stick
 L.magnet_name     = "Magneto-stick"
 L.magnet_help     = "{primaryfire} to attach body to surface."
