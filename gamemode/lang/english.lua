@@ -931,115 +931,130 @@ L.ev_win_time    = "The traitors ran out of time and lost!"
 --- Awards/highlights
 
 L.aw_sui1_title = "Suicide Cult Leader"
-L.aw_sui1_text  = "showed the other suiciders how to do it by being the first to go."
+L.aw_sui1_text  = "Showed the other suiciders how to do it by being the first to go."
 
 L.aw_sui2_title = "Lonely and Depressed"
-L.aw_sui2_text  = "was the only one who killed themselves."
+L.aw_sui2_text  = "Was the only one who killed themselves."
 
 L.aw_exp1_title = "Explosives Research Grant"
-L.aw_exp1_text  = "was recognized for their research on explosions. {num} test subjects helped out."
+L.aw_exp1_text  = "Killed {num} people with an explosion. Nice!"
 
 L.aw_exp2_title = "Field Research"
-L.aw_exp2_text  = "tested their own resistance to explosions. It was not high enough."
+L.aw_exp2_text  = "Tested their own resistance to explosions. It was not high enough."
 
 L.aw_fst1_title = "First Blood"
-L.aw_fst1_text  = "delivered the first innocent death at a traitor's hands."
+L.aw_fst1_text  = "Delivered the first innocent death at a traitor's hands."
 
 L.aw_fst2_title = "First Bloody Stupid Kill"
-L.aw_fst2_text  = "scored the first kill by shooting a fellow traitor. Good job."
+L.aw_fst2_text  = "Scored the first kill by shooting a fellow traitor. Good job."
 
 L.aw_fst3_title = "First Blooper"
-L.aw_fst3_text  = "was the first to kill. Too bad it was an innocent comrade."
+L.aw_fst3_text  = "Was the first to kill. Too bad it was an innocent comrade."
 
 L.aw_fst4_title = "First Blow"
-L.aw_fst4_text  = "struck the first blow for the innocent terrorists by making the first death a traitor's."
+L.aw_fst4_text  = "Struck the first blow, making the first death a traitor's."
 
 L.aw_all1_title = "Deadliest Among Equals"
-L.aw_all1_text  = "was responsible for every kill made by the innocent this round."
+L.aw_all1_text  = "Was responsible for every kill made by the innocent this round."
 
 L.aw_all2_title = "Lone Wolf"
-L.aw_all2_text  = "was responsible for every kill made by a traitor this round."
+L.aw_all2_text  = "Was responsible for every kill made by a traitor this round."
 
 L.aw_nkt1_title = "I Got One, Boss!"
-L.aw_nkt1_text  = "managed to kill a single innocent. Sweet!"
+L.aw_nkt1_text  = "Managed to kill a single innocent. Sweet!"
 
-L.aw_nkt2_title = "A Bullet For Two"
-L.aw_nkt2_text  = "showed the first one was not a lucky shot by killing another."
+L.aw_nkt2_title = "A Bullet for Two"
+L.aw_nkt2_text  = "Showed the first one was not a lucky shot by killing another."
 
 L.aw_nkt3_title = "Serial Traitor"
-L.aw_nkt3_text  = "ended three innocent lives of terrorism today."
+L.aw_nkt3_text  = "Ended three innocent lives of terrorism today."
 
 L.aw_nkt4_title = "Wolf Among More Sheep-Like Wolves"
-L.aw_nkt4_text  = "eats innocent terrorists for dinner. A dinner of {num} courses."
+L.aw_nkt4_text  = "Eats innocent terrorists for dinner. A dinner of {num} courses."
 
 L.aw_nkt5_title = "Counter-Terrorism Operative"
-L.aw_nkt5_text  = "gets paid per kill. Can now buy another luxury yacht."
+L.aw_nkt5_text  = "Gets paid per kill. Can now buy another luxury yacht."
 
 L.aw_nki1_title = "Betray This"
-L.aw_nki1_text  = "found a traitor. Shot a traitor. Easy."
+L.aw_nki1_text  = "Found a traitor. Shot a traitor. Easy."
 
 L.aw_nki2_title = "Applied to the Justice Squad"
-L.aw_nki2_text  = "escorted two traitors to the great beyond."
+L.aw_nki2_text  = "Escorted two traitors to the great beyond."
 
-L.aw_nki3_title = "Do Traitors Dream Of Traitorous Sheep?"
-L.aw_nki3_text  = "put three traitors to rest."
+L.aw_nki3_title = "Do Traitors Dream of Traitorous Sheep?"
+L.aw_nki3_text  = "Put three traitors to rest."
 
 L.aw_nki4_title = "Internal Affairs Employee"
-L.aw_nki4_text  = "gets paid per kill. Can now order their fifth swimming pool."
+L.aw_nki4_text  = "Gets paid per kill. Can now order their fifth swimming pool."
 
-L.aw_fal1_title = "No Mr. Bond, I Expect You To Fall"
-L.aw_fal1_text  = "pushed someone off a great height."
+L.aw_fal1_title = "No Mr. Bond, I Expect You to Fall"
+L.aw_fal1_text  = "Pushed someone off a great height."
 
 L.aw_fal2_title = "Floored"
-L.aw_fal2_text  = "let their body hit the floor after falling from a significant altitude."
+L.aw_fal2_text  = "Let their body hit the floor after falling from a significant altitude."
 
 L.aw_fal3_title = "The Human Meteorite"
-L.aw_fal3_text  = "crushed someone by falling on them from a great height."
+L.aw_fal3_text  = "Crushed someone by falling on them from a great height."
 
 L.aw_hed1_title = "Efficiency"
-L.aw_hed1_text  = "discovered the joy of headshots and made {num}."
+L.aw_hed1_text  = "Discovered the joy of headshots and made {num}."
 
 L.aw_hed2_title = "Neurology"
-L.aw_hed2_text  = "removed the brains from {num} heads for a closer examination."
+L.aw_hed2_text  = "Removed the brains from {num} heads for a closer examination."
 
 L.aw_hed3_title = "Videogames Made Me Do It"
-L.aw_hed3_text  = "applied their murder simulation training and headshotted {num} foes."
+L.aw_hed3_text  = "Applied their murder simulation training and headshotted {num} foes."
 
-L.aw_tkl1_title = "Made An Oopsie"
-L.aw_tkl1_text  = "had their finger slip just when they were aiming at a buddy."
+L.aw_tkl1_title = "Made an Oopsie"
+L.aw_tkl1_text  = "Had their finger slip just when they were aiming at a buddy."
 
 L.aw_tkl2_title = "Double-Oops"
-L.aw_tkl2_text  = "thought they got a Traitor twice, but was wrong both times."
+L.aw_tkl2_text  = "Thought they got a Traitor twice, but was wrong both times."
 
-L.aw_tkl3_title = "Karma-conscious"
-L.aw_tkl3_text  = "couldn't stop after killing two teammates. Three is their lucky number."
+L.aw_tkl3_title = "Karma-Conscious"
+L.aw_tkl3_text  = "Couldn't stop after killing two teammates. Three is their lucky number."
 
 L.aw_tkl4_title = "Teamkiller"
-L.aw_tkl4_text  = "murdered the entirety of their team. RDM RDM RDM RDM RDM RDM!!!!!"
+L.aw_tkl4_text  = "Murdered the entirety of their team. RDM RDM RDM RDM RDM RDM!!!!!"
 
 L.aw_tkl5_title = "Roleplayer"
-L.aw_tkl5_text  = "was roleplaying a madman, honest. That's why they killed most of their team."
+L.aw_tkl5_text  = "Was roleplaying a madman, honest. That's why they killed most of their team."
 
 L.aw_tkl6_title = "Moron"
-L.aw_tkl6_text  = "couldn't figure out which side they were on, and killed over half of their comrades."
+L.aw_tkl6_text  = "Couldn't figure out which side they were on, and killed most of their comrades."
 
 L.aw_tkl7_title = "Redneck"
-L.aw_tkl7_text  = "protected their turf real good by killing over a quarter of their teammates."
+L.aw_tkl7_text  = "Protected their turf real good by killing over a quarter of their teammates."
 
 L.aw_tod1_title = "Pyrrhic Victory"
-L.aw_tod1_text  = "died only seconds before their team won the round."
+L.aw_tod1_text  = "Died only seconds before their team won the round."
 
 L.aw_tod2_title = "I Hate This Game"
-L.aw_tod2_text  = "died right after the start of the round."
+L.aw_tod2_text  = "Died right after the start of the round."
 
 L.aw_spd1_title = "Big Spender"
-L.aw_spd1_text  = "went on a shopping spree, placing {num} orders this round."
+L.aw_spd1_text  = "Went on a shopping spree, placing {num} orders this round."
 
 L.aw_carr1_title = "Carried"
-L.aw_carr1_text  = "didn't land a single kill or point of damage, yet somehow ended up on the winning side."
+L.aw_carr1_text  = "Didn't deal any damage, yet somehow ended up on the winning side."
 
 L.aw_slow1_title = "Slow Day"
-L.aw_slow1_text  = "went the whole round without dealing damage, taking damage, or finding a body. Nothing to see here."
+L.aw_slow1_text  = "Went the whole round without dealing damage, taking damage, or finding a body. Zzz..."
+
+L.aw_mira1_title = "Miracle Worker"
+L.aw_mira1_text  = "Used a defibrillator to bring a teammate back from the dead."
+
+L.aw_necro1_title = "Necromancer"
+L.aw_necro1_text  = "Used a defibrillator to revive an enemy. Bold strategy."
+
+L.aw_flame1_title = "Carried the Flame"
+L.aw_flame1_text  = "Took at least one enemy with them by detonating a suicide bomb."
+
+L.aw_rebel1_title = "Rebel Without a Cause"
+L.aw_rebel1_text  = "Detonated a suicide bomb and killed nobody but themselves."
+
+L.aw_missin1_title = "Missed Input"
+L.aw_missin1_text  = "Killed a fellow traitor with their own suicide bomb."
 
 
 --- New and modified pieces of text are placed below this point, marked with the

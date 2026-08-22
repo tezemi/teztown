@@ -535,7 +535,12 @@ end
 -- ShowPanel above, which is left in place (dead code, unused) rather than
 -- deleted in case any of it -- the event log tab/save-to-file especially --
 -- turns out to be wanted again later.
-function CLSCORE:ShowMVPPanel()
+-- is_debug: when true, any fake/unresolvable player (no real SteamID, as with
+-- ttt_mvp_debug's synthetic round) falls back to showing the local player's
+-- own avatar instead of leaving the slot empty, so you can actually see how
+-- an avatar looks in the layout. Never happens outside debug -- a genuinely
+-- disconnected player in a real round still correctly shows no avatar.
+function CLSCORE:ShowMVPPanel(is_debug)
    if IsValid(self.Panel) then
       self:ClearPanel()
    end
@@ -655,6 +660,7 @@ function CLSCORE:ShowMVPPanel()
 
       local avatar_size = 128
       local mvp_ply = player.GetBySteamID(mvp_sid)
+      if not IsValid(mvp_ply) and is_debug then mvp_ply = LocalPlayer() end
       if IsValid(mvp_ply) then
          local avatar = vgui.Create("AvatarImage", dpanel)
          avatar:SetSize(avatar_size, avatar_size)
@@ -692,9 +698,9 @@ function CLSCORE:ShowMVPPanel()
       -- Top 5 awards only, highest priority first.
       local mvp_awards = awards_by_nick[nick] or {}
 
-      local list_w = 480
+      local list_w = 780
       local shown = math.min(#mvp_awards, 5)
-      local awards_h = math.max(shown, 1) * 70
+      local awards_h = math.max(shown, 1) * 84
       local scroll = vgui.Create("DScrollPanel", dpanel)
       scroll:SetPos((scrw - list_w) / 2, y)
       scroll:SetSize(list_w, awards_h)
@@ -708,7 +714,7 @@ function CLSCORE:ShowMVPPanel()
             local titlelbl = vgui.Create("DLabel", scroll)
             titlelbl:SetFont("MVPAwardTitle")
             titlelbl:SetText(string.upper(a.title))
-            titlelbl:SetTextColor(COLOR_WHITE)
+            titlelbl:SetTextColor(a.category == "bad" and Color(220, 60, 60) or COLOR_WHITE)
             titlelbl:SizeToContents()
             titlelbl:SetPos((list_w - titlelbl:GetWide()) / 2, ly)
             ly = ly + titlelbl:GetTall() + 2
@@ -720,7 +726,7 @@ function CLSCORE:ShowMVPPanel()
             textlbl:SetContentAlignment(5)
             textlbl:SizeToContents()
             textlbl:SetPos((list_w - textlbl:GetWide()) / 2, ly)
-            ly = ly + textlbl:GetTall() + 14
+            ly = ly + textlbl:GetTall() + 26
          end
       else
          local nonelbl = vgui.Create("DLabel", scroll)
@@ -731,13 +737,13 @@ function CLSCORE:ShowMVPPanel()
          nonelbl:SetPos((list_w - nonelbl:GetWide()) / 2, 0)
       end
 
-      -- Ranks #2-#9: a smaller row per player -- rank, avatar, name, best
+      -- Ranks #2-#8: a smaller row per player -- rank, avatar, name, best
       -- (highest-priority) award, even if it's a bad one.
-      local row_w = 480
+      local row_w = 780
       local row_h = 36
       local rows_x = (scrw - row_w) / 2
 
-      for rank = 2, math.min(#ranked, 9) do
+      for rank = 2, math.min(#ranked, 8) do
          local entry = ranked[rank]
          local rsid = entry.sid
          local rnick = self.Players[rsid] or "???"
@@ -756,6 +762,7 @@ function CLSCORE:ShowMVPPanel()
          ranklbl:SetSize(36, row_h)
 
          local rply = player.GetBySteamID(rsid)
+         if not IsValid(rply) and is_debug then rply = LocalPlayer() end
          if IsValid(rply) then
             local ravatar = vgui.Create("AvatarImage", row)
             ravatar:SetSize(row_h, row_h)
@@ -798,7 +805,7 @@ function CLSCORE:ShowMVPPanel()
             local awnamelbl = vgui.Create("DLabel", row)
             awnamelbl:SetFont("MVPRowAwardName")
             awnamelbl:SetText(awnamepart)
-            awnamelbl:SetTextColor(COLOR_WHITE)
+            awnamelbl:SetTextColor(best.category == "bad" and Color(220, 60, 60) or COLOR_WHITE)
             awnamelbl:SetContentAlignment(4)
             awnamelbl:SetPos(award_x, 0)
             awnamelbl:SetSize(awnamew, row_h)
@@ -852,6 +859,81 @@ function CLSCORE:ShowMVPPanel()
    dpanel:MakePopup()
    dpanel:SetKeyboardInputEnabled(false)
 end
+
+-- Debug preview: fabricates a full fake round event log (players, roles,
+-- kills, damage, purchases, a body find, a finish) and pushes it through the
+-- exact same CLSCORE:Init/ShowMVPPanel path a real round result uses, so
+-- what you see is genuinely the real renderer, not a mockup. Console-only,
+-- not gated behind sv_cheats since it's a purely clientside visual preview.
+--
+-- Fake players have no real SteamID, so player.GetBySteamID() finds nothing
+-- for them -- their avatar slots are correctly just empty, same as it'd
+-- gracefully handle a disconnected player in a real round.
+local function BuildFakeRoundEvents()
+   local names = {"Ligma", "Sugma", "Testificate", "Gnorman", "Bort",
+                  "Skibbly", "Wumbo", "Deez", "Farva"}
+
+   local sids = {}
+   for i = 1, #names do
+      sids[i] = "FAKE_DEBUG_" .. i
+   end
+
+   local events = {}
+   local t = 0
+   local function Add(e)
+      e.t = t
+      t = t + 1
+      table.insert(events, e)
+   end
+
+   Add({id = EVENT_GAME, state = ROUND_ACTIVE})
+
+   for i = 1, #names do
+      Add({id = EVENT_SPAWN, sid = sids[i], ni = names[i]})
+   end
+
+   -- 1: traitor, big spender, gets some kills (MVP candidate)
+   -- 2: traitor, does nothing all round -> Carried
+   -- 3: detective, finds a body, buys a few things
+   -- 4-9: innocents, mixed activity; 6 does nothing -> Slow Day
+   local traitor_ids = {sids[1], sids[2]}
+   local detective_ids = {sids[3]}
+   Add({id = EVENT_SELECTED, traitor_ids = traitor_ids, detective_ids = detective_ids})
+
+   for i = 4, 9 do
+      Add({id = EVENT_KILL,
+           att = {ni = names[1], sid = sids[1], tr = true},
+           vic = {ni = names[i], sid = sids[i], tr = false},
+           dmg = {t = DMG_BULLET, a = 60, h = (i % 2 == 0), g = AMMO_PISTOL}})
+   end
+
+   Add({id = EVENT_BODYFOUND, sid = sids[3], ni = names[3], b = names[4]})
+
+   for i = 1, 4 do
+      Add({id = EVENT_PURCHASE, sid = sids[1], ni = names[1]})
+   end
+   for i = 1, 3 do
+      Add({id = EVENT_PURCHASE, sid = sids[3], ni = names[3]})
+   end
+
+   -- Round-end damage summary, normally added by SCORE:HandleDamageSummary.
+   -- sids[2] and sids[6] deliberately get none -> Carried / Slow Day.
+   Add({id = EVENT_DAMAGE, sid = sids[1], dealt = 240, received = 40})
+   Add({id = EVENT_DAMAGE, sid = sids[3], dealt = 20, received = 60})
+   Add({id = EVENT_DAMAGE, sid = sids[5], dealt = 30, received = 15})
+   Add({id = EVENT_DAMAGE, sid = sids[7], dealt = 0, received = 45})
+   Add({id = EVENT_DAMAGE, sid = sids[8], dealt = 10, received = 0})
+
+   Add({id = EVENT_FINISH, win = WIN_TRAITOR})
+
+   return events
+end
+
+concommand.Add("ttt_mvp_debug", function()
+   CLSCORE:Reset()
+   CLSCORE:Init(BuildFakeRoundEvents())
+   CLSCORE:ShowMVPPanel(true)
+end)
 
 function CLSCORE:ClearPanel()
 

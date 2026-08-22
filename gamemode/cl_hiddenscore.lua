@@ -452,3 +452,78 @@ HIDDENSCORE.AddFactor("slow_day", "neutral", function(events, scores, players, t
 
    return out
 end)
+
+-- MiracleWorker / Necromancer: applies to every revival this round, not
+-- just one -- a medic who revives several teammates should be rewarded for
+-- each, same logic as Carried/SlowDay above. Relies on EVENT_REVIVE
+-- (SCORE:HandleRevive in weapon_ttt_defib.lua).
+HIDDENSCORE.AddFactor("miracle_worker", "good", function(events, scores, players, traitors, detectives)
+   local out = {}
+   for i = 1, #events do
+      local e = events[i]
+      if e.id == EVENT_REVIVE and e.mtr == e.ttr then
+         out[e.sid] = (out[e.sid] or 0) + 4
+      end
+   end
+   return out
+end)
+
+HIDDENSCORE.AddFactor("necromancer", "bad", function(events, scores, players, traitors, detectives)
+   local out = {}
+   for i = 1, #events do
+      local e = events[i]
+      if e.id == EVENT_REVIVE and e.mtr != e.ttr then
+         out[e.sid] = (out[e.sid] or 0) - 4
+      end
+   end
+   return out
+end)
+
+-- Suicide bomb outcomes, all keyed off dmg.g == AMMO_SUICIDEBOMB in the kill
+-- log (see cl_awards.lua's CarriedTheFlame for why that's reliable). Each
+-- applies to every qualifying bomber, not just one.
+HIDDENSCORE.AddFactor("carried_the_flame", "good", function(events, scores, players, traitors, detectives)
+   local out = {}
+   for i = 1, #events do
+      local e = events[i]
+      if e.id == EVENT_KILL and e.dmg.g == AMMO_SUICIDEBOMB
+         and e.att.sid != e.vic.sid and e.att.sid != -1 and not e.vic.tr then
+         out[e.att.sid] = (out[e.att.sid] or 0) + 4
+      end
+   end
+   return out
+end)
+
+HIDDENSCORE.AddFactor("missed_input", "bad", function(events, scores, players, traitors, detectives)
+   local out = {}
+   for i = 1, #events do
+      local e = events[i]
+      if e.id == EVENT_KILL and e.dmg.g == AMMO_SUICIDEBOMB
+         and e.att.sid != e.vic.sid and e.att.sid != -1 and e.vic.tr then
+         out[e.att.sid] = (out[e.att.sid] or 0) - 5
+      end
+   end
+   return out
+end)
+
+HIDDENSCORE.AddFactor("rebel_without_a_cause", "bad", function(events, scores, players, traitors, detectives)
+   local bombers, others_killed = {}, {}
+   for i = 1, #events do
+      local e = events[i]
+      if e.id == EVENT_KILL and e.dmg.g == AMMO_SUICIDEBOMB then
+         if e.att.sid == e.vic.sid then
+            bombers[e.att.sid] = true
+         else
+            others_killed[e.att.sid] = true
+         end
+      end
+   end
+
+   local out = {}
+   for sid in pairs(bombers) do
+      if not others_killed[sid] then
+         out[sid] = -3
+      end
+   end
+   return out
+end)

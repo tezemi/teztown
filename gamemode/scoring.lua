@@ -154,6 +154,18 @@ function SCORE:HandlePurchase(ply)
    self:AddEvent({id=EVENT_PURCHASE, sid=ply:SteamID(), ni=ply:Nick()})
 end
 
+-- medic revived target with a defibrillator. Logs both players' traitor
+-- status at the moment of revival so awards can tell teammate from enemy.
+function SCORE:HandleRevive(medic, target)
+   if not (IsValid(medic) and medic:IsPlayer()) then return end
+   if not (IsValid(target) and target:IsPlayer()) then return end
+
+   self:AddEvent({id = EVENT_REVIVE,
+                   sid = medic:SteamID(), ni = medic:Nick(),
+                   tsid = target:SteamID(), tni = target:Nick(),
+                   mtr = medic:GetTraitor(), ttr = target:GetTraitor()})
+end
+
 -- Accumulates into DamageDealt/DamageReceived rather than logging an event
 -- per hit. attacker dealing damage to itself (eg. fall damage) only counts
 -- as damage received, not dealt -- "dealt damage" here means to someone

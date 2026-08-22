@@ -108,6 +108,7 @@ if SERVER then
       local medic = player.GetBySteamID(medicsid)
       if IsValid(medic) then
          LANG.Msg(medic, "defib_used", {player = target:Nick()})
+         SCORE:HandleRevive(medic, target)
       end
 
       LANG.Msg(target, "defib_revived", {player = IsValid(medic) and medic:Nick() or "???"})
