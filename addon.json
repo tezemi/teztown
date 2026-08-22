@@ -1,0 +1,16 @@
+{
+	"title": "Trouble in Tez Town",
+	"type": "gamemode",
+	"tags": ["fun", "roleplay"],
+	"ignore":
+	[
+		"gamemodes/*/.git/*",
+		"gamemodes/*/.vscode/*",
+		"gamemodes/*/*.psd",
+		"gamemodes/*/*.vcproj",
+		"gamemodes/*/.svn/*",
+		"gamemodes/*/*~",
+		"gamemodes/*/temp_change_list.txt",
+		"gamemodes/*/ulx_motd.txt"
+	]
+}
