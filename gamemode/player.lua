@@ -256,24 +256,18 @@ end
 
 
 function GM:PlayerSetModel(ply)
-   -- Only trust the addon if it has actually given this player a real model;
-   -- being installed doesn't guarantee it assigned one (eg. disabled, or
-   -- HL2 content not mounted), which used to leave players on the grey
-   -- error/placeholder model with no ragdoll physics.
-   local has_custom_model = CustomPlayerModelAddonInstalled()
-                             and util.IsValidModel(ply:GetModel())
-                             and ply:GetModel() != "models/player.mdl"
+   -- If the player doesn't already have a real model (nothing else set one,
+   -- or it's invalid/the generic default), give them one of TTT's own.
+   local has_model = util.IsValidModel(ply:GetModel()) and ply:GetModel() != "models/player.mdl"
 
-   if not has_custom_model then
-
+   if not has_model then
       local mdl = GAMEMODE.playermodel or "models/player/phoenix.mdl"
       util.PrecacheModel(mdl)
       ply:SetModel(mdl)
-
-      -- Always clear color state, may later be changed in TTTPlayerSetColor
-      ply:SetColor(COLOR_WHITE)
-
    end
+
+   -- Always clear color state, may later be changed in TTTPlayerSetColor
+   ply:SetColor(COLOR_WHITE)
 end
 
 
@@ -429,12 +423,6 @@ function GM:KeyRelease(ply, key)
       end
    end
 
-end
-
-function GM:ShowSpare1(ply)
-   if CustomPlayerModelAddonInstalled() then
-      ply:ConCommand("playermodel_selector")
-   end
 end
 
 -- Normally all dead players are blocked from IN_USE on the server, meaning we

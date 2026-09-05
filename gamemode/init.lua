@@ -260,23 +260,6 @@ function GM:SyncGlobals()
    SetGlobalFloat("ttt_voice_drain_recharge", GetConVar("ttt_voice_drain_recharge"):GetFloat())
 end
 
-function CustomPlayerModelAddonInstalled()
-
-   local addons = engine.GetAddons();
-   for k, v in pairs(addons) do       
-      
-      if (v.title == "Enhanced PlayerModel Selector") then
-
-         return true;
-
-      end
-
-   end
-
-   return false;
-
-end
-
 function SendRoundState(state, ply)
    net.Start("TTT_RoundState")
       net.WriteUInt(state, 3)
@@ -286,20 +269,6 @@ end
 -- Round state is encapsulated by set/get so that it can easily be changed to
 -- eg. a networked var if this proves more convenient
 function SetRoundState(state)
-   if (CustomPlayerModelAddonInstalled()) then
-
-      if (state == ROUND_ACTIVE) then
-
-         RunConsoleCommand("sv_playermodel_selector_force", "0");
-      
-      elseif (state == ROUND_POST) then
-
-         RunConsoleCommand("sv_playermodel_selector_force", "1");
-
-      end
-
-   end
-
    GAMEMODE.round_state = state
 
    SCORE:RoundStateChange(state)
