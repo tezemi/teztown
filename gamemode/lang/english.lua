@@ -1084,6 +1084,12 @@ L.aw_rebel1_text  = "Detonated a suicide bomb and killed nobody but themselves."
 L.aw_missin1_title = "Missed Input"
 L.aw_missin1_text  = "Killed a fellow traitor with their own suicide bomb."
 
+L.aw_testhelp1_title = "Scavenger Hunter"
+L.aw_testhelp1_text  = "Helped gather the parts that assembled the Traitor Tester."
+
+L.aw_testsab1_title = "Scavenger Blunder"
+L.aw_testsab1_text  = "Helped assemble the Traitor Tester... even though they were a traitor."
+
 
 --- New and modified pieces of text are placed below this point, marked with the
 --- version in which they were added, to make updating translations easier.

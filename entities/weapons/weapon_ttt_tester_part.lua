@@ -69,6 +69,10 @@ if SERVER then
       -- ends up in a hurt trigger is still on the traitor.
       self.held_by_traitor = newowner:IsTraitor()
 
+      -- Credit for helping assemble the set later, even if they drop this
+      -- (or it gets taken) before that actually happens.
+      TESTERPARTS.RecordHolder(newowner)
+
       LANG.Msg(newowner, "tester_part_picked")
 
       if self.held_by_traitor then

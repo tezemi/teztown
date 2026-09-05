@@ -166,6 +166,13 @@ function SCORE:HandleRevive(medic, target)
                    mtr = medic:GetTraitor(), ttr = target:GetTraitor()})
 end
 
+-- Traitor Tester assembled. sids is everyone who ever carried a part this
+-- round, whether or not they were still holding one at assembly time --
+-- see TESTERPARTS.holders in testerparts.lua.
+function SCORE:HandleTesterAssembled(sids)
+   self:AddEvent({id = EVENT_TESTERASSEMBLED, sids = sids})
+end
+
 -- Accumulates into DamageDealt/DamageReceived rather than logging an event
 -- per hit. attacker dealing damage to itself (eg. fall damage) only counts
 -- as damage received, not dealt -- "dealt damage" here means to someone

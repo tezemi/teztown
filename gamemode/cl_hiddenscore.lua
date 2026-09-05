@@ -506,6 +506,45 @@ HIDDENSCORE.AddFactor("missed_input", "bad", function(events, scores, players, t
    return out
 end)
 
+-- Traitor Tester Parts (gamemode/testerparts.lua): unlike the AWARDS
+-- version of these (cl_awards.lua's TesterHelper/TesterSaboteur, which can
+-- only pick one on-screen winner), every eligible holder is credited here,
+-- not just one at random.
+local function TesterAssembledSids(events)
+   for i = 1, #events do
+      if events[i].id == EVENT_TESTERASSEMBLED then
+         return events[i].sids
+      end
+   end
+   return nil
+end
+
+HIDDENSCORE.AddFactor("tester_helper", "good", function(events, scores, players, traitors, detectives)
+   local sids = TesterAssembledSids(events)
+   if not sids then return nil end
+
+   local out = {}
+   for _, sid in ipairs(sids) do
+      if not table.HasValue(traitors, sid) then
+         out[sid] = 4
+      end
+   end
+   return out
+end)
+
+HIDDENSCORE.AddFactor("tester_saboteur", "bad", function(events, scores, players, traitors, detectives)
+   local sids = TesterAssembledSids(events)
+   if not sids then return nil end
+
+   local out = {}
+   for _, sid in ipairs(sids) do
+      if table.HasValue(traitors, sid) then
+         out[sid] = -4
+      end
+   end
+   return out
+end)
+
 HIDDENSCORE.AddFactor("rebel_without_a_cause", "bad", function(events, scores, players, traitors, detectives)
    local bombers, others_killed = {}, {}
    for i = 1, #events do

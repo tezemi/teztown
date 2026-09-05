@@ -87,12 +87,25 @@ function TESTERPARTS.Reset()
    end
 
    TESTERPARTS.sabotaged = false
+   TESTERPARTS.holders = {}
 
    for _, ply in ipairs(player.GetAll()) do
       if IsValid(ply) then ply.testerpart_carried = 0 end
    end
 
    SetProgress(0, 0)
+end
+
+-- Called from weapon_ttt_tester_part.lua's SWEP:Equip. Anyone who ever
+-- carries a part is remembered for the rest of the round, whether or not
+-- they're still holding one (or anything at all) by the time -- or if --
+-- the set is actually assembled. Read back in Assemble() below to credit
+-- everyone who helped, not just whoever was holding the final piece.
+function TESTERPARTS.RecordHolder(ply)
+   if not (IsValid(ply) and ply:IsPlayer()) then return end
+
+   TESTERPARTS.holders = TESTERPARTS.holders or {}
+   TESTERPARTS.holders[ply:SteamID()] = true
 end
 
 -- Parts sit in the primary slot, but unlike a normal full slot picking one
@@ -294,6 +307,14 @@ function TESTERPARTS.Assemble(center)
    SetProgress(0, 0)
 
    sound.Play(assemble_sound, center, 80, 100)
+
+   local holder_sids = {}
+   for sid in pairs(TESTERPARTS.holders or {}) do
+      table.insert(holder_sids, sid)
+   end
+   if #holder_sids > 0 then
+      SCORE:HandleTesterAssembled(holder_sids)
+   end
 
    local traitors = {}
    for _, ply in ipairs(player.GetAll()) do

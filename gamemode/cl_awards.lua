@@ -571,7 +571,56 @@ local function MissedInput(events, scores, players, traitors)
    return nil
 end
 
+-- Traitor Tester Parts (gamemode/testerparts.lua): EVENT_TESTERASSEMBLED
+-- carries everyone who ever carried a part this round, whether or not they
+-- were still holding one -- or anything at all -- once the set actually
+-- came together. Both awards below pick one recipient at random from that
+-- list, same as every other award that could apply to more than one player.
+local function TesterAssembledSids(events)
+   for k, e in pairs(events) do
+      if e.id == EVENT_TESTERASSEMBLED then
+         return e.sids
+      end
+   end
+   return nil
+end
+
+-- Helped assemble the Traitor Tester: good for anyone not a traitor.
+local function TesterHelper(events, scores, players, traitors)
+   local sids = TesterAssembledSids(events)
+   if not sids then return nil end
+
+   local eligible = {}
+   for _, sid in ipairs(sids) do
+      if players[sid] and not table.HasValue(traitors, sid) then
+         table.insert(eligible, sid)
+      end
+   end
+   if #eligible == 0 then return nil end
+
+   local nick = players[table.Random(eligible)]
+   return {nick = nick, title = T("aw_testhelp1_title"), text = T("aw_testhelp1_text"), priority = math.random(1, 5), category = "good"}
+end
+
+-- Same event, but bad for a traitor who helped bring about their own side's
+-- exposure.
+local function TesterSaboteur(events, scores, players, traitors)
+   local sids = TesterAssembledSids(events)
+   if not sids then return nil end
+
+   local eligible = {}
+   for _, sid in ipairs(sids) do
+      if players[sid] and table.HasValue(traitors, sid) then
+         table.insert(eligible, sid)
+      end
+   end
+   if #eligible == 0 then return nil end
+
+   local nick = players[table.Random(eligible)]
+   return {nick = nick, title = T("aw_testsab1_title"), text = T("aw_testsab1_text"), priority = math.random(1, 5), category = "bad"}
+end
+
 
 -- New award functions must be added to this to be used by CLSCORE.
 -- Note that AWARDS is global. You can just go: table.insert(AWARDS, myawardfn) in your SWEPs.
-AWARDS = { FirstSuicide, ExplosiveGrant, ExplodedSelf, FirstBlood, AllKills, NumKills_Traitor, NumKills_Inno, FallDeath, Headshots, TeamKiller, FallKill, TimeOfDeath, BigSpender, Carried, SlowDay, MiracleWorker, Necromancer, CarriedTheFlame, RebelWithoutACause, MissedInput }
+AWARDS = { FirstSuicide, ExplosiveGrant, ExplodedSelf, FirstBlood, AllKills, NumKills_Traitor, NumKills_Inno, FallDeath, Headshots, TeamKiller, FallKill, TimeOfDeath, BigSpender, Carried, SlowDay, MiracleWorker, Necromancer, CarriedTheFlame, RebelWithoutACause, MissedInput, TesterHelper, TesterSaboteur }
