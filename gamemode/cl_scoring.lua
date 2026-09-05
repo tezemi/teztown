@@ -580,15 +580,31 @@ function CLSCORE:ShowMVPPanel(is_debug)
 
    local mvp_sid = ranked[1] and ranked[1].sid
 
+   -- The variant they held, if any (logged with EVENT_SELECTED).
+   local function Variant(sid)
+      return ROLES.Get(self.Variants and self.Variants[sid])
+   end
+
    local function RoleString(sid)
-      if table.HasValue(self.TraitorIDs, sid) then return T("traitor")
-      elseif table.HasValue(self.DetectiveIDs, sid) then return T("detective")
-      else return T("innocent") end
+      local base
+      if table.HasValue(self.TraitorIDs, sid) then base = T("traitor")
+      elseif table.HasValue(self.DetectiveIDs, sid) then base = T("detective")
+      else base = T("innocent") end
+
+      -- eg. "Traitor - Kingpin"
+      local v = Variant(sid)
+      if v then return base .. " - " .. LANG.TryTranslation(v.name) end
+
+      return base
    end
 
    -- Same role colours used elsewhere (eg. the role-highlighted portion of
-   -- the "you were killed by" chat message in cl_lang.lua).
+   -- the "you were killed by" chat message in cl_lang.lua). A variant
+   -- overrides its base role's colour with its own.
    local function RoleColor(sid)
+      local v = Variant(sid)
+      if v and v.color then return v.color end
+
       if table.HasValue(self.TraitorIDs, sid) then return Color(220, 60, 60)
       elseif table.HasValue(self.DetectiveIDs, sid) then return Color(80, 140, 255)
       else return Color(80, 200, 80) end
@@ -1013,6 +1029,7 @@ function CLSCORE:Reset()
    self.Events = {}
    self.TraitorIDs = {}
    self.DetectiveIDs = {}
+   self.Variants = {}
    self.Scores = {}
    self.Players = {}
    self.RoundStarted = 0
@@ -1023,7 +1040,7 @@ end
 function CLSCORE:Init(events)
    -- Get start time, traitors, detectives, scores, and nicks
    local starttime = 0
-   local traitors, detectives
+   local traitors, detectives, variants
    local scores, nicks = {}, {}
    
    -- Used to bail out early once one of each event type had been seen, on
@@ -1043,6 +1060,7 @@ function CLSCORE:Init(events)
       elseif e.id == EVENT_SELECTED then
          traitors = e.traitor_ids
          detectives = e.detective_ids
+         variants = e.variants
       elseif e.id == EVENT_SPAWN then
          scores[e.sid] = ScoreInit()
          nicks[e.sid] = e.ni
@@ -1058,6 +1076,7 @@ function CLSCORE:Init(events)
    self.Scores = scores
    self.TraitorIDs = traitors
    self.DetectiveIDs = detectives
+   self.Variants = variants or {}
    self.StartTime = starttime
    self.Events = events
 end

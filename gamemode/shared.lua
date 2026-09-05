@@ -12,10 +12,12 @@ ROUND_PREP   = 2
 ROUND_ACTIVE = 3
 ROUND_POST   = 4
 
--- Player roles
+-- Player roles. Roles are networked as a 2-bit uint (see traitor_state.lua),
+-- so 3 is the last value that fits without widening those messages.
 ROLE_INNOCENT  = 0
 ROLE_TRAITOR   = 1
 ROLE_DETECTIVE = 2
+ROLE_NEUTRAL   = 3
 ROLE_NONE = ROLE_INNOCENT
 
 -- Game event log defs
@@ -88,6 +90,8 @@ COLOR_OLIVE  = Color(100, 100, 0, 255)
 include("util.lua")
 include("lang_shd.lua") -- uses some of util
 include("equip_items_shd.lua")
+include("roles_shd.lua") -- role variant registry, uses ROLE_ and LANG
+include("roles_kingpin.lua") -- registers a variant, needs the registry above
 
 function DetectiveMode() return GetGlobalBool("ttt_detective", false) end
 function HasteMode() return GetGlobalBool("ttt_haste", false) end

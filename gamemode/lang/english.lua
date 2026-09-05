@@ -6,7 +6,26 @@ local L = LANG.CreateLanguage("English")
 L.traitor    = "Traitor"
 L.detective  = "Detective"
 L.innocent   = "Innocent"
+L.neutral    = "Neutral"
 L.last_words = "Last Words"
+
+--- Role variants
+L.role_kingpin = "Kingpin"
+L.role_kingpin_desc = "You have no traitor chat and do not know your fellow traitors -- but they know you. Fund them from the equipment menu."
+
+L.variant_you_are    = "You are a {variant}!"
+L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
+L.variant_revealed   = "{player} is your {variant}!"
+
+L.kingpin_announce       = "A Kingpin is funding the Traitors."
+L.kingpin_killed_traitor = "{player} was one of your own Traitors!"
+
+L.variant_no_team_chat = "Your role has no team chat. Nobody heard that."
+
+L.kingpin_kill_credits = "Your organisation collected {num} credit(s) from a kill."
+L.kingpin_funded       = "You sent {num} credit(s) to one of your traitors."
+L.kingpin_received     = "The Kingpin sent you {num} credit(s)."
+L.kingpin_no_recipient = "There is no one left to send credits to."
 
 L.terrorists = "Terrorists"
 L.spectators = "Spectators"
@@ -31,6 +50,7 @@ L.death_killed_by      = "You were killed by {killer}, they were {role}!"
 L.death_role_traitor   = "a traitor"
 L.death_role_detective = "a detective"
 L.death_role_innocent  = "innocent"
+L.death_role_neutral   = "neutral"
 
 --- Karma
 L.karma_dmg_other  = "Your Karma is {amount}. As a result all damage you deal is reduced by {num}%"
@@ -108,6 +128,7 @@ L.xfer_menutitle  = "Transfer credits"
 L.xfer_no_credits = "You have no credits to give!"
 L.xfer_send       = "Send a credit"
 L.xfer_help       = "You can only transfer credits to fellow {role} players."
+L.xfer_help_blind = "You do not know who your allies are. Credits are sent to one of them at random."
 
 L.xfer_no_recip   = "Recipient not valid, credit transfer aborted."
 L.xfer_no_credits = "Insufficient credits for transfer."
@@ -170,6 +191,7 @@ L.search_nick   = "This is the body of {player}."
 L.search_role_t = "This person was a Traitor!"
 L.search_role_d = "This person was a Detective."
 L.search_role_i = "This person was an innocent terrorist."
+L.search_role_variant = "({variant})"
 
 L.search_words  = "Something tells you some of this person's last words were: '{lastwords}'"
 L.search_armor  = "They were wearing nonstandard body armor."

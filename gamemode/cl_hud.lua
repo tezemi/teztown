@@ -254,13 +254,23 @@ local function InfoPaint(client)
 
    local traitor_y = y - 30
    local text = nil
+   local role_color = COLOR_WHITE
+
    if round_state == ROUND_ACTIVE then
-      text = L[ client:GetRoleStringRaw() ]
+      -- Variant name in place of the base role's, so eg. a Kingpin reads as
+      -- "Kingpin" rather than a plain "Traitor". Falls back to the base role
+      -- name for everyone else.
+      text = client:GetRoleVariantString()
+
+      local variant = client:GetRoleVariantData()
+      if variant and variant.color then
+         role_color = variant.color
+      end
    else
       text = L[ roundstate_string[round_state] ]
    end
 
-   ShadowedText(text, "TraitorState", x + margin + 73, traitor_y, COLOR_WHITE, TEXT_ALIGN_CENTER)
+   ShadowedText(text, "TraitorState", x + margin + 73, traitor_y, role_color, TEXT_ALIGN_CENTER)
 
    -- Draw round time
    local is_haste = HasteMode() and round_state == ROUND_ACTIVE

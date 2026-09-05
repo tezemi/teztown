@@ -78,23 +78,79 @@ function SendInnocentList(ply_or_rf)
 
    -- traitors get actual innocent, so they do not reset their traitor mates to
    -- innocence
-   SendRoleListMessage(ROLE_INNOCENT, inno_ids, GetTraitorFilter())
+   SendRoleListMessage(ROLE_INNOCENT, inno_ids, GetTeamAwareTraitorFilter())
 
    -- detectives and innocents get an expanded version of the truth so that they
    -- reset everyone who is not detective
    table.Add(inno_ids, traitor_ids)
    table.Shuffle(inno_ids)
-   SendRoleListMessage(ROLE_INNOCENT, inno_ids, GetInnocentFilter())
+
+   -- A traitor cut out of the team list gets that same doctored version, but
+   -- with himself taken out of it: the merged list marks everyone in it
+   -- innocent, and the client applies that to itself too, which would reset
+   -- his own role clientside.
+   local blind_traitors, others = {}, {}
+   for _, v in ipairs(GetTeamBlindFilter()) do
+      if v:GetTraitor() then
+         table.insert(blind_traitors, v)
+      else
+         table.insert(others, v)
+      end
+   end
+
+   if #others > 0 then
+      SendRoleListMessage(ROLE_INNOCENT, inno_ids, others)
+   end
+
+   for _, v in ipairs(blind_traitors) do
+      local own = v:EntIndex()
+      local trimmed = {}
+      for _, idx in ipairs(inno_ids) do
+         if idx != own then table.insert(trimmed, idx) end
+      end
+
+      SendRoleListMessage(ROLE_INNOCENT, trimmed, v)
+   end
 end
 
 function SendConfirmedTraitors(ply_or_rf)
    SendTraitorList(ply_or_rf, function(p) return p:GetNWBool("body_found") end)
 end
 
+-- Traitors, minus any variant flagged no_team_list -- those never learn who
+-- they're working with, so the traitor list simply isn't sent to them.
+function GetTeamAwareTraitorFilter(alive_only)
+   local filter = {}
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) and ply:GetTraitor() and (not ROLES.HasFlag(ply, "no_team_list"))
+         and (not alive_only or ply:IsTerror()) then
+         table.insert(filter, ply)
+      end
+   end
+
+   return filter
+end
+
+-- The complement: innocents, detectives, and any traitor cut out of the team
+-- list. They all get the same doctored view of the traitor side. Sending a
+-- no_team_list traitor the innocents' *real* list would give them their team
+-- for free by omission, which is why they belong on this side of the line.
+function GetTeamBlindFilter(alive_only)
+   local filter = {}
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) and ((not ply:GetTraitor()) or ROLES.HasFlag(ply, "no_team_list"))
+         and (not alive_only or ply:IsTerror()) then
+         table.insert(filter, ply)
+      end
+   end
+
+   return filter
+end
+
 function SendFullStateUpdate()
    SendPlayerRoles()
    SendInnocentList()
-   SendTraitorList(GetTraitorFilter())
+   SendTraitorList(GetTeamAwareTraitorFilter())
    SendDetectiveList()
    -- not useful to sync confirmed traitors here
 end
@@ -124,10 +180,27 @@ local function request_rolelist(ply)
       SendRoleReset(ply)
       SendDetectiveList(ply)
 
-      if ply:IsTraitor() then
+      -- SendRoleReset just marked everyone, including them, innocent. A
+      -- normal traitor gets corrected by the traitor list below, but one cut
+      -- out of that list would be left thinking they're innocent, so re-send
+      -- their own role explicitly.
+      net.Start("TTT_Role")
+         net.WriteUInt(ply:GetRole(), 2)
+      net.Send(ply)
+
+      if ply:IsTraitor() and not ROLES.HasFlag(ply, "no_team_list") then
          SendTraitorList(ply)
       else
          SendConfirmedTraitors(ply)
+      end
+
+      -- Re-send any variant their team is meant to be able to identify, so
+      -- reconnecting doesn't lose it.
+      for _, other in ipairs(player.GetAll()) do
+         if IsValid(other) and other != ply and other:GetRole() == ply:GetRole()
+            and ROLES.HasFlag(other, "reveal_to_team") then
+            ROLES.NetworkVariant(other, ply)
+         end
       end
    end
 end

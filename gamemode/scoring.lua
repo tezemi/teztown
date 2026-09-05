@@ -111,7 +111,15 @@ function SCORE:HandleSelection()
       end
    end
 
-   self:AddEvent({id=EVENT_SELECTED, traitor_ids=traitors, detective_ids=detectives})
+   -- Role variants too, so the round report can show eg. "Traitor - Kingpin".
+   -- Runs after SelectRoles, so these are already assigned.
+   local variants = {}
+   for k, ply in ipairs(player.GetAll()) do
+      local id = ply:GetRoleVariant()
+      if id then variants[ply:SteamID()] = id end
+   end
+
+   self:AddEvent({id=EVENT_SELECTED, traitor_ids=traitors, detective_ids=detectives, variants=variants})
 end
 
 function SCORE:HandleBodyFound(finder, found)

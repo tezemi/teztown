@@ -110,6 +110,12 @@ function PreprocSearch(raw)
             search[t].text = T("search_role_i")
          end
 
+         -- Role variant, if any (eg. "This person was a Traitor! (Kingpin)")
+         local v = raw.variant and ROLES.Get(raw.variant)
+         if v then
+            search[t].text = search[t].text .. " " .. PT("search_role_variant", {variant = LANG.TryTranslation(v.name)})
+         end
+
          search[t].p = 2
       elseif t == "words" then
          if d != "" then
@@ -455,6 +461,10 @@ local function ReceiveRagdollSearch()
 
    -- Traitor things
    search.role = net.ReadUInt(2)
+
+   local variant_id = net.ReadString()
+   search.variant = (variant_id != "") and variant_id or nil
+
    search.c4 = net.ReadInt(bitsRequired(C4_WIRE_COUNT) + 1)
 
    -- Kill info

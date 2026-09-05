@@ -200,6 +200,7 @@ function CORPSE.ShowSearch(ply, rag, covert, long_range)
    local nick  = CORPSE.GetPlayerNick(rag)
    local traitor = (rag.was_role == ROLE_TRAITOR)
    local role  = rag.was_role
+   local variant = rag.was_variant or ""
    local eq    = rag.equipment or EQUIP_NONE
    local c4    = rag.bomb_wire or -1
    local dmg   = rag.dmgtype or DMG_GENERIC
@@ -265,6 +266,7 @@ function CORPSE.ShowSearch(ply, rag, covert, long_range)
       net.WriteString(nick)
       net.WriteUInt(eq, 16) -- Equipment ( 16 = max. )
       net.WriteUInt(role, 2) -- ( 2 bits )
+      net.WriteString(variant) -- role variant id, "" for none
       net.WriteInt(c4, bitsRequired(C4_WIRE_COUNT) + 1) -- -1 -> 2^bits ( default c4: 4 bits )
       net.WriteUInt(dmg, 30) -- DMG_BUCKSHOT is the highest. ( 30 bits )
       net.WriteString(wep)
@@ -414,6 +416,7 @@ function CORPSE.Create(ply, attacker, dmginfo)
    -- death circumstances
    rag.equipment = ply:GetEquipmentItems()
    rag.was_role = ply:GetRole()
+   rag.was_variant = ply:GetRoleVariant()
    rag.bomb_wire = ply.bomb_wire
    rag.dmgtype = dmginfo:GetDamageType()
 

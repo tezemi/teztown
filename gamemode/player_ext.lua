@@ -62,6 +62,12 @@ function plymeta:SetDefaultCredits()
    else
       self:SetCredits(0)
    end
+
+   -- Role variants can start richer than their base role (see roles_shd.lua)
+   local v = self:GetRoleVariantData()
+   if v and v.credits then
+      self:AddCredits(math.ceil(v.credits))
+   end
 end
 
 function plymeta:SendCredits()

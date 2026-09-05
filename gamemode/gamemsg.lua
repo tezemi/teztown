@@ -44,12 +44,27 @@ function TraitorMsg(ply_or_rfilter, msg)
 end
 
 -- Traitorchat
+-- Variants flagged no_team_chat are cut out of their role's team comms in
+-- both directions: they can't send to it, and it isn't sent to them.
+local function NoTeamComms(ply)
+   return ROLES.HasFlag(ply, "no_team_chat")
+end
+
 local function RoleChatMsg(sender, role, msg)
+   local recipients = {}
+   for _, ply in ipairs(GetRoleFilter(role)) do
+      if not NoTeamComms(ply) then
+         table.insert(recipients, ply)
+      end
+   end
+
+   if #recipients == 0 then return end
+
    net.Start("TTT_RoleChat")
       net.WriteUInt(role, 2)
       net.WriteEntity(sender)
       net.WriteString(msg)
-   net.Send(GetRoleFilter(role))
+   net.Send(recipients)
 end
 
 
@@ -109,7 +124,8 @@ function GM:PlayerCanSeePlayersChat(text, team_only, listener, speaker)
 	(not GetConVar("ttt_limit_spectator_chat"):GetBool()) or   -- Spectators can chat freely
 	(not DetectiveMode()) or   -- Mumbling
 	(not sTeam and ((team_only and not speaker:IsSpecial()) or (not team_only))) or   -- If someone alive talks (and not a special role in teamchat's case)
-	(not sTeam and team_only and speaker:GetRole() == listener:GetRole()) or
+	(not sTeam and team_only and speaker:GetRole() == listener:GetRole()
+	 and (not NoTeamComms(speaker)) and (not NoTeamComms(listener))) or
 	(sTeam and lTeam) then   -- If the speaker and listener are spectators
 	   return true
 	end
@@ -147,6 +163,11 @@ function GM:PlayerSay(ply, text, team_only)
          table.insert(filtered, 1, "[MUMBLED]")
          return table.concat(filtered, " ")
       elseif team_only and not team and ply:IsSpecial() then
+         if NoTeamComms(ply) then
+            LANG.Msg(ply, "variant_no_team_chat")
+            return ""
+         end
+
 	     RoleChatMsg(ply, ply:GetRole(), text)
 		 return ""
       end
@@ -199,7 +220,8 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
    if speaker:IsActiveTraitor() then
       if speaker.traitor_gvoice then
          return true, loc_voice:GetBool()
-      elseif listener:IsActiveTraitor() then
+      elseif listener:IsActiveTraitor()
+             and (not NoTeamComms(speaker)) and (not NoTeamComms(listener)) then
          return true, false
       else
          -- unless traitor_gvoice is true, normal innos can't hear speaker

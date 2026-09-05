@@ -25,6 +25,8 @@ AddCSLuaFile("lang_shd.lua")
 AddCSLuaFile("corpse_shd.lua")
 AddCSLuaFile("player_ext_shd.lua")
 AddCSLuaFile("weaponry_shd.lua")
+AddCSLuaFile("roles_shd.lua")
+AddCSLuaFile("roles_kingpin.lua")
 AddCSLuaFile("cl_radio.lua")
 AddCSLuaFile("cl_radar.lua")
 AddCSLuaFile("cl_tbuttons.lua")
@@ -50,6 +52,7 @@ include("admin.lua")
 include("traitor_state.lua")
 include("propspec.lua")
 include("weaponry.lua")
+include("roles.lua")
 include("mysterybox.lua")
 include("testerparts.lua")
 include("gamemsg.lua")
@@ -152,6 +155,7 @@ util.AddNetworkString("TTT_CorpseCall")
 util.AddNetworkString("TTT_ClearClientState")
 util.AddNetworkString("TTT_PerformGesture")
 util.AddNetworkString("TTT_Role")
+util.AddNetworkString("TTT_RoleVariant")
 util.AddNetworkString("TTT_RoleList")
 util.AddNetworkString("TTT_ConfirmUseTButton")
 util.AddNetworkString("TTT_C4Config")
@@ -546,7 +550,7 @@ function TellTraitorsAboutTraitors()
    -- This is ugly as hell, but it's kinda nice to filter out the names of the
    -- traitors themselves in the messages to them
    for k,v in ipairs(plys) do
-      if v:IsTraitor() then
+      if v:IsTraitor() and not ROLES.HasFlag(v, "no_team_list") then
          if #traitornicks < 2 then
             LANG.Msg(v, "round_traitors_one")
             return
@@ -974,6 +978,10 @@ function SelectRoles()
          table.remove(choices, pick)
       end
    end
+
+   -- Promote some of those base roles to variants (gamemode/roles.lua). Runs
+   -- before credits below so anything it changes is reflected in them.
+   ROLES.SelectVariants(plys)
 
    GAMEMODE.LastRole = {}
 

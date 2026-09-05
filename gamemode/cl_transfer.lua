@@ -13,6 +13,23 @@ function CreateTransferMenu(parent)
    end
 
    local bw, bh = 100, 20
+
+   -- A variant that isn't told who its team is can't pick a recipient from a
+   -- list -- the dropdown below would just be empty. It gets a blind send
+   -- instead, handled by whatever command the variant names.
+   local variant = LocalPlayer():GetRoleVariantData()
+   if variant and variant.fund_command then
+      local dblind = vgui.Create("DButton", dform)
+      dblind:SetSize(bw, bh)
+      dblind:SetText(GetTranslation("xfer_send"))
+      dblind.DoClick = function() RunConsoleCommand(variant.fund_command) end
+
+      dform:AddItem(dblind)
+      dform:Help(GetTranslation("xfer_help_blind"))
+
+      return dform
+   end
+
    local dsubmit = vgui.Create("DButton", dform)
    dsubmit:SetSize(bw, bh)
    dsubmit:SetDisabled(true)
