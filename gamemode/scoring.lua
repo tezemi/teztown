@@ -81,11 +81,11 @@ function SCORE:HandleKill(victim, attacker, dmginfo)
       e.att.sid = attacker:SteamID()
       e.att.tr = attacker:GetTraitor()
 
-      -- If a traitor gets himself killed by another traitor's C4, it's his own
-      -- damn fault for ignoring the indicator.
+      -- If a traitor gets himself killed by another traitor's C4 or slam
+      -- mine, it's his own damn fault for ignoring the indicator.
       if dmginfo:IsExplosionDamage() and attacker:GetTraitor() and victim:GetTraitor() then
          local infl = dmginfo:GetInflictor()
-         if IsValid(infl) and infl:GetClass() == "ttt_c4" then
+         if IsValid(infl) and (infl:GetClass() == "ttt_c4" or infl:GetClass() == "ttt_slammine") then
             e.att = table.Copy(e.vic)
          end
       end

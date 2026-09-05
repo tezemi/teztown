@@ -339,6 +339,23 @@ L.c4_disarm_other = "Cut a safe wire to disarm the bomb. It will explode if you 
 L.c4_status_armed    = "ARMED"
 L.c4_status_disarmed = "DISARMED"
 
+-- Slam Mine
+L.slammine_name = "Slam Mine"
+L.slammine_desc = [[
+A tripwire mine. Sticks to the first wall
+you aim it at, then fires a laser out from
+the surface.
+
+Anyone who crosses the beam sets it off,
+including you.]]
+
+-- Hopper Mine
+L.hoppermine_name = "Hopper Mine"
+L.hoppermine_desc = [[
+A short-range thrown mine. Arms itself a
+few seconds after landing, then hops
+toward and detonates on nearby targets.]]
+
 -- Suicide Bomb
 L.suicidebomb_name          = "Suicide Bomb"
 L.suicidebomb_desc          = [[
