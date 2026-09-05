@@ -565,10 +565,16 @@ function CLSCORE:ShowMVPPanel(is_debug)
    local hidden = HIDDENSCORE.Calculate(self.Events, self.Scores, self.Players, self.TraitorIDs, self.DetectiveIDs)
 
    -- Everyone who scored, ranked highest first. ranked[1] is the MVP;
-   -- ranked[2..9] are the smaller list shown underneath.
+   -- ranked[2..9] are the smaller list shown underneath. Guard against a
+   -- HIDDENSCORE factor handing back a sid that never actually spawned this
+   -- round (eg. one keyed off a raw SteamID() rather than cross-checked
+   -- against self.Players) -- without a nick to show, that row would just
+   -- read "???" on screen.
    local ranked = {}
    for sid, score in pairs(hidden) do
-      table.insert(ranked, {sid = sid, score = score})
+      if self.Players[sid] then
+         table.insert(ranked, {sid = sid, score = score})
+      end
    end
    table.sort(ranked, function(a, b) return a.score > b.score end)
 

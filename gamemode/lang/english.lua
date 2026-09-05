@@ -14,22 +14,10 @@ L.spectators = "Spectators"
 --- Round status messages
 L.round_minplayers = "Not enough players to start a new round..."
 L.round_voting     = "Vote in progress, delaying new round by {num} seconds..."
-L.round_begintime  = "A new round begins in {num} seconds. Prepare yourself."
-L.round_selected   = "The Traitors have been selected."
-L.round_started    = "The round has begun!"
 L.round_restart    = "The round has been forced to restart by an admin."
 
 L.round_traitors_one  = "Traitor, you stand alone."
 L.round_traitors_more = "Traitor, these are your allies: {names}"
-
-L.win_time         = "Time has run out. The Traitors lose."
-L.win_traitor      = "The Traitors have won!"
-L.win_innocent     = "The Traitors have been defeated!"
-L.win_showreport   = "Let's look at the round report for {num} seconds."
-
-L.limit_round      = "Round limit reached. {mapname} will load soon."
-L.limit_time       = "Time limit reached. {mapname} will load soon."
-L.limit_left       = "{num} round(s) or {time} minutes remaining before the map changes to {mapname}."
 
 --- Credit awards
 L.credit_det_all   = "Detectives, you have been awarded {num} equipment credit(s) for your performance."
@@ -45,7 +33,6 @@ L.death_role_detective = "a detective"
 L.death_role_innocent  = "innocent"
 
 --- Karma
-L.karma_dmg_full   = "Your Karma is {amount}, so you deal full damage this round!"
 L.karma_dmg_other  = "Your Karma is {amount}. As a result all damage you deal is reduced by {num}%"
 
 --- Body identification messages

@@ -24,14 +24,15 @@ local text_width = msg_width - (margin * 3) -- three margins for a little more r
 
 local text_height = draw.GetFontHeight(msgfont)
 
-local top_y = margin
-local top_x = ScrW() - margin - msg_width
+-- Centered under the crosshair rather than tucked in a corner
+local top_x = (ScrW() - msg_width) / 2
+local top_y = (ScrH() / 2) + 40
 
 local staytime = 12
 local max_items = 8
 
 local fadein = 0.1
-local fadeout = 0.6
+local fadeout = 0.15
 
 local movespeed = 2
 
@@ -46,20 +47,25 @@ local msgcolors = {
 -- Total width we take up on screen, for other elements to read
 MSTACK.width = msg_width + margin
 
-function MSTACK:AddColoredMessage(text, clr)
+-- sound_paths is an optional list of sound paths (relative to sound/), tried
+-- in order via util.PlayFirstAvailableSound; falls back to the generic
+-- notification sound below if omitted.
+function MSTACK:AddColoredMessage(text, clr, sound_paths)
    local item = {}
    item.text = text
    item.col = clr
    item.bg  = msgcolors.generic_bg
+   item.sound_paths = sound_paths
 
    self:AddMessageEx(item)
 end
 
-function MSTACK:AddColoredBgMessage(text, bg_clr)
+function MSTACK:AddColoredBgMessage(text, bg_clr, sound_paths)
    local item = {}
    item.text = text
    item.col  = msgcolors.generic_text
    item.bg   = bg_clr
+   item.sound_paths = sound_paths
 
    self:AddMessageEx(item)
 end
@@ -142,7 +148,11 @@ function MSTACK:Draw(client)
    for k, item in pairs(self.msgs) do
       if item.time < CurTime() then
          if item.sounded == false then
-            client:EmitSound(msg_sound, 80, 250)
+            if item.sound_paths then
+               util.PlayFirstAvailableSound(item.sound_paths)
+            else
+               client:EmitSound(msg_sound, 80, 250)
+            end
             item.sounded = true
          end
 

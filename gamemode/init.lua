@@ -533,7 +533,6 @@ function PrepareRound()
    -- related to traitor's mics cutting off for a second when they're selected.
    timer.Create("selectmute", ptime - 1, 1, function() MuteForRestart(true) end)
 
-   LANG.Msg("round_begintime", {num = ptime})
    SetRoundState(ROUND_PREP)
 
    -- Delay spawning until next frame to avoid ent overload
@@ -696,7 +695,6 @@ function BeginRound()
    -- Select traitors & co. This is where things really start so we can't abort
    -- anymore.
    SelectRoles()
-   LANG.Msg("round_selected")
    SendFullStateUpdate()
 
    -- Edge case where a player joins just as the round starts and is picked as
@@ -721,7 +719,6 @@ function BeginRound()
 
    -- Sound start alarm
    SetRoundState(ROUND_ACTIVE)
-   LANG.Msg("round_started")
    ServerLog("Round proper has begun...\n")
 
    GAMEMODE:UpdatePlayerLoadouts() -- needs to happen when round_active
@@ -734,13 +731,10 @@ end
 function PrintResultMessage(type)
    ServerLog("Round ended.\n")
    if type == WIN_TIMELIMIT then
-      LANG.Msg("win_time")
       ServerLog("Result: timelimit reached, traitors lose.\n")
    elseif type == WIN_TRAITOR then
-      LANG.Msg("win_traitor")
       ServerLog("Result: traitors win.\n")
    elseif type == WIN_INNOCENT then
-      LANG.Msg("win_innocent")
       ServerLog("Result: innocent win.\n")
    else
       ServerLog("Result: unknown victory condition!\n")
@@ -754,23 +748,16 @@ function CheckForMapSwitch()
 
    local time_left = math.max(0, (GetConVar("ttt_time_limit_minutes"):GetInt() * 60) - CurTime())
    local switchmap = false
-   local nextmap = string.upper(game.GetMapNext())
 
    if rounds_left <= 0 then
-      LANG.Msg("limit_round", {mapname = nextmap})
       switchmap = true
    elseif time_left <= 0 then
-      LANG.Msg("limit_time", {mapname = nextmap})
       switchmap = true
    end
 
    if switchmap then
       timer.Stop("end2prep")
       timer.Simple(15, game.LoadNextMap)
-   else
-      LANG.Msg("limit_left", {num = rounds_left,
-                              time = math.ceil(time_left / 60),
-                              mapname = nextmap})
    end
 end
 
@@ -781,7 +768,6 @@ function EndRound(type)
    SetRoundState(ROUND_POST)
 
    local ptime = math.max(5, GetConVar("ttt_posttime_seconds"):GetInt())
-   LANG.Msg("win_showreport", {num = ptime})
    timer.Create("end2prep", ptime, 1, PrepareRound)
 
    -- Piggyback on "round end" time global var to show end of phase timer

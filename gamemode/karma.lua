@@ -236,14 +236,12 @@ end
 
 function KARMA.NotifyPlayer(ply)
    local df = ply:GetDamageFactor() or 1
+   if df > 0.99 then return end
+
    local k = math.Round(ply:GetBaseKarma())
-   if df > 0.99 then
-      LANG.Msg(ply, "karma_dmg_full", {amount = k})
-   else
-      LANG.Msg(ply, "karma_dmg_other",
-               {amount = k,
-                num = math.ceil((1 - df) * 100)})
-   end
+   LANG.Msg(ply, "karma_dmg_other",
+            {amount = k,
+             num = math.ceil((1 - df) * 100)})
 end
 
 -- These generic fns will be called at round end and start, so that stuff can

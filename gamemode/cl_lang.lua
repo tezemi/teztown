@@ -243,6 +243,15 @@ LANG.Styles = {
                    print("TTT:   " .. text)
                 end,
 
+   -- Red, with an alert sound (a TF2 sound, falling back to a stock one) --
+   -- for notifications important enough to actually draw the eye/ear, eg.
+   -- a body being found.
+   alert = function(text)
+              MSTACK:AddColoredMessage(text, COLOR_RED,
+                                        {"ui/vote_started.wav", "buttons/button2.wav"})
+              print("TTT:   " .. text)
+           end,
+
    chat_warn  = function(text)
                    chat.AddText(COLOR_RED, text)
                 end,
@@ -389,6 +398,10 @@ local styledmessages = {
 
    chat_rolecolour = {
       "death_killed_by"
+   },
+
+   alert = {
+      "body_found"
    }
 };
 
