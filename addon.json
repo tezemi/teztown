@@ -11,6 +11,10 @@
 		"gamemodes/*/.svn/*",
 		"gamemodes/*/*~",
 		"gamemodes/*/temp_change_list.txt",
-		"gamemodes/*/ulx_motd.txt"
+		"gamemodes/*/ulx_motd.txt",
+		"gamemodes/*/.gitignore",
+		"gamemodes/*/addon.json",
+		"gamemodes/*/content/maps/*.txt",
+		"gamemodes/*/content/models/ttt/*.sw.vtx"
 	]
 }

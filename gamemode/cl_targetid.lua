@@ -190,16 +190,14 @@ function GM:HUDDrawTargetID()
    local hint = (not minimal) and (ent.TargetIDHint or ClassHint[cls])
 
    if ent:IsPlayer() then
-      if ent:GetNWBool("disguised", false) then
+      local disguised_as = ent:GetNWString("disguised_player", "nil")
+
+      if disguised_as != "nil" then
+         -- Disguise swaps the model too, so target ID should show the
+         -- identity being impersonated, not the wearer's real name.
          client.last_id = nil
 
-         if client:IsTraitor() or client:IsSpec() then
-            text = ent:Nick() .. L.target_disg
-         else
-            -- Do not show anything
-            return
-         end
-
+         text = disguised_as
          color = COLOR_RED
       else
          text = ent:Nick()

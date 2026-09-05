@@ -119,13 +119,22 @@ function PANEL:UpdateSortCache()
          comp = sort_func(plya, plyb)
       end
 
-      local ret = true
+      if comp == 0 then
+         local namea, nameb = strlower(plya:GetName()), strlower(plyb:GetName())
 
-      if comp != 0 then
-         ret = comp > 0
-      else
-         ret = strlower(plya:GetName()) > strlower(plyb:GetName())
+         if namea != nameb then
+            comp = namea > nameb and 1 or -1
+         else
+            -- Still tied (eg. two players sharing a name). A genuine tie must
+            -- never reach the ascending flip below -- it'd turn "both false"
+            -- into "both true", which breaks table.sort's strict-order
+            -- contract ("invalid order function for sorting") -- so break
+            -- the tie on something that's always unique instead.
+            comp = plya:EntIndex() - plyb:EntIndex()
+         end
       end
+
+      local ret = comp > 0
 
       if GetConVar("ttt_scoreboard_ascending"):GetBool() then
          ret = not ret

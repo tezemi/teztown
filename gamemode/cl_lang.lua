@@ -255,8 +255,13 @@ LANG.Styles = {
    -- portion in the colour for params.role_raw (see GetRoleStringRaw), e.g.
    -- "You were killed by X, they were a Y!" with only "a Y" coloured.
    chat_rolecolour = function(text, params, raw)
-                         local before, after = raw and string.match(raw, "^(.-){role}(.*)$")
-                         if not (before and params and params.role) then
+                         if not (raw and params and params.role) then
+                            chat.AddText(text)
+                            return
+                         end
+
+                         local before, after = string.match(raw, "^(.-){role}(.*)$")
+                         if not before then
                             chat.AddText(text)
                             return
                          end
@@ -265,7 +270,7 @@ LANG.Styles = {
 
                          chat.AddText(COLOR_WHITE, interp(before, params),
                                       clr, params.role,
-                                      COLOR_WHITE, interp(after, params))
+                                      COLOR_WHITE, (interp(after, params)))
                       end
 };
 

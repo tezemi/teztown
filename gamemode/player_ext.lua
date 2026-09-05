@@ -398,7 +398,7 @@ end
 
 local function UpdateDisguise(len, ply)
 
-   if (IsValid(ply) and ply:HasEquipmentItem(TTT_Disguise)) then
+   if (IsValid(ply) and ply:HasEquipmentItem(EQUIP_DISGUISE)) then
 
       local nick = net.ReadString();
       local model = net.ReadString();

@@ -622,6 +622,14 @@ function CLSCORE:ShowMVPPanel(is_debug)
 
    self.Panel = dpanel
 
+   local closex = vgui.Create("DButton", dpanel)
+   closex:SetSize(32, 32)
+   closex:SetPos(scrw - 32 - 20, 20)
+   closex:SetText("X")
+   closex:SetFont("MVPName")
+   closex:SetTextColor(COLOR_WHITE)
+   closex.DoClick = function() dpanel:Close() end
+
    -- Win title, same big-box style the old panel used
    local titletext = T(title.Text or self.WinTypes.Default.Text)
 
@@ -858,6 +866,17 @@ function CLSCORE:ShowMVPPanel(is_debug)
 
    dpanel:MakePopup()
    dpanel:SetKeyboardInputEnabled(false)
+
+   -- Keyboard input is off above so players can still move around while the
+   -- summary is up, but that also means OnKeyCodePressed never sees escape.
+   -- OnPauseMenuShow fires on an escape press regardless, so use it instead;
+   -- returning false stops the normal pause menu from opening over this.
+   hook.Add("OnPauseMenuShow", "TTT_MVPPanelEscape", function()
+      if IsValid(dpanel) then
+         dpanel:Close()
+         return false
+      end
+   end)
 end
 
 -- Debug preview: fabricates a full fake round event log (players, roles,
@@ -947,6 +966,8 @@ function CLSCORE:ClearPanel()
       local pnl = self.Panel
       timer.Simple(0, function() if IsValid(pnl) then pnl:Remove() end end)
    end
+
+   hook.Remove("OnPauseMenuShow", "TTT_MVPPanelEscape")
 end
 
 function CLSCORE:SaveLog()
