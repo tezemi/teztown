@@ -151,13 +151,56 @@ function ROLES.SelectVariants(plys)
 
    if total == 0 then return end
 
+   -- Guarantees (see GuaranteedVariants/ttt_guarantee_variant in
+   -- traitor_state.lua) go first and bypass the variant's own enabled/pct/
+   -- min/max/chance settings entirely -- consumed whether or not the
+   -- target is actually online, same as GuaranteedTraitors/
+   -- GuaranteedDetectives. If the target's base role doesn't already match
+   -- the variant's, it's overridden to match, which can shift the round's
+   -- traitor/detective count by one; this is a testing/admin tool, not
+   -- something that preserves round balance.
+   local guaranteed_variants = {}
+
+   for sid, vid in pairs(GuaranteedVariants) do
+      GuaranteedVariants[sid] = nil
+
+      local v = ROLES.Get(vid)
+      if v then
+         for _, ply in ipairs(plys or player.GetAll()) do
+            if IsValid(ply) and ply:SteamID() == sid and not ply:IsSpec() then
+               -- Pull them out of whatever pool they landed in normally so
+               -- the random draws below don't also touch them.
+               local old_pool = pools[ply:GetRole()]
+               if old_pool then
+                  for i, p in ipairs(old_pool) do
+                     if p == ply then
+                        table.remove(old_pool, i)
+                        break
+                     end
+                  end
+               end
+
+               ply:SetRole(v.base)
+               ply:SetRoleVariant(v.id)
+               guaranteed_variants[v.id] = true
+
+               break
+            end
+         end
+      end
+   end
+
    -- Shuffled so that when several variants draw from the same pool, the
    -- same one doesn't always get first pick of it.
    local variants = ROLES.GetAll()
    table.Shuffle(variants)
 
    for _, v in ipairs(variants) do
-      ApplyVariant(v, pools, total)
+      -- A guaranteed variant already has its holder; skip the normal random
+      -- pass for it so a max > 1 variant doesn't also roll extra ones.
+      if not guaranteed_variants[v.id] then
+         ApplyVariant(v, pools, total)
+      end
    end
 
    -- Done as a second pass so every variant is settled first, otherwise a
@@ -204,26 +247,106 @@ function ROLES.BriefHolders()
             end
          end
 
-         -- Some variants are public knowledge to the other side. Announced
-         -- once per variant however many holders it ended up with, and only
-         -- to players who aren't on its base role.
+         -- Some variants are public knowledge to a side other than their
+         -- own -- Kingpin's opposing side, or the Spy's own victims, who
+         -- are otherwise fooled about everything else. Announced once per
+         -- variant however many holders it ended up with. announce_role
+         -- picks out one specific role (eg. Spy -> just traitors, not also
+         -- detectives); without it, everyone off the variant's own base
+         -- role hears it (eg. Kingpin -> both innocents and detectives).
          if v.announce and not announced[v.id] then
             announced[v.id] = true
 
-            local enemies = {}
+            local recipients = {}
             for _, other in ipairs(player.GetAll()) do
-               if IsValid(other) and other:GetRole() != v.base then
-                  table.insert(enemies, other)
+               if IsValid(other) then
+                  local matches
+                  if v.announce_role then
+                     matches = other:GetRole() == v.announce_role
+                  else
+                     matches = other:GetRole() != v.base
+                  end
+
+                  if matches then table.insert(recipients, other) end
                end
             end
 
-            if #enemies > 0 then LANG.Msg(enemies, v.announce) end
+            if #recipients > 0 then LANG.Msg(recipients, v.announce) end
          end
       end
    end
 end
 
 hook.Add("TTTPrepareRound", "RoleVariants_Clear", ROLES.ClearAll)
+
+---- Disguise, chat suppression, credit cap
+--
+-- All three are named-role effects rather than boolean flags (see the flag
+-- list in roles_shd.lua), so they get their own helpers rather than going
+-- through ROLES.HasFlag.
+
+-- Everyone currently disguised as role, to anyone who genuinely holds it.
+function ROLES.GetDisguisedAs(role)
+   local out = {}
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) then
+         local v = ply:GetRoleVariantData()
+         if v and v.disguise_role == role then table.insert(out, ply) end
+      end
+   end
+
+   return out
+end
+
+-- What ply should appear as to viewer specifically -- their real role,
+-- unless a disguise fools this particular viewer. Only matters server-side
+-- (radar.lua); the scoreboard/target ID/ally-list illusion is instead done
+-- by feeding disguised players into the real traitor list broadcast itself,
+-- so every client-side system that already trusts GetRole() is fooled by
+-- the same one change rather than needing its own special case.
+function ROLES.VisibleRole(ply, viewer)
+   local role = IsValid(ply) and ply:GetRole() or ROLE_INNOCENT
+
+   if IsValid(viewer) then
+      local v = ply:GetRoleVariantData()
+      if v and v.disguise_role and viewer:GetRole() == v.disguise_role then
+         return v.disguise_role
+      end
+   end
+
+   return role
+end
+
+-- True if some living variant holder is currently jamming role's team chat
+-- and voice for everyone on it (eg. the Spy silencing the traitors).
+-- Independent of no_team_chat, which cuts off a variant's access to its OWN
+-- team chat rather than the whole channel.
+function ROLES.IsTeamChatSuppressedFor(role)
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) and ply:Alive() then
+         local v = ply:GetRoleVariantData()
+         if v and v.suppress_team_chat_for == role then return true end
+      end
+   end
+
+   return false
+end
+
+-- The lowest credit_cap_amount currently imposed on role by any living
+-- variant holder, or nil for no cap.
+function ROLES.GetCreditCap(role)
+   local cap = nil
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) and ply:Alive() then
+         local v = ply:GetRoleVariantData()
+         if v and v.credit_cap_role == role then
+            cap = cap and math.min(cap, v.credit_cap_amount) or v.credit_cap_amount
+         end
+      end
+   end
+
+   return cap
+end
 
 -- Variants flagged sees_team_bodies are shown where anyone sharing their
 -- base role died. Reuses the beacon the "call detective" feature already

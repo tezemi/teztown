@@ -61,6 +61,27 @@ end
 function SendTraitorList(ply_or_rf, pred) SendRoleList(ROLE_TRAITOR, ply_or_rf, pred) end
 function SendDetectiveList(ply_or_rf) SendRoleList(ROLE_DETECTIVE, ply_or_rf) end
 
+-- Same as SendTraitorList, but also includes anyone disguised as a traitor
+-- (disguise_role, eg. the Spy -- see roles_shd.lua) as if they were real.
+-- Only for lists that exist so traitors can identify their own side --
+-- never for SendConfirmedTraitors, which innocents rely on for the truth.
+function SendTraitorListWithDisguises(ply_or_rf, pred)
+   local role_ids = {}
+   for _, v in ipairs(player.GetAll()) do
+      if v:IsRole(ROLE_TRAITOR) and (not pred or pred(v)) then
+         table.insert(role_ids, v:EntIndex())
+      end
+   end
+
+   for _, v in ipairs(ROLES.GetDisguisedAs(ROLE_TRAITOR)) do
+      if not pred or pred(v) then
+         table.insert(role_ids, v:EntIndex())
+      end
+   end
+
+   SendRoleListMessage(ROLE_TRAITOR, role_ids, ply_or_rf)
+end
+
 -- this is purely to make sure last round's traitors/dets ALWAYS get reset
 -- not happy with this, but it'll do for now
 function SendInnocentList(ply_or_rf)
@@ -150,7 +171,13 @@ end
 function SendFullStateUpdate()
    SendPlayerRoles()
    SendInnocentList()
-   SendTraitorList(GetTeamAwareTraitorFilter())
+
+   -- SendInnocentList (above) already marked a disguised player innocent
+   -- for real traitors, since they're genuinely innocent -- this fixes that
+   -- up right after by re-marking them traitor for that same audience, and
+   -- since net messages are ordered, the illusion is what the client ends
+   -- up settled on.
+   SendTraitorListWithDisguises(GetTeamAwareTraitorFilter())
    SendDetectiveList()
    -- not useful to sync confirmed traitors here
 end
@@ -189,7 +216,7 @@ local function request_rolelist(ply)
       net.Send(ply)
 
       if ply:IsTraitor() and not ROLES.HasFlag(ply, "no_team_list") then
-         SendTraitorList(ply)
+         SendTraitorListWithDisguises(ply)
       else
          SendConfirmedTraitors(ply)
       end
@@ -324,6 +351,70 @@ local function guarantee_detective(ply, cmd, args)
    end
 end
 concommand.Add("ttt_guarantee_detective", guarantee_detective)
+
+
+-- SteamID -> variant id, guaranteed at the next role selection; consumed in
+-- ROLES.SelectVariants (roles.lua). Unlike GuaranteedTraitors/
+-- GuaranteedDetectives above, this can override whatever base role the
+-- target would otherwise have been assigned, which can shift the round's
+-- traitor/detective count by one -- it's a testing/admin tool, not
+-- something that preserves round balance the way the other two do.
+GuaranteedVariants = GuaranteedVariants or {}
+
+-- Admin-only, silent (server console feedback to the caller only, no
+-- broadcast). Guarantees a player will hold the given role variant at the
+-- next role selection, regardless of that variant's own enabled/pct/min/
+-- max/chance settings; see ROLES.SelectVariants() in roles.lua for where
+-- this is consumed.
+--   ttt_guarantee_variant <variant>            guarantee yourself
+--   ttt_guarantee_variant <variant> <target>   guarantee <target>
+--   ttt_guarantee_variant clear                clear your own guarantee
+--   ttt_guarantee_variant clear <target>       clear <target>'s guarantee
+local function guarantee_variant(ply, cmd, args)
+   if IsValid(ply) and (not ply:IsSuperAdmin()) then return end
+
+   local out = IsValid(ply) and function(msg) ply:PrintMessage(HUD_PRINTCONSOLE, msg) end or print
+
+   if not args[1] then
+      out("Usage: ttt_guarantee_variant <variant id> [target]  |  ttt_guarantee_variant clear [target]")
+      return
+   end
+
+   local function resolve_target(arg)
+      if arg then return FindTargetPlayer(arg, out) end
+      if not IsValid(ply) then
+         out("Console must specify a target player.")
+         return nil
+      end
+      return ply
+   end
+
+   if string.lower(args[1]) == "clear" then
+      local target = resolve_target(args[2])
+      if not IsValid(target) then return end
+
+      GuaranteedVariants[target:SteamID()] = nil
+      out(target:Nick() .. " no longer has a guaranteed role variant.")
+      return
+   end
+
+   local variant_id = string.lower(args[1])
+   if not ROLES.Get(variant_id) then
+      local ids = {}
+      for _, v in ipairs(ROLES.GetAll()) do table.insert(ids, v.id) end
+
+      out("'" .. args[1] .. "' is not a registered role variant. Known: "
+          .. (#ids > 0 and table.concat(ids, ", ") or "(none registered)"))
+      return
+   end
+
+   local target = resolve_target(args[2])
+   if not IsValid(target) then return end
+
+   GuaranteedVariants[target:SteamID()] = variant_id
+   out(target:Nick() .. " is now guaranteed the '" .. variant_id .. "' role variant next round.")
+end
+concommand.Add("ttt_guarantee_variant", guarantee_variant)
 
 
 local function force_spectate(ply, cmd, arg)

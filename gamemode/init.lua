@@ -27,6 +27,7 @@ AddCSLuaFile("player_ext_shd.lua")
 AddCSLuaFile("weaponry_shd.lua")
 AddCSLuaFile("roles_shd.lua")
 AddCSLuaFile("roles_kingpin.lua")
+AddCSLuaFile("roles_spy.lua")
 AddCSLuaFile("cl_radio.lua")
 AddCSLuaFile("cl_radar.lua")
 AddCSLuaFile("cl_tbuttons.lua")
@@ -545,6 +546,12 @@ function TellTraitorsAboutTraitors()
       if v:IsTraitor() then
          table.insert(traitornicks, v:Nick())
       end
+   end
+
+   -- Anyone disguised as a traitor (eg. the Spy) belongs in the list too --
+   -- from a real traitor's point of view, they simply are one.
+   for _, v in ipairs(ROLES.GetDisguisedAs(ROLE_TRAITOR)) do
+      table.insert(traitornicks, v:Nick())
    end
 
    -- This is ugly as hell, but it's kinda nice to filter out the names of the

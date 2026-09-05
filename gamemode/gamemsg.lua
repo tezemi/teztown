@@ -45,9 +45,12 @@ end
 
 -- Traitorchat
 -- Variants flagged no_team_chat are cut out of their role's team comms in
--- both directions: they can't send to it, and it isn't sent to them.
+-- both directions: they can't send to it, and it isn't sent to them. This
+-- also covers the whole channel being jammed for everyone on that role (see
+-- suppress_team_chat_for, eg. the Spy silencing the traitors) -- from any
+-- one player's perspective the two look the same: no team chat right now.
 local function NoTeamComms(ply)
-   return ROLES.HasFlag(ply, "no_team_chat")
+   return ROLES.HasFlag(ply, "no_team_chat") or ROLES.IsTeamChatSuppressedFor(ply:GetRole())
 end
 
 local function RoleChatMsg(sender, role, msg)
@@ -163,8 +166,14 @@ function GM:PlayerSay(ply, text, team_only)
          table.insert(filtered, 1, "[MUMBLED]")
          return table.concat(filtered, " ")
       elseif team_only and not team and ply:IsSpecial() then
-         if NoTeamComms(ply) then
+         -- Distinguished from the generic NoTeamComms check below so the
+         -- message is accurate: one is "your role personally has no team
+         -- chat", the other is "someone is actively jamming your team's".
+         if ROLES.HasFlag(ply, "no_team_chat") then
             LANG.Msg(ply, "variant_no_team_chat")
+            return ""
+         elseif ROLES.IsTeamChatSuppressedFor(ply:GetRole()) then
+            LANG.Msg(ply, "variant_chat_jammed")
             return ""
          end
 

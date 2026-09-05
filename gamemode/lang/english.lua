@@ -13,14 +13,19 @@ L.last_words = "Last Words"
 L.role_kingpin = "Kingpin"
 L.role_kingpin_desc = "You have no traitor chat and do not know your fellow traitors -- but they know you. Fund them from the equipment menu."
 
+L.role_spy = "Spy"
+L.role_spy_desc = "You appear as a Traitor to the Traitor team. While you're alive, their team chat is jammed and none of them can hold more than 1 credit."
+
 L.variant_you_are    = "You are a {variant}!"
 L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
 L.variant_revealed   = "{player} is your {variant}!"
 
 L.kingpin_announce       = "A Kingpin is funding the Traitors."
+L.spy_announce           = "A Spy has infiltrated your ranks... an innocent player that appears as a traitor. They are jamming your chat and limiting you to one credit!"
 L.kingpin_killed_traitor = "{player} was one of your own Traitors!"
 
 L.variant_no_team_chat = "Your role has no team chat. Nobody heard that."
+L.variant_chat_jammed  = "Your team's chat is being jammed. Nobody heard that."
 
 L.kingpin_kill_credits = "Your organisation collected {num} credit(s) from a kill."
 L.kingpin_funded       = "You sent {num} credit(s) to one of your traitors."

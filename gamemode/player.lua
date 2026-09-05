@@ -24,7 +24,7 @@ function GM:PlayerInitialSpawn( ply )
    local rstate = GetRoundState() or ROUND_WAIT
    -- We should update the traitor list, if we are not about to send it
    if rstate <= ROUND_PREP then
-      SendTraitorList(GetTeamAwareTraitorFilter())
+      SendTraitorListWithDisguises(GetTeamAwareTraitorFilter())
       SendConfirmedTraitors(GetTeamBlindFilter())
       SendDetectiveList()
    end
@@ -459,7 +459,7 @@ function GM:PlayerDisconnected(ply)
 
    if GetRoundState() != ROUND_PREP then
       -- Keep traitor entindices in sync on traitor clients
-      SendTraitorList(GetTeamAwareTraitorFilter(false), nil)
+      SendTraitorListWithDisguises(GetTeamAwareTraitorFilter(false), nil)
 
       -- Same for confirmed traitors on innocent clients
       SendConfirmedTraitors(GetTeamBlindFilter(false))

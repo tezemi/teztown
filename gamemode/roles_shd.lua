@@ -36,6 +36,28 @@
 --                     this variant (roles.lua)
 --   credits        -- extra starting credits on top of their base role's
 --                     (player_ext.lua's SetDefaultCredits)
+--   announce       -- a language key, broadcast once at round start to
+--                     whoever announce_role names, or (if that's omitted)
+--                     to everyone off this variant's own base role. Never
+--                     names the holder -- just that the variant exists.
+--                     (roles.lua's BriefHolders)
+--   announce_role  -- narrows announce to one specific ROLE_ value instead
+--                     of "everyone not on my side" -- eg. the Spy wants
+--                     only traitors warned, not also detectives.
+--
+--   disguise_role  -- a ROLE_ value: players who genuinely hold that role
+--                     see this player as one of their own (scoreboard,
+--                     radar, target ID, the ally list, all of it), even
+--                     though their real role never changes. One-directional
+--                     and never told to anyone else. (traitor_state.lua,
+--                     init.lua's TellTraitorsAboutTraitors, radar.lua)
+--   suppress_team_chat_for -- a ROLE_ value: while this variant is alive,
+--                     that role's entire team chat/voice channel is down
+--                     for everyone on it, not just this player (gamemsg.lua)
+--   credit_cap_role / credit_cap_amount -- while this variant is alive, no
+--                     player holding credit_cap_role can carry more than
+--                     credit_cap_amount credits -- every gain is clamped the
+--                     moment it happens (player_ext.lua's SetCredits)
 --
 -- Selection itself lives in roles.lua (server), and the whole system is off
 -- unless ttt_role_variants is 1.

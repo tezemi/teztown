@@ -41,6 +41,12 @@ end
 
 --- Equipment credits
 function plymeta:SetCredits(amt)
+   -- A variant may be capping this role's credits (eg. the Spy on
+   -- traitors, see roles.lua). AddCredits/SubtractCredits both route
+   -- through here, so this catches every way credits can change.
+   local cap = ROLES.GetCreditCap(self:GetRole())
+   if cap then amt = math.min(amt, cap) end
+
    self.equipment_credits = amt
    self:SendCredits()
 end

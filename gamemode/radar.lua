@@ -36,7 +36,10 @@ local function RadarScan(ply, cmd, args)
             pos.y = math.Round(pos.y)
             pos.z = math.Round(pos.z)
 
-            local role = p:IsPlayer() and p:GetRole() or -1
+            -- VisibleRole rather than the raw role so a disguised variant
+            -- (eg. the Spy, appearing as a traitor to traitors) shows up on
+            -- radar the same way it does everywhere else.
+            local role = p:IsPlayer() and ROLES.VisibleRole(p, ply) or -1
 
             if not p:IsPlayer() then
                -- Decoys appear as innocents for non-traitors
