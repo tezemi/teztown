@@ -213,11 +213,12 @@ L.sb_karma      = "Karma"
 
 L.sb_info_help  = "Search this player's body, and you can review the results here."
 
-L.sb_tag_friend = "FRIEND"
-L.sb_tag_susp   = "SUSPECT"
-L.sb_tag_avoid  = "AVOID"
-L.sb_tag_kill   = "KILL"
-L.sb_tag_miss   = "MISSING"
+L.sb_tag_friend   = "FRIEND"
+L.sb_tag_susp     = "SUSPECT"
+L.sb_tag_avoid    = "AVOID"
+L.sb_tag_kill     = "KILL"
+L.sb_tag_miss     = "MISSING"
+L.sb_tag_innocent = "INNOCENT"
 
 --- Help and settings menu (F1)
 
@@ -561,6 +562,29 @@ L.lifesign_limit        = "Tracked list is full. You cannot scan any more player
 L.lifesign_hud_title    = "TRACKED SUBJECTS"
 L.lifesign_alive        = "ALIVE"
 L.lifesign_dead         = "DECEASED"
+
+-- Traitor Tester parts objective
+L.tester_parts_scattered = "{num} Traitor Tester Parts are scattered around the map. Bring them all to one place to expose a traitor."
+L.tester_parts_revealed  = "The Traitor Tester exposed {player} as a traitor!"
+L.tester_parts_nobody    = "The Traitor Tester was assembled, but there were no traitors left to expose."
+L.tester_parts_hud       = "TESTER PARTS HELD"
+
+L.tester_part_name       = "Traitor Tester Part"
+L.tester_part_desc       = [[
+One piece of the Traitor Tester.
+
+You can only carry one. Gather every part
+in one place to expose a random traitor.]]
+
+L.tester_part_help       = "Bring this to the other parts to expose a traitor"
+L.tester_part_picked     = "You picked up a Traitor Tester Part. Take it to the others!"
+
+L.tester_parts_destroyed = "A Traitor Tester Part was destroyed! Only {num} are needed now."
+L.tester_parts_sabotaged = "A Traitor Tester Part was destroyed by one of your own. The Tester can no longer be assembled this round."
+
+L.tester_part_drain      = "The Traitor Tester Part you are carrying drained one of your credits."
+L.tester_part_debt       = "You are in credit debt. The Traitor Tester Part took your {item}!"
+L.tester_part_debt_empty = "You are in credit debt, but have nothing left for the Traitor Tester Part to take."
 
 -- Mystery Box
 L.mysterybox_name          = "Mystery Box"

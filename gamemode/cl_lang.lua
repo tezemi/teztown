@@ -401,7 +401,11 @@ local styledmessages = {
    },
 
    alert = {
-      "body_found"
+      "body_found",
+
+      "tester_parts_revealed",
+      "tester_parts_destroyed",
+      "tester_parts_sabotaged"
    }
 };
 

@@ -131,12 +131,21 @@ vgui.Register("TTTScorePlayerInfoSearch", PANEL, "TTTScorePlayerInfoBase")
 --- Living player, tags etc
 
 local tags = {
-   {txt="sb_tag_friend", color=COLOR_GREEN},
-   {txt="sb_tag_susp",   color=COLOR_YELLOW},
-   {txt="sb_tag_avoid",  color=Color(255, 150, 0, 255)},
-   {txt="sb_tag_kill",   color=COLOR_RED},
-   {txt="sb_tag_miss",   color=Color(130, 190, 130, 255)}
+   {txt="sb_tag_friend",   color=COLOR_GREEN},
+   {txt="sb_tag_susp",     color=COLOR_YELLOW},
+   {txt="sb_tag_avoid",    color=Color(255, 150, 0, 255)},
+   {txt="sb_tag_kill",     color=COLOR_RED},
+   {txt="sb_tag_miss",     color=Color(130, 190, 130, 255)},
+   {txt="sb_tag_innocent", color=Color(80, 200, 80, 255)}
 };
+
+-- Exposed so other systems (eg. the Traitor Tester) can set ply.sb_tag to
+-- the exact table the UI compares against, by name, rather than a lookalike
+-- copy that wouldn't be == to it.
+SB_TAGS = {}
+for _, tag in ipairs(tags) do
+   SB_TAGS[tag.txt] = tag
+end
 
 local PANEL = {}
 

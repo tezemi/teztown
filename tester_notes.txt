@@ -1,0 +1,9 @@
+New Mechanic: Traitor Tester
+
+When enabled, a specified number of "Traitor Tester Parts" will appear randomly around the map. The innocents should work to find all parts, and bring them to a central location. When they do: a random traitor is revealed to the entire server!
+
+Be careful, traitors can see where every part is, and might be inclined to make sure innocent players don't find them. Carrying a part occupies your main weapon slot, leaving you even more vulnerable while you have one. If you're thinking about testing traitors by having them pick up a part, there's nothing stopping traitors from picking up the parts themselves!
+
+Traitors... you might be thinking, "What's stopping me from just picking up all the parts and hiding them, or holding onto them all round?" Well, a few things. First, when you pick up a part, it instantly drains a credit. The longer you hold onto it, the more credits you'll lose (dropping doesn't reset the timer). Don't have any credits? That's okay, if you're still holding onto a traitor tester part, you'll start losing your equipment! Okay, fine, "I'll just destroy the part," you say. That's bad too, if you destroy a part, it just lowers the number of parts needed to activate the test. So, really, you should just try to prevent innocents from finding them.
+
+A final note for innocents: if you destroy a part, it ruins the whole thing. Just be good and take it to your friends.
