@@ -1056,10 +1056,37 @@ function CLSCORE:Init(events)
    self.Events = events
 end
 
+-- TF2's personalised win/lose stings, falling back to CSS's more generic
+-- round-outcome jingles for anyone who doesn't have TF2 mounted. Silent if
+-- neither game's content is available.
+local RESULT_SOUNDS = {
+   won  = {"misc/your_team_won.wav",  "radio/terwin.wav"},
+   lost = {"misc/your_team_lost.wav", "radio/ctwin.wav"}
+};
+
+function CLSCORE:PlayResultSound(events)
+   local win = WIN_NONE
+   for i = #events, 1, -1 do
+      if events[i].id == EVENT_FINISH then
+         win = events[i].win
+         break
+      end
+   end
+
+   if win == WIN_NONE then return end
+
+   -- Detectives are on the innocent side, so "not a traitor" covers both.
+   local is_traitor = table.HasValue(self.TraitorIDs, LocalPlayer():SteamID())
+   local won = (win == WIN_TRAITOR) == is_traitor
+
+   util.PlayFirstAvailableSound(RESULT_SOUNDS[won and "won" or "lost"])
+end
+
 function CLSCORE:ReportEvents(events)
    self:Reset()
 
    self:Init(events)
+   self:PlayResultSound(events)
    self:ShowMVPPanel()
 end
 

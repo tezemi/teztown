@@ -101,6 +101,20 @@ if CLIENT then
    function IsOffScreen(scrpos)
       return not scrpos.visible or scrpos.x < 0 or scrpos.y < 0 or scrpos.x > ScrW() or scrpos.y > ScrH()
    end
+
+   -- Plays the first sound in a list (paths relative to sound/) that this
+   -- client actually has content for, eg. a sound from a game they may not
+   -- own mounted, with fallbacks. Silent (returns false) if none are found.
+   function util.PlayFirstAvailableSound(paths)
+      for _, path in ipairs(paths) do
+         if file.Exists("sound/" .. path, "GAME") then
+            surface.PlaySound(path)
+            return true
+         end
+      end
+
+      return false
+   end
 end
 
 function AccessorFuncDT(tbl, varname, name)
