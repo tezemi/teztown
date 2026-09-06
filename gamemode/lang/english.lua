@@ -16,6 +16,9 @@ L.role_kingpin_desc = "You have no traitor chat and do not know your fellow trai
 L.role_spy = "Spy"
 L.role_spy_desc = "You appear as a Traitor to the Traitor team. While you're alive, their team chat is jammed and none of them can hold more than 1 credit."
 
+L.role_rogue = "Rogue"
+L.role_rogue_desc = "You are on nobody's side. You appear as an Innocent to everyone, but you shop from the Traitor equipment list and start with 3 credits. You win alone by being the last Traitor or Innocent standing."
+
 L.variant_you_are    = "You are a {variant}!"
 L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
 L.variant_revealed   = "{player} is your {variant}!"
@@ -902,6 +905,7 @@ L.report_save_result = "The Event Log has been saved to:"
 -- Big title window
 L.hilite_win_traitors = "THE TRAITORS WIN"
 L.hilite_win_innocent = "THE INNOCENT WIN"
+L.hilite_win_neutral  = "THE {variant} WINS"
 
 -- MVP end screen
 L.report_mvp_title    = "MVP"
@@ -982,6 +986,7 @@ L.ev_start       = "The round started"
 L.ev_win_traitor = "The dastardly traitors won the round!"
 L.ev_win_inno    = "The lovable innocent terrorists won the round!"
 L.ev_win_time    = "The traitors ran out of time and lost!"
+L.ev_win_neutral = "A neutral player won the round on their own!"
 
 --- Awards/highlights
 

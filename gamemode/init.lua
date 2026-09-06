@@ -28,6 +28,7 @@ AddCSLuaFile("weaponry_shd.lua")
 AddCSLuaFile("roles_shd.lua")
 AddCSLuaFile("roles_kingpin.lua")
 AddCSLuaFile("roles_spy.lua")
+AddCSLuaFile("roles_rogue.lua")
 AddCSLuaFile("cl_radio.lua")
 AddCSLuaFile("cl_radar.lua")
 AddCSLuaFile("cl_tbuttons.lua")
@@ -719,6 +720,9 @@ function PrintResultMessage(type)
       ServerLog("Result: traitors win.\n")
    elseif type == WIN_INNOCENT then
       ServerLog("Result: innocent win.\n")
+   elseif type == WIN_NEUTRAL then
+      local who = IsValid(GAMEMODE.NeutralWinner) and GAMEMODE.NeutralWinner:Nick() or "a neutral player"
+      ServerLog(Format("Result: neutral win (%s).\n", who))
    else
       ServerLog("Result: unknown victory condition!\n")
    end
@@ -802,12 +806,29 @@ function GM:TTTCheckForWin()
       return mw
    end
 
+   -- Neutral-base variants (eg. the Rogue) bring their own win condition
+   -- rather than joining the traitor/innocent tally below, so they're
+   -- checked first and can win even while both real sides still have
+   -- someone alive.
+   for _, ply in ipairs(player.GetAll()) do
+      if IsValid(ply) and ply:Alive() and ply:IsTerror() and ply:IsNeutral() then
+         local vdata = ply:GetRoleVariantData()
+         if vdata and vdata.win_check and vdata.win_check(ply) then
+            GAMEMODE.NeutralWinner = ply
+            return WIN_NEUTRAL
+         end
+      end
+   end
+
    local traitor_alive = false
    local innocent_alive = false
+   local neutral_alive = false
    for k,v in ipairs(player.GetAll()) do
       if v:Alive() and v:IsTerror() then
          if v:GetTraitor() then
             traitor_alive = true
+         elseif v:IsNeutral() then
+            neutral_alive = true
          else
             innocent_alive = true
          end
@@ -816,6 +837,14 @@ function GM:TTTCheckForWin()
       if traitor_alive and innocent_alive then
          return WIN_NONE --early out
       end
+   end
+
+   -- A neutral is an enemy of both sides, so neither of them has finished the
+   -- job while one is still up -- the traitors have to kill the Rogue like
+   -- any innocent, and the innocents have to kill him like any traitor. His
+   -- own win_check above already had its chance to end it the other way.
+   if neutral_alive then
+      return WIN_NONE
    end
 
    if traitor_alive and not innocent_alive then
@@ -853,10 +882,14 @@ end
 
 function SelectRoles()
    local choices = {}
+   -- Nothing reads the neutral bucket (only the traitor/innocent ones bias
+   -- the picks below), but last round's Rogue still has to land somewhere --
+   -- without the key, table.insert below errors out mid-selection.
    local prev_roles = {
       [ROLE_INNOCENT] = {},
       [ROLE_TRAITOR] = {},
-      [ROLE_DETECTIVE] = {}
+      [ROLE_DETECTIVE] = {},
+      [ROLE_NEUTRAL] = {}
    };
 
    if not GAMEMODE.LastRole then GAMEMODE.LastRole = {} end

@@ -28,7 +28,8 @@ local bg_colors = {
    noround = Color(100,100,100,200),
    traitor = Color(200, 25, 25, 200),
    innocent = Color(25, 200, 25, 200),
-   detective = Color(25, 25, 200, 200)
+   detective = Color(25, 25, 200, 200),
+   neutral = Color(150, 40, 180, 200)
 };
 
 local health_colors = {
@@ -123,6 +124,8 @@ local function DrawBg(x, y, width, height, client)
       col = bg_colors.traitor
    elseif client:GetDetective() then
       col = bg_colors.detective
+   elseif client:GetNeutral() then
+      col = bg_colors.neutral
    end
 
    draw.RoundedBox(8, x, y, tw, th, col)
@@ -262,9 +265,11 @@ local function InfoPaint(client)
       -- name for everyone else.
       text = client:GetRoleVariantString()
 
+      -- hud_color overrides just this text, for a variant whose own colour
+      -- would otherwise sit on a same-coloured role tab (see roles_shd.lua).
       local variant = client:GetRoleVariantData()
-      if variant and variant.color then
-         role_color = variant.color
+      if variant then
+         role_color = variant.hud_color or variant.color or role_color
       end
    else
       text = L[ roundstate_string[round_state] ]

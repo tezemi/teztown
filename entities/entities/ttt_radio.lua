@@ -45,7 +45,9 @@ function ENT:Initialize()
 end
 
 function ENT:UseOverride(activator)
-   if IsValid(activator) and activator:IsPlayer() and activator:IsActiveTraitor() then
+   -- Shop role rather than real role, so a variant shopping from the
+   -- traitor catalogue (eg. the Rogue) can pick this back up too.
+   if IsValid(activator) and activator:IsPlayer() and activator:IsActive() and ROLES.ShopRole(activator) == ROLE_TRAITOR then
       local prints = self.fingerprints or {}
       self:Remove()
 
@@ -267,7 +269,7 @@ if SERVER then
 
 
    local function RadioCmd(ply, cmd, args)
-      if not IsValid(ply) or not ply:IsActiveTraitor() then return end
+      if not IsValid(ply) or not ply:IsActive() or ROLES.ShopRole(ply) != ROLE_TRAITOR then return end
       if not (#args == 2) then return end
 
       local eidx = tonumber(args[1])

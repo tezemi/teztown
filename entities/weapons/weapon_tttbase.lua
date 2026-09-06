@@ -159,8 +159,10 @@ if CLIENT then
       local bright = crosshair_brightness:GetFloat() or 1
 
       -- somehow it seems this can be called before my player metatable
-      -- additions have loaded
-      if client.IsTraitor and client:IsTraitor() then
+      -- additions have loaded. Shop role rather than real role, so a
+      -- variant shopping from the traitor catalogue (eg. the Rogue) also
+      -- gets the traitor crosshair rather than reading as innocent.
+      if client.IsTraitor and (client:IsTraitor() or ROLES.ShopRole(client) == ROLE_TRAITOR) then
          surface.SetDrawColor(255 * bright,
                               50 * bright,
                               50 * bright,

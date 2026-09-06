@@ -103,11 +103,14 @@ end
 function SCORE:HandleSelection()
    local traitors = {}
    local detectives = {}
+   local neutrals = {}
    for k, ply in ipairs(player.GetAll()) do
       if ply:GetTraitor() then
          table.insert(traitors, ply:SteamID())
       elseif ply:GetDetective() then
          table.insert(detectives, ply:SteamID())
+      elseif ply:GetNeutral() then
+         table.insert(neutrals, ply:SteamID())
       end
    end
 
@@ -119,7 +122,7 @@ function SCORE:HandleSelection()
       if id then variants[ply:SteamID()] = id end
    end
 
-   self:AddEvent({id=EVENT_SELECTED, traitor_ids=traitors, detective_ids=detectives, variants=variants})
+   self:AddEvent({id=EVENT_SELECTED, traitor_ids=traitors, detective_ids=detectives, neutral_ids=neutrals, variants=variants})
 end
 
 function SCORE:HandleBodyFound(finder, found)
@@ -278,7 +281,15 @@ function SCORE:RoundStateChange(newstate)
 end
 
 function SCORE:RoundComplete(wintype)
-   self:AddEvent({id=EVENT_FINISH, win=wintype})
+   -- The round report can only name the winner for a neutral win -- the
+   -- traitor/innocent sides are whole teams, but a neutral variant (eg. the
+   -- Rogue) wins alone, so its role text needs to know which one it was.
+   local winner_sid = nil
+   if wintype == WIN_NEUTRAL and IsValid(GAMEMODE.NeutralWinner) then
+      winner_sid = GAMEMODE.NeutralWinner:SteamID()
+   end
+
+   self:AddEvent({id=EVENT_FINISH, win=wintype, winner_sid=winner_sid})
 end
 
 function SCORE:Reset()

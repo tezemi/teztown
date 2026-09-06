@@ -56,7 +56,8 @@ local TypeToMat = {
    eq_armor="armor",
    eq_radar="radar",
    eq_disg="disguise",
-   role={[ROLE_TRAITOR]="traitor", [ROLE_DETECTIVE]="det", [ROLE_INNOCENT]="inno"},
+   -- Neutrals read as innocent in the search text, so use that icon to match
+   role={[ROLE_TRAITOR]="traitor", [ROLE_DETECTIVE]="det", [ROLE_INNOCENT]="inno", [ROLE_NEUTRAL]="inno"},
    c4="code",
    dmg=DmgToMat,
    wep=WeaponToIcon,

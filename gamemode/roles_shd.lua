@@ -14,6 +14,9 @@
 --      name    = "role_hypnotist",  -- language string key
 --      base    = ROLE_TRAITOR,      -- base role it sits on
 --      color   = Color(180, 50, 50),
+--      -- optional: HUD role-text colour, when `color` would clash with the
+--      -- base role's HUD tab. Defaults to `color`.
+--      hud_color = COLOR_BLACK,
 --
 --      enabled = false,  -- ttt_variant_hypnotist_enabled
 --      pct     = 0.25,   -- ttt_variant_hypnotist_pct     (of all players)
@@ -58,6 +61,18 @@
 --                     player holding credit_cap_role can carry more than
 --                     credit_cap_amount credits -- every gain is clamped the
 --                     moment it happens (player_ext.lua's SetCredits)
+--   shop_as_role   -- a ROLE_ value: the equipment menu and purchase checks
+--                     treat this player as if they held that role instead of
+--                     their real one (ROLES.ShopRole, below). Their real role
+--                     is untouched, so eg. credit_cap_role still keys off
+--                     what they actually are. (cl_equip.lua, weaponry.lua)
+--   win_check      -- function(ply) -> bool, checked every win-condition
+--                     poll for each living holder. The first one to return
+--                     true wins the round for their side (WIN_NEUTRAL) and
+--                     is recorded as GAMEMODE.NeutralWinner. Neutral-base
+--                     variants need this since they have no built-in win
+--                     condition the way traitors/innocents do.
+--                     (init.lua's TTTCheckForWin)
 --
 -- Selection itself lives in roles.lua (server), and the whole system is off
 -- unless ttt_role_variants is 1.
@@ -144,6 +159,18 @@ function plymeta:GetRoleVariantString()
    if not v then return self:GetRoleString() end
 
    return LANG.TryTranslation and LANG.TryTranslation(v.name) or v.name
+end
+
+-- The role a player should shop as (see shop_as_role above) -- their real
+-- role, unless a variant overrides it. Shared because both the client's
+-- equipment menu and the server's purchase validation need to agree on it.
+function ROLES.ShopRole(ply)
+   if not IsValid(ply) then return ROLE_INNOCENT end
+
+   local v = ply:GetRoleVariantData()
+   if v and v.shop_as_role then return v.shop_as_role end
+
+   return ply:GetRole()
 end
 
 if SERVER then

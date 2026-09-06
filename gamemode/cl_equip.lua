@@ -210,7 +210,7 @@ local function TraitorMenuPopup()
    dlist:SetPadding(4)
 
 
-   local items = GetEquipmentForRole(ply:GetRole())
+   local items = GetEquipmentForRole(ROLES.ShopRole(ply))
 
    local to_select = nil
    for k, item in pairs(items) do
@@ -228,7 +228,7 @@ local function TraitorMenuPopup()
          if ItemIsWeapon(item) then
             local slot = vgui.Create("SimpleIconLabelled")
             slot:SetIcon("vgui/ttt/slotcap")
-            slot:SetIconColor(color_slot[ply:GetRole()] or COLOR_GREY)
+            slot:SetIconColor(color_slot[ROLES.ShopRole(ply)] or COLOR_GREY)
             slot:SetIconSize(16)
 
             slot:SetIconText(item.slot)
@@ -415,7 +415,10 @@ concommand.Add("ttt_cl_traitorpopup_close", ForceCloseTraitorMenu)
 
 function GM:OnContextMenuOpen()
    local r = GetRoundState()
-   if r == ROUND_ACTIVE and not (LocalPlayer():GetTraitor() or LocalPlayer():GetDetective()) then
+   -- Shop role, so a variant that buys from someone else's catalogue (eg. the
+   -- Rogue, shopping as a traitor) can actually open the menu.
+   local shop_role = ROLES.ShopRole(LocalPlayer())
+   if r == ROUND_ACTIVE and not (shop_role == ROLE_TRAITOR or shop_role == ROLE_DETECTIVE) then
       return
    elseif r == ROUND_POST or r == ROUND_PREP then
       CLSCORE:Toggle()

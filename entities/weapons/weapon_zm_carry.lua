@@ -480,7 +480,10 @@ end
 
 function SWEP:PinRagdoll()
    if not pin_rag:GetBool() then return end
-   if (not self:GetOwner():IsTraitor()) and (not pin_rag_inno:GetBool()) then return end
+
+   -- Shop role rather than real role, so a variant shopping from the
+   -- traitor catalogue (eg. the Rogue) also gets this traitor perk.
+   if (ROLES.ShopRole(self:GetOwner()) != ROLE_TRAITOR) and (not pin_rag_inno:GetBool()) then return end
 
    local rag = self.EntHolding
    local ply = self:GetOwner()
@@ -584,7 +587,7 @@ if CLIENT then
       if self.dt.can_rag_pin and IsValid(self.dt.carried_rag) then
          local client = LocalPlayer()
 
-         if not client:IsSpec() and (self.dt.can_rag_pin_inno or client:IsTraitor()) then
+         if not client:IsSpec() and (self.dt.can_rag_pin_inno or ROLES.ShopRole(client) == ROLE_TRAITOR) then
             local tr = util.TraceLine({start  = client:EyePos(),
                endpos = client:EyePos() + (client:GetAimVector() * PIN_RAG_RANGE),
                filter = {client, self, self.dt.carried_rag},

@@ -45,6 +45,11 @@ local function GetLoadoutWeapons(r)
          end
       end
 
+      -- Neutral roles (eg. the Rogue) have no base-selection loadout of
+      -- their own -- they get the same baseline items as innocents
+      -- (unarmed, crowbar, carry tool), not zero.
+      tbl[ROLE_NEUTRAL] = tbl[ROLE_INNOCENT]
+
       loadout_weapons = tbl
    end
 
@@ -334,7 +339,10 @@ end
 local function OrderEquipment(ply, cmd, args)
    if not IsValid(ply) or #args != 1 then return end
 
-   if not (ply:IsActiveTraitor() or ply:IsActiveDetective()) then return end
+   -- Shop role rather than real role, so a variant with shop_as_role (eg.
+   -- the Rogue shopping as a traitor) can buy despite not really being one.
+   local shop_role = ROLES.ShopRole(ply)
+   if not (ply:IsActive() and (shop_role == ROLE_TRAITOR or shop_role == ROLE_DETECTIVE)) then return end
 
    -- it's an item if the arg is an id instead of an ent name
    local id = args[1]
@@ -363,7 +371,7 @@ local function OrderEquipment(ply, cmd, args)
       id = tonumber(id)
 
       -- item whitelist check
-      local allowed = GetEquipmentItem(ply:GetRole(), id)
+      local allowed = GetEquipmentItem(shop_role, id)
 
       if not allowed then
          print(ply, "tried to buy item not buyable for his class:", id)
@@ -384,7 +392,7 @@ local function OrderEquipment(ply, cmd, args)
       end
    elseif swep_table then
       -- weapon whitelist check
-      if not table.HasValue(swep_table.CanBuy, ply:GetRole()) then
+      if not table.HasValue(swep_table.CanBuy, shop_role) then
          print(ply, "tried to buy weapon his role is not permitted to buy")
          return
       end

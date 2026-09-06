@@ -111,6 +111,34 @@ local function WasAvoidable(attacker, victim, dmginfo)
    return false
 end
 
+-- Classifies attacker hurting/killing victim for karma purposes:
+--   "friendly" -- same side, penalise the attacker
+--   "heroic"   -- a non-traitor taking down a traitor, reward the attacker
+--   nil        -- no karma effect either way
+--
+-- Neutral variants (eg. the Rogue) are on nobody's side, so an interaction
+-- involving one is never friendly fire in either direction -- a non-traitor
+-- taking one down is treated the same as taking down a traitor (heroic),
+-- while the neutral's own kills/hits (of anyone) don't move their karma at
+-- all, since hunting both sides is simply their job, not an atrocity.
+local function ClassifyAttack(attacker, victim)
+   if attacker:IsNeutral() or victim:IsNeutral() then
+      if (not attacker:IsNeutral()) and (not attacker:GetTraitor()) and victim:IsNeutral() then
+         return "heroic"
+      end
+
+      return nil
+   end
+
+   if attacker:GetTraitor() == victim:GetTraitor() then
+      return "friendly"
+   elseif (not attacker:GetTraitor()) and victim:GetTraitor() then
+      return "heroic"
+   end
+
+   return nil
+end
+
 -- Handle karma change due to one player damaging another. Damage must not have
 -- been applied to the victim yet, but must have been scaled according to the
 -- damage factor of the attacker.
@@ -122,7 +150,9 @@ function KARMA.Hurt(attacker, victim, dmginfo)
    -- Ignore excess damage
    local hurt_amount = math.min(victim:Health(), dmginfo:GetDamage())
 
-   if attacker:GetTraitor() == victim:GetTraitor() then
+   local class = ClassifyAttack(attacker, victim)
+
+   if class == "friendly" then
       if WasAvoidable(attacker, victim, dmginfo) then return end
 
       local penalty = KARMA.GetHurtPenalty(victim:GetLiveKarma(), hurt_amount)
@@ -134,7 +164,7 @@ function KARMA.Hurt(attacker, victim, dmginfo)
       if IsDebug() then
          print(Format("%s (%f) attacked %s (%f) for %d and got penalised for %f", attacker:Nick(), attacker:GetLiveKarma(), victim:Nick(), victim:GetLiveKarma(), hurt_amount, penalty))
       end
-   elseif (not attacker:GetTraitor()) and victim:GetTraitor() then
+   elseif class == "heroic" then
       local reward = KARMA.GetHurtReward(hurt_amount)
       reward = KARMA.GiveReward(attacker, reward)
 
@@ -151,7 +181,9 @@ function KARMA.Killed(attacker, victim, dmginfo)
    if attacker == victim then return end
    if not attacker:IsPlayer() or not victim:IsPlayer() then return end
 
-   if attacker:GetTraitor() == victim:GetTraitor() then
+   local class = ClassifyAttack(attacker, victim)
+
+   if class == "friendly" then
       -- don't penalise attacker for stupid victims
       if WasAvoidable(attacker, victim, dmginfo) then return end
 
@@ -164,7 +196,7 @@ function KARMA.Killed(attacker, victim, dmginfo)
       if IsDebug() then
          print(Format("%s (%f) killed %s (%f) and gets penalised for %f", attacker:Nick(), attacker:GetLiveKarma(), victim:Nick(), victim:GetLiveKarma(), penalty))
       end
-   elseif (not attacker:GetTraitor()) and victim:GetTraitor() then
+   elseif class == "heroic" then
       local reward = KARMA.GetKillReward()
       reward = KARMA.GiveReward(attacker, reward)
 

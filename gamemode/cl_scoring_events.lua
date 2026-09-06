@@ -50,6 +50,8 @@ Event(EVENT_FINISH,
                      return T("ev_win_inno")
                   elseif e.win == WIN_TIMELIMIT then
                      return T("ev_win_time")
+                  elseif e.win == WIN_NEUTRAL then
+                     return T("ev_win_neutral")
                   end
                end,
         icon = function(e)
@@ -57,6 +59,8 @@ Event(EVENT_FINISH,
                      return star_icon, "Traitors won"
                   elseif e.win == WIN_INNOCENT then
                      return star_icon, "Innocents won"
+                  elseif e.win == WIN_NEUTRAL then
+                     return star_icon, "Neutral won"
                   else
                      return star_icon, "Timelimit"
                   end

@@ -21,7 +21,7 @@ function WEPS.GetClass(wep)
 end
 
 function WEPS.DisguiseToggle(ply)
-   if IsValid(ply) and ply:IsActiveTraitor() then
+   if IsValid(ply) and ply:IsActive() and ROLES.ShopRole(ply) == ROLE_TRAITOR then
       if not ply:GetNWBool("disguised", false) then
          RunConsoleCommand("ttt_set_disguise", "1")
       else

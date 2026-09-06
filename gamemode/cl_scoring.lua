@@ -12,6 +12,7 @@ CLSCORE.Events = {}
 CLSCORE.Scores = {}
 CLSCORE.TraitorIDs = {}
 CLSCORE.DetectiveIDs = {}
+CLSCORE.NeutralIDs = {}
 CLSCORE.Players = {}
 CLSCORE.StartTime = 0
 CLSCORE.Panel = nil
@@ -346,6 +347,12 @@ CLSCORE.WinTypes = {
       BoxColor = Color(190, 5, 5, 255),
       TextColor = COLOR_WHITE,
       BackgroundColor = Color(50, 50, 50, 255)
+   },
+   [WIN_NEUTRAL] = {
+      Text = "hilite_win_neutral",
+      BoxColor = Color(150, 110, 190, 255),
+      TextColor = COLOR_WHITE,
+      BackgroundColor = Color(50, 50, 50, 255)
    }
 }
 
@@ -354,6 +361,29 @@ CLSCORE.WinTypes[WIN_TIMELIMIT] = CLSCORE.WinTypes[WIN_INNOCENT]
 
 -- The default wintype if no EVENT_FINISH is specified
 CLSCORE.WinTypes.Default = CLSCORE.WinTypes[WIN_INNOCENT]
+
+-- Traitor/innocent wins are whole-team, so a static title works, but a
+-- neutral variant (eg. the Rogue) wins alone -- the banner should name which
+-- one, not just say "a neutral player". Returns a copy of the WinTypes entry
+-- with a RawText field the render code prefers over the static Text key.
+function CLSCORE:ResolveWinTitle(e)
+   local title = self.WinTypes[e.win] or self.WinTypes.Default
+   if e.win != WIN_NEUTRAL then return title end
+
+   local v = ROLES.Get(self.Variants[e.winner_sid])
+   local rolename = v and LANG.TryTranslation(v.name) or T("neutral")
+
+   title = table.Copy(title)
+   title.RawText = string.upper(PT("hilite_win_neutral", {variant = rolename}))
+
+   return title
+end
+
+-- Prefer a pre-resolved RawText (see ResolveWinTitle) over the static Text
+-- lang key, so a neutral win's title can name the actual winning variant.
+local function WinTitleText(title)
+   return title.RawText or T(title.Text or CLSCORE.WinTypes.Default.Text)
+end
 
 function CLSCORE:BuildHilitePanel(dpanel, title, starttime, endtime)
    local w, h = dpanel:GetSize()
@@ -369,7 +399,7 @@ function CLSCORE:BuildHilitePanel(dpanel, title, starttime, endtime)
 
    local winlbl = vgui.Create("DLabel", dpanel)
    winlbl:SetFont("WinHuge")
-   winlbl:SetText( T(title.Text or self.WinTypes.Default.Text) )
+   winlbl:SetText( WinTitleText(title) )
    winlbl:SetTextColor(title.TextColor or self.WinTypes.Default.TextColor)
    winlbl:SizeToContents()
    local xwin = (w - winlbl:GetWide())/2
@@ -454,14 +484,14 @@ function CLSCORE:ShowPanel()
       local e = events[i]
       if e.id == EVENT_FINISH then
          endtime = e.t
-         title = self.WinTypes[e.win]
+         title = self:ResolveWinTitle(e)
          break
       end
    end
 
    -- size the panel based on the win text w/ 88px horizontal padding and 44px veritcal padding
    surface.SetFont("WinHuge")
-   local w, h = surface.GetTextSize( T(title.Text or self.WinTypes.Default.Text) )
+   local w, h = surface.GetTextSize( WinTitleText(title) )
 
    -- w + DPropertySheet padding (8) + winlbl padding (30) + offset margin (margin * 2) + size margin (margin)
    w, h = math.max(700, w + 38 + margin * 3), 500
@@ -551,7 +581,7 @@ function CLSCORE:ShowMVPPanel(is_debug)
    for i = #events, 1, -1 do
       local e = events[i]
       if e.id == EVENT_FINISH then
-         title = self.WinTypes[e.win]
+         title = self:ResolveWinTitle(e)
          break
       end
    end
@@ -589,6 +619,7 @@ function CLSCORE:ShowMVPPanel(is_debug)
       local base
       if table.HasValue(self.TraitorIDs, sid) then base = T("traitor")
       elseif table.HasValue(self.DetectiveIDs, sid) then base = T("detective")
+      elseif table.HasValue(self.NeutralIDs, sid) then base = T("neutral")
       else base = T("innocent") end
 
       -- eg. "Traitor - Kingpin"
@@ -653,7 +684,7 @@ function CLSCORE:ShowMVPPanel(is_debug)
    closex.DoClick = function() dpanel:Close() end
 
    -- Win title, same big-box style the old panel used
-   local titletext = T(title.Text or self.WinTypes.Default.Text)
+   local titletext = WinTitleText(title)
 
    surface.SetFont("WinHuge")
    local tw, th = surface.GetTextSize(titletext)
@@ -1029,6 +1060,7 @@ function CLSCORE:Reset()
    self.Events = {}
    self.TraitorIDs = {}
    self.DetectiveIDs = {}
+   self.NeutralIDs = {}
    self.Variants = {}
    self.Scores = {}
    self.Players = {}
@@ -1040,7 +1072,7 @@ end
 function CLSCORE:Init(events)
    -- Get start time, traitors, detectives, scores, and nicks
    local starttime = 0
-   local traitors, detectives, variants
+   local traitors, detectives, neutrals, variants
    local scores, nicks = {}, {}
    
    -- Used to bail out early once one of each event type had been seen, on
@@ -1060,6 +1092,7 @@ function CLSCORE:Init(events)
       elseif e.id == EVENT_SELECTED then
          traitors = e.traitor_ids
          detectives = e.detective_ids
+         neutrals = e.neutral_ids
          variants = e.variants
       elseif e.id == EVENT_SPAWN then
          scores[e.sid] = ScoreInit()
@@ -1069,6 +1102,7 @@ function CLSCORE:Init(events)
 
    if traitors == nil then traitors = {} end
    if detectives == nil then detectives = {} end
+   if neutrals == nil then neutrals = {} end
 
    scores = ScoreEventLog(events, scores, traitors, detectives)
 
@@ -1076,6 +1110,7 @@ function CLSCORE:Init(events)
    self.Scores = scores
    self.TraitorIDs = traitors
    self.DetectiveIDs = detectives
+   self.NeutralIDs = neutrals
    self.Variants = variants or {}
    self.StartTime = starttime
    self.Events = events
@@ -1100,9 +1135,19 @@ function CLSCORE:PlayResultSound(events)
 
    if win == WIN_NONE then return end
 
-   -- Detectives are on the innocent side, so "not a traitor" covers both.
-   local is_traitor = table.HasValue(self.TraitorIDs, LocalPlayer():SteamID())
-   local won = (win == WIN_TRAITOR) == is_traitor
+   local mysid = LocalPlayer():SteamID()
+   local won
+
+   if win == WIN_NEUTRAL then
+      -- Neutral wins are solo, not team-based -- only the neutral(s) who
+      -- actually won hear the win jingle, everyone else (traitor, innocent,
+      -- or any other neutral who wasn't the one who won) hears the loss one.
+      won = table.HasValue(self.NeutralIDs, mysid)
+   else
+      -- Detectives are on the innocent side, so "not a traitor" covers both.
+      local is_traitor = table.HasValue(self.TraitorIDs, mysid)
+      won = (win == WIN_TRAITOR) == is_traitor
+   end
 
    util.PlayFirstAvailableSound(RESULT_SOUNDS[won and "won" or "lost"])
 end

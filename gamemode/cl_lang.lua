@@ -217,7 +217,8 @@ end
 local bgcolor = {
    [ROLE_TRAITOR]   = Color(150, 0, 0, 200),
    [ROLE_DETECTIVE] = Color(0, 0, 150, 200),
-   [ROLE_INNOCENT]  = Color(0, 50,  0, 200)
+   [ROLE_INNOCENT]  = Color(0, 50,  0, 200),
+   [ROLE_NEUTRAL]   = Color(80, 0, 110, 200)
 };
 
 -- Text colour used for chat messages that relate to a particular role
@@ -225,7 +226,8 @@ local bgcolor = {
 local rolecolor_text = {
    innocent  = Color(80, 200, 80),
    traitor   = Color(220, 60, 60),
-   detective = Color(80, 140, 255)
+   detective = Color(80, 140, 255),
+   neutral   = Color(175, 105, 215)
 };
 
 -- Table of styles that can take a string and display it in some position,

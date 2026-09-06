@@ -70,7 +70,7 @@ function DISGUISE.CreateMenu(parent)
 end
 
 function DISGUISE.Draw(client)
-   if (not client) or (not client:IsActiveTraitor()) then return end
+   if (not client) or (not client:IsActive()) or (ROLES.ShopRole(client) != ROLE_TRAITOR) then return end
    
    if (IsValid(client) and client:GetNWString("disguised_player", "nil") ~= "nil") then
 

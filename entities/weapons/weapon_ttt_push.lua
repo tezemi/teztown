@@ -210,7 +210,9 @@ if CLIENT then
       local nxt = self:GetNextPrimaryFire()
       local charge = self.dt.charge
 
-      if LocalPlayer():IsTraitor() then
+      -- Shop role rather than real role, so a variant shopping from the
+      -- traitor catalogue (eg. the Rogue) also gets the traitor colouring.
+      if ROLES.ShopRole(LocalPlayer()) == ROLE_TRAITOR then
          surface.SetDrawColor(255, 0, 0, 255)
       else
          surface.SetDrawColor(0, 255, 0, 255)
@@ -245,7 +247,7 @@ if CLIENT then
 
          surface.DrawOutlinedRect(x - w/2, y - h, w, h)
 
-         if LocalPlayer():IsTraitor() then
+         if ROLES.ShopRole(LocalPlayer()) == ROLE_TRAITOR then
             surface.SetDrawColor(255, 0, 0, 155)
          else
             surface.SetDrawColor(0, 255, 0, 155)
