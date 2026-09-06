@@ -30,6 +30,7 @@ include("cl_radar.lua")
 include("cl_tbuttons.lua")
 include("cl_scoreboard.lua")
 include("cl_tips.lua")
+include("cl_roleinfo.lua") -- defines ROLEINFO, used by the help screen below
 include("cl_help.lua")
 include("cl_hud.lua")
 include("cl_msgstack.lua")

@@ -63,6 +63,10 @@ L.death_role_detective = "a detective"
 L.death_role_innocent  = "innocent"
 L.death_role_neutral   = "neutral"
 
+-- Used instead of the death_role_* keys above when the killer held a role
+-- variant (eg. "a Kingpin", "a Deputy") -- see cl_lang.lua's chat_rolecolour.
+L.death_role_variant   = "a {variant}"
+
 --- Karma
 L.karma_dmg_other  = "Your Karma is {amount}. As a result all damage you deal is reduced by {num}%"
 
@@ -258,11 +262,84 @@ L.sb_tag_innocent = "INNOCENT"
 L.help_title = "Help and Settings"
 
 -- Tabs
+L.help_roles     = "Your Role"
+L.help_roles_tip = "What you are, and what everyone else might be"
+
 L.help_tut     = "Tutorial"
 L.help_tut_tip = "How TTT works, in 6 steps"
 
 L.help_settings = "Settings"
 L.help_settings_tip = "Client-side settings"
+
+-- Role reference tab (cl_roleinfo.lua). The _mech and _psych entries are
+-- newline-separated: one bullet per line.
+L.help_role_current    = "Your current role"
+L.help_role_mech       = "How it works"
+L.help_role_psych      = "Playing it well"
+
+L.help_role_innocent_tag = "Work with the other innocent players to discover the traitors."
+L.help_role_innocent_mech = [[Search bodies to learn who it was, what killed them, and when.
+Tell your teammates when you see something suspicious.
+You win when every traitor is dead, or when the round timer runs out.]]
+L.help_role_innocent_psych = [[Stick with players you trust.
+A wrong kill is worse than no kill at all.
+Investigate bodies to keep track of who is alive and dead.]]
+
+L.help_role_detective_tag = "Confirmed innocent with a target on your back."
+L.help_role_detective_mech = [[Your name goes out to every player the moment the round begins.
+Purchase items like a DNA scanner, health station, defuser and more.
+Every detective is paid credits whenever a detective kills a traitor.]]
+L.help_role_detective_psych = [[Innocents will trust you, but traitors will want you dead.
+Establish who you trust early and try to not get caught out.]]
+
+L.help_role_traitor_tag = "Kill innocents, but don't get caught!"
+L.help_role_traitor_mech = [[You know who every other traitor is, and you can speak to them privately in team chat and team voice.
+You have credits and a shop: C4, silenced pistol, knife, disguiser and more.
+Many maps have traitor-only buttons and doors that only your side can trigger.
+You win when every innocent and detective is dead. If the round timer runs out first, you lose.]]
+L.help_role_traitor_psych = [[The clock is not on your side, but getting kills adds time.
+Use equipment to get kills without drawing attention.
+Your team can hand the round away by dying carelessly. Be strategic.]]
+
+L.help_role_kingpin_tag = "I stole this from Secret Hitler a little."
+L.help_role_kingpin_mech = [[You are a traitor, but you have no traitor chat or voice, and you are never told who your fellow traitors are. Every one of them knows exactly who you are.
+You start with 3 credits above a normal traitor, and earn more every time the traitor side kills a non-traitor.
+You can push credits to a random traitor from the equipment menu. You never find out who received them.
+You are shown the location of any traitor who dies.
+The innocents are told at round start that a Kingpin is funding the traitors, just not who it is.]]
+L.help_role_kingpin_psych = [[Every credit you send out arms a player you will never see.
+You cannot see your own team, so any stranger might be one of them. Kill carefully.
+The innocents know a Kingpin exists from the first minute.
+You can spot your teammates bodies instantly. Use a defib to revive them!]]
+
+L.help_role_spy_tag = "An innocent in disguise."
+L.help_role_spy_mech = [[You're innocent, but every traitor sees you as a fellow traitor; On the scoreboard, on radar, in target ID, and on their round-start ally list.
+While you are alive, traitor team chat and voice are jammed completely.
+While you are alive, no traitor can hold more than 1 credit.
+The traitors are warned at round start that a spy is among them, but not which of them it is.
+No innocent is ever told that you exist.]]
+L.help_role_spy_psych = [[Traitors will be on the lookout for a teammate not getting kills. Make yourself look busy.
+Traitors will buy and kill in front of you. Take them out, or report them to your team.
+The round won't end for traitors while you're still living. If every other innocent is dead, they'll start talking among themselves.]]
+
+L.help_role_deputy_tag = "A detective that can't be fully trusted."
+L.help_role_deputy_mech = [[You are a full detective: the same shop, the same credits, the same equipment.
+Nobody is told you are a detective.
+You have no detective team chat.
+Your corpse reads as a plain innocent when it is searched.
+Bodies you search still broadcast to the whole server, exactly like any other detective's.]]
+L.help_role_deputy_psych = [[Traitors cannot put you at the top of their list if they do not know you are on it.
+Innocents don't know they can trust you, and buying traitor equipment might look suspicious.
+You can tell innocents your role... but traitors can lie and do the same.]]
+
+L.help_role_rogue_tag = "Playing the long game."
+L.help_role_rogue_mech = [[You have no allies and you appear as an innocent to absolutely everyone.
+You buy from the traitor shop and start with extra credits.
+You win by being the last terrorist alive. Every traitor and every innocent has to be dead.
+Neither side can win the round while you are still living.
+If the round timer runs out, you lose.]]
+L.help_role_rogue_psych = [[You need everyone dead, but you cannot fight everyone at once. Let the traitors get some kills, then clean up the rest.
+Nobody knows a third side is present. To innocents you may seem like just another traitor, but traitors will really be thrown off.]]
 
 -- Settings
 L.set_title_gui = "Interface settings"

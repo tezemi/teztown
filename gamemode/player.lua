@@ -653,9 +653,19 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
          if attacker != ply then
             local role_raw = attacker:GetRoleStringRaw()
+
+            -- Named variant instead of the plain base role (eg. "a Kingpin"
+            -- rather than "a traitor") -- resolved clientside in
+            -- cl_lang.lua's chat_rolecolour, since that's the localized
+            -- name lookup. hide_role holders (eg. the Deputy) never send
+            -- theirs -- their corpse already keeps this secret even from
+            -- their own victims, so their kills should too.
+            local variant = (not ROLES.HasFlag(attacker, "hide_role")) and attacker:GetRoleVariant() or nil
+
             LANG.Msg(ply, "death_killed_by", {killer    = attacker:Nick(),
                                                role      = LANG.NameParam("death_role_" .. role_raw),
-                                               role_raw  = role_raw})
+                                               role_raw  = role_raw,
+                                               variant   = variant or ""})
          end
       else
          DamageLog(Format("KILL:\t <something/world> killed %s [%s]", ply:Nick(), ply:GetRoleString()))

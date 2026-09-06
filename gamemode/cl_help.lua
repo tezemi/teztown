@@ -38,6 +38,16 @@ function HELPSCRN:Show()
 
    padding = padding * 2
 
+   -- Added first so it's the tab that opens by default -- what you are is
+   -- the thing you most want to look up mid-round.
+   local roleparent = vgui.Create("DPanel", dtabs)
+   roleparent:SetPaintBackground(false)
+   roleparent:StretchToParent(margin, 0, padding, 0)
+
+   ROLEINFO:CreatePanel(roleparent)
+
+   dtabs:AddSheet(GetTranslation("help_roles"), roleparent, "icon16/user_suit.png", false, false, GetTranslation("help_roles_tip"))
+
    local tutparent = vgui.Create("DPanel", dtabs)
    tutparent:SetPaintBackground(false)
    tutparent:StretchToParent(margin, 0, 0, 0)

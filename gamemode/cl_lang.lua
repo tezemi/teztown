@@ -279,8 +279,21 @@ LANG.Styles = {
 
                          local clr = rolecolor_text[params.role_raw] or COLOR_WHITE
 
+                         -- If the killer held a role variant, name that
+                         -- instead of the plain base role -- eg. "a Kingpin"
+                         -- rather than just "a traitor". Still coloured by
+                         -- the base role, so the highlight matches every
+                         -- other death message regardless of variant.
+                         local roletext = params.role
+                         if params.variant and params.variant != "" then
+                            local v = ROLES.Get(params.variant)
+                            if v then
+                               roletext = LANG.GetParamTranslation("death_role_variant", {variant = LANG.TryTranslation(v.name)})
+                            end
+                         end
+
                          chat.AddText(COLOR_WHITE, interp(before, params),
-                                      clr, params.role,
+                                      clr, roletext,
                                       COLOR_WHITE, (interp(after, params)))
                       end
 };
