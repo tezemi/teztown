@@ -22,10 +22,10 @@ ROLES.Register({
    hud_color = COLOR_BLACK,
 
    enabled = true,
-   pct     = 0.34,  -- min/max both being 1 means this only matters if max is raised
-   min     = 1,
+   pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
+   min     = 0,
    max     = 1,
-   chance  = 1,     -- turn ttt_variant_rogue_chance down to make him occasional
+   chance  = 0.20,  -- ttt_variant_rogue_chance: odds he appears at all this round
 
    credits      = 3,            -- his entire starting credits, see SetDefaultCredits
    shop_as_role = ROLE_TRAITOR, -- same catalogue and purchase rules as a traitor

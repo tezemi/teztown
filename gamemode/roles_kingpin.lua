@@ -18,10 +18,10 @@ ROLES.Register({
    color = Color(190, 140, 40),
 
    enabled = true,
-   pct     = 0.34,  -- min/max both being 1 means this only matters if max is raised
-   min     = 1,
+   pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
+   min     = 0,
    max     = 1,
-   chance  = 1,     -- turn ttt_variant_kingpin_chance down to make him occasional
+   chance  = 0.33,  -- ttt_variant_kingpin_chance: odds he appears at all this round
 
    no_team_chat     = true,  -- no traitor chat or voice, either direction
    no_team_list     = true,  -- never learns who the other traitors are
