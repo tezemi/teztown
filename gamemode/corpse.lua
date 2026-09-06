@@ -415,8 +415,12 @@ function CORPSE.Create(ply, attacker, dmginfo)
    -- if someone searches this body they can find info on the victim and the
    -- death circumstances
    rag.equipment = ply:GetEquipmentItems()
-   rag.was_role = ply:GetRole()
-   rag.was_variant = ply:GetRoleVariant()
+
+   -- VisibleRole rather than the raw role, so a hide_role variant (eg. the
+   -- Deputy) is captured as a plain innocent corpse -- no role, no variant
+   -- tag, nothing that would out them even in death.
+   rag.was_role = ROLES.VisibleRole(ply)
+   rag.was_variant = (not ROLES.HasFlag(ply, "hide_role")) and ply:GetRoleVariant() or nil
    rag.bomb_wire = ply.bomb_wire
    rag.dmgtype = dmginfo:GetDamageType()
 

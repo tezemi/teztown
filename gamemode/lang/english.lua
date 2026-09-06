@@ -19,6 +19,9 @@ L.role_spy_desc = "You appear as a Traitor to the Traitor team. While you're ali
 L.role_rogue = "Rogue"
 L.role_rogue_desc = "You are on nobody's side. You appear as an Innocent to everyone, but you shop from the Traitor equipment list and start with 3 credits. You win alone by being the last Traitor or Innocent standing."
 
+L.role_deputy = "Deputy"
+L.role_deputy_desc = "You are a secret Detective. Nobody knows this but you -- not even another detective, if one exists. You have full detective equipment and credits, but no proof will convince anyone your search results are real unless they trust you."
+
 L.variant_you_are    = "You are a {variant}!"
 L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
 L.variant_revealed   = "{player} is your {variant}!"

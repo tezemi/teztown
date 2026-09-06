@@ -111,7 +111,10 @@ end
 CreateConVar("ttt_detective_hats", "1")
 -- Just hats right now
 local function GiveLoadoutSpecial(ply)
-   if ply:IsActiveDetective() and GetConVar("ttt_detective_hats"):GetBool() and CanWearHat(ply) then
+   -- The hat is a dead giveaway, so a hide_role detective (eg. the Deputy)
+   -- never gets one.
+   if ply:IsActiveDetective() and not ROLES.HasFlag(ply, "hide_role")
+      and GetConVar("ttt_detective_hats"):GetBool() and CanWearHat(ply) then
 
       if not IsValid(ply.hat) then
          local hat = ents.Create("ttt_hat_deerstalker")

@@ -73,6 +73,16 @@
 --                     variants need this since they have no built-in win
 --                     condition the way traitors/innocents do.
 --                     (init.lua's TTTCheckForWin)
+--   hide_role      -- this player's role is never revealed to anyone else by
+--                     the systems that normally broadcast it outright (the
+--                     public detective list in traitor_state.lua, the
+--                     detective hat in weaponry.lua) or infer it live (radar
+--                     and any other consumer of ROLES.VisibleRole, below).
+--                     Their corpse is captured as a plain innocent too, with
+--                     no variant tag, so even death doesn't out them -- eg.
+--                     the Deputy, a detective nobody but themselves knows
+--                     about. Their own client still sees their real role
+--                     locally, so their own shop/HUD/perks work normally.
 --
 -- Selection itself lives in roles.lua (server), and the whole system is off
 -- unless ttt_role_variants is 1.

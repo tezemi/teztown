@@ -95,6 +95,7 @@ include("roles_shd.lua") -- role variant registry, uses ROLE_ and LANG
 include("roles_kingpin.lua") -- registers a variant, needs the registry above
 include("roles_spy.lua") -- registers a variant, needs the registry above
 include("roles_rogue.lua") -- registers a variant, needs the registry above
+include("roles_deputy.lua") -- registers a variant, needs the registry above
 
 function DetectiveMode() return GetGlobalBool("ttt_detective", false) end
 function HasteMode() return GetGlobalBool("ttt_haste", false) end

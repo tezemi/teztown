@@ -59,7 +59,17 @@ end
 -- Tell traitors about other traitors
 
 function SendTraitorList(ply_or_rf, pred) SendRoleList(ROLE_TRAITOR, ply_or_rf, pred) end
-function SendDetectiveList(ply_or_rf) SendRoleList(ROLE_DETECTIVE, ply_or_rf) end
+
+-- Unlike traitors, detectives are public knowledge by design -- this is the
+-- one and only "who's a detective" broadcast, sent to literally everyone
+-- (including other detectives) with no filtering. A hide_role holder (eg.
+-- the Deputy) is left out of the list entirely, so this single change is
+-- also what keeps them off the scoreboard, target ID, and every other
+-- client-side display that trusts the replicated role. Radar is separate --
+-- it computes its own view live via ROLES.VisibleRole, see roles.lua.
+function SendDetectiveList(ply_or_rf)
+   SendRoleList(ROLE_DETECTIVE, ply_or_rf, function(v) return not ROLES.HasFlag(v, "hide_role") end)
+end
 
 -- Same as SendTraitorList, but also includes anyone disguised as a traitor
 -- (disguise_role, eg. the Spy -- see roles_shd.lua) as if they were real.

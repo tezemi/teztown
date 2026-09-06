@@ -305,6 +305,10 @@ end
 -- so every client-side system that already trusts GetRole() is fooled by
 -- the same one change rather than needing its own special case.
 function ROLES.VisibleRole(ply, viewer)
+   -- hide_role fools everyone, not just one specific viewer, so it's checked
+   -- before disguise_role gets a say.
+   if ROLES.HasFlag(ply, "hide_role") then return ROLE_INNOCENT end
+
    local role = IsValid(ply) and ply:GetRole() or ROLE_INNOCENT
 
    if IsValid(viewer) then
