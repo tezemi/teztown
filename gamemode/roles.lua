@@ -352,6 +352,50 @@ function ROLES.GetCreditCap(role)
    return cap
 end
 
+-- The highest damage multiplier currently imposed on role because some
+-- on_death_vulnerable_role variant lost every holder it had (eg. the VIP
+-- dying and leaving the innocents rattled), or nil if nothing qualifies.
+-- Live-scanned like the two helpers above: a variant never selected this
+-- round contributes nothing, and one whose holder comes back (a defib)
+-- switches back off on its own, since role_variant survives death and is
+-- only cleared at the next round's ROLES.ClearAll.
+function ROLES.GetDeathVulnerabilityMultiplier(role)
+   local mult = nil
+
+   for _, v in ipairs(ROLES.GetAll()) do
+      if v.on_death_vulnerable_role == role then
+         local any_holder, any_alive = false, false
+
+         for _, ply in ipairs(player.GetAll()) do
+            if IsValid(ply) and ply:HasRoleVariant(v.id) then
+               any_holder = true
+               if ply:Alive() and ply:IsTerror() then
+                  any_alive = true
+                  break
+               end
+            end
+         end
+
+         if any_holder and not any_alive then
+            mult = mult and math.max(mult, v.on_death_damage_mult) or v.on_death_damage_mult
+         end
+      end
+   end
+
+   return mult
+end
+
+-- A living variant holder's own personal damage_taken_mult, or nil -- eg.
+-- the VIP being squishier than a normal innocent. Unlike the other helpers
+-- above this only ever looks at ply's own variant, since it's a personal
+-- trait rather than something one player imposes on a whole role.
+function ROLES.GetDamageTakenMultiplier(ply)
+   if not IsValid(ply) or not ply:Alive() then return nil end
+
+   local v = ply:GetRoleVariantData()
+   return v and v.damage_taken_mult or nil
+end
+
 -- Variants flagged sees_team_bodies are shown where anyone sharing their
 -- base role died. Reuses the beacon the "call detective" feature already
 -- draws (TTT_CorpseCall, see cl_radar.lua) rather than inventing a second

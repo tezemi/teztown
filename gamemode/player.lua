@@ -1097,6 +1097,18 @@ function GM:PlayerTakeDamage(ent, infl, att, amount, dmginfo)
          dmginfo:ScaleDamage(att:GetDamageFactor())
       end
 
+      -- eg. the innocents taking more damage once the VIP is dead
+      local vuln = ROLES.GetDeathVulnerabilityMultiplier(ent:GetRole())
+      if vuln then
+         dmginfo:ScaleDamage(vuln)
+      end
+
+      -- personal squishiness, eg. the VIP themselves
+      local personal_vuln = ROLES.GetDamageTakenMultiplier(ent)
+      if personal_vuln then
+         dmginfo:ScaleDamage(personal_vuln)
+      end
+
       -- process the effects of the damage on karma
       KARMA.Hurt(att, ent, dmginfo)
 

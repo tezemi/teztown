@@ -83,6 +83,25 @@
 --                     the Deputy, a detective nobody but themselves knows
 --                     about. Their own client still sees their real role
 --                     locally, so their own shop/HUD/perks work normally.
+--   target_id_tag  -- draw the coloured crosshair ring + role-name label
+--                     (like the detective's) on this player, but only for
+--                     viewers whose own client already knows the variant --
+--                     ie. whatever reveal_to_team (or some future mechanism)
+--                     already told them. No new networking: it just reads
+--                     GetRoleVariantData() clientside, which is nil for
+--                     anyone who was never sent the reveal. (cl_targetid.lua)
+--   on_death_vulnerable_role / on_death_damage_mult -- once every holder of
+--                     this variant is dead (or none were ever assigned this
+--                     round), players holding on_death_vulnerable_role take
+--                     on_death_damage_mult times damage in PvP -- eg. the
+--                     innocents getting shakier once the VIP falls.
+--                     (roles.lua's GetDeathVulnerabilityMultiplier, applied
+--                     in player.lua's PlayerTakeDamage)
+--   damage_taken_mult -- this player personally takes this much times damage
+--                     in PvP while alive -- eg. the VIP themselves being
+--                     squishier, on top of (not instead of) the whole-role
+--                     effect above. (roles.lua's GetDamageTakenMultiplier,
+--                     applied in player.lua's PlayerTakeDamage)
 --
 -- Selection itself lives in roles.lua (server), and the whole system is off
 -- unless ttt_role_variants is 1.

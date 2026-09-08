@@ -174,6 +174,7 @@ function GM:HUDDrawTargetID()
    local target_traitor = false
    local target_detective = false
    local target_corpse = false
+   local target_variant = nil
 
    local text = nil
    local color = COLOR_WHITE
@@ -216,6 +217,17 @@ function GM:HUDDrawTargetID()
 
       target_detective = GetRoundState() > ROUND_PREP and ent:IsDetective() or false
 
+      -- A variant flagged target_id_tag (eg. the VIP) gets the same ring
+      -- and label a detective gets, but only for viewers whose client
+      -- already knows about it -- GetRoleVariantData is nil for anyone who
+      -- was never sent the reveal (see roles_shd.lua's target_id_tag).
+      if GetRoundState() > ROUND_PREP then
+         local v = ent:GetRoleVariantData()
+         if v and v.target_id_tag then
+            target_variant = v
+         end
+      end
+
    elseif cls == "prop_ragdoll" then
       -- only show this if the ragdoll has a nick, else it could be a mattress
       if CORPSE.GetPlayerNick(ent, false) == false then return end
@@ -239,13 +251,15 @@ function GM:HUDDrawTargetID()
 
    local w, h = 0,0 -- text width/height, reused several times
 
-   if target_traitor or target_detective then
+   if target_traitor or target_detective or target_variant then
       surface.SetTexture(ring_tex)
 
       if target_traitor then
          surface.SetDrawColor(255, 0, 0, 200)
-      else
+      elseif target_detective then
          surface.SetDrawColor(0, 0, 255, 220)
+      else
+         surface.SetDrawColor(target_variant.color.r, target_variant.color.g, target_variant.color.b, 220)
       end
       surface.DrawTexturedRect(x-32, y-32, 64, 64)
    end
@@ -340,6 +354,9 @@ function GM:HUDDrawTargetID()
    elseif target_detective then
       text = L.target_detective
       clr = COLOR_BLUE
+   elseif target_variant then
+      text = string.upper(LANG.TryTranslation(target_variant.name))
+      clr = target_variant.color
    elseif ent.sb_tag and ent.sb_tag.txt != nil then
       text = L[ ent.sb_tag.txt ]
       clr = ent.sb_tag.color

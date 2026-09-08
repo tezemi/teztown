@@ -22,6 +22,9 @@ L.role_rogue_desc = "You are on nobody's side. You appear as an Innocent to ever
 L.role_deputy = "Deputy"
 L.role_deputy_desc = "You are a secret Detective. Nobody knows this but you -- not even another detective, if one exists. You have full detective equipment and credits, but no proof will convince anyone your search results are real unless they trust you."
 
+L.role_vip = "VIP"
+L.role_vip_desc = "Every innocent is told who you are. While you're alive, no traitor can hold more than 1 credit, but you take 20% more damage yourself. If you die, every innocent takes extra damage for the rest of the round."
+
 L.variant_you_are    = "You are a {variant}!"
 L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
 L.variant_revealed   = "{player} is your {variant}!"
@@ -340,6 +343,16 @@ Neither side can win the round while you are still living.
 If the round timer runs out, you lose.]]
 L.help_role_rogue_psych = [[You need everyone dead, but you cannot fight everyone at once. Let the traitors get some kills, then clean up the rest.
 Nobody knows a third side is present. To innocents you may seem like just another traitor, but traitors will really be thrown off.]]
+
+L.help_role_vip_tag = "Don't let it go to your head."
+L.help_role_vip_mech = [[Every other innocent is told who you are the moment the round begins.
+Traitors are never told, and nothing about you is ever broadcast to them.
+While you're alive, no traitor can hold more than 1 credit.
+You personally take 20% more damage than a normal innocent.
+Once you die, every innocent takes extra damage for the rest of the round.]]
+L.help_role_vip_psych = [[Your teammates know to protect you. Stay with those you trust.
+A traitor watching the innocents can sometimes work out who you are just from how they act around you.
+You die quick. Make sure you teammates don't blow your cover.]]
 
 -- Settings
 L.set_title_gui = "Interface settings"
