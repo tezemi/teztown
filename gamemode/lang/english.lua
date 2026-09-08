@@ -429,6 +429,9 @@ L.c4_no_room      = "You cannot carry this C4."
 
 L.c4_desc         = "Powerful timed explosive."
 
+L.clustergrenade_name = "Cluster Grenade"
+L.clustergrenade_desc = "Explodes into four smaller grenades, which then explode again shortly after."
+
 L.c4_arm          = "Arm C4"
 L.c4_arm_timer    = "Timer"
 L.c4_arm_seconds  = "Seconds until detonation:"
