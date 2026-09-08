@@ -25,6 +25,12 @@ L.role_deputy_desc = "You are a secret Detective. Nobody knows this but you -- n
 L.role_vip = "VIP"
 L.role_vip_desc = "Every innocent is told who you are. While you're alive, no traitor can hold more than 1 credit, but you take 20% more damage yourself. If you die, every innocent takes extra damage for the rest of the round."
 
+L.role_sleeper = "Sleeper Agent"
+L.role_sleeper_desc = "For now, you're an innocent... But if every traitor dies while you're still alive, you will secretly become one yourself, with a traitor's starting credits and extra time added to the round."
+
+L.sleeper_activated_you = "Every traitor has fallen. You are now a Traitor! You've been given {num} credit(s), and the round clock has been extended."
+L.sleeper_activated_announce = "Every last traitor has fallen... but a sleeper agent has just woken up among the innocents."
+
 L.variant_you_are    = "You are a {variant}!"
 L.variant_team_body  = "One of your own is down: {player}. Their body is marked."
 L.variant_revealed   = "{player} is your {variant}!"
@@ -353,6 +359,16 @@ Once you die, every innocent takes extra damage for the rest of the round.]]
 L.help_role_vip_psych = [[Your teammates know to protect you. Stay with those you trust.
 A traitor watching the innocents can sometimes work out who you are just from how they act around you.
 You die quick. Make sure you teammates don't blow your cover.]]
+
+L.help_role_sleeper_tag = "Wake up. Wake up and smell the ashes."
+L.help_role_sleeper_mech = [[You start as an innocent. Play like one.
+If every traitor dies while you're still alive, you secretly become a real traitor.
+The whole server is told a sleeper agent has woken up the moment it happens, but never who.
+Activating also adds bonus time to the round clock.
+If you die or the clock runs out as an innocent, you were just an innocent.]]
+L.help_role_sleeper_psych = [[Play as an innocent for as long as the traitors are alive. There's nothing to gain by acting early.
+Once you wake up, everyone still thinks you're innocent.
+The innocents weren't expecting an extra traitor in the mix. Use it to your advantage.]]
 
 -- Settings
 L.set_title_gui = "Interface settings"

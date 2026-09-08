@@ -32,6 +32,7 @@ AddCSLuaFile("roles_spy.lua")
 AddCSLuaFile("roles_rogue.lua")
 AddCSLuaFile("roles_deputy.lua")
 AddCSLuaFile("roles_vip.lua")
+AddCSLuaFile("roles_sleeper.lua")
 AddCSLuaFile("cl_radio.lua")
 AddCSLuaFile("cl_radar.lua")
 AddCSLuaFile("cl_tbuttons.lua")
@@ -754,6 +755,11 @@ end
 function EndRound(type)
    PrintResultMessage(type)
 
+   -- Let hooks correct final state before any scoring is computed or
+   -- streamed -- eg. a role variant fixing up a player's role now that the
+   -- round's outcome is known (see roles_sleeper.lua).
+   hook.Call("TTTRoundWillEnd", GAMEMODE, type)
+
    -- first handle round end
    SetRoundState(ROUND_POST)
 
@@ -831,7 +837,15 @@ function GM:TTTCheckForWin()
          if v:GetTraitor() then
             traitor_alive = true
          elseif v:IsNeutral() then
-            neutral_alive = true
+            -- Only a neutral with its own win_check (eg. the Rogue) is a
+            -- genuine third faction that has to be hunted down before
+            -- either side can claim the round. A neutral without one (eg.
+            -- a still-dormant Sleeper Agent) isn't an active threat to
+            -- anyone yet, so it shouldn't hold up a win it has no stake in.
+            local vdata = v:GetRoleVariantData()
+            if vdata and vdata.win_check then
+               neutral_alive = true
+            end
          else
             innocent_alive = true
          end

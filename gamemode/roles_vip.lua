@@ -24,10 +24,10 @@ ROLES.Register({
    color = Color(70, 200, 200),
 
    enabled = true,
-   pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
-   min     = 1,
+   pct     = 0.25,  -- min 0 / max 1 means this only matters if max is raised
+   min     = 0,
    max     = 1,
-   chance  = 1,  -- ttt_variant_vip_chance: odds he appears at all this round
+   chance  = 0.33,  -- ttt_variant_vip_chance: odds he appears at all this round
 
    reveal_to_team = true, -- every innocent is told who the VIP is
    target_id_tag  = true, -- ...and sees a ring/label on them, like a detective

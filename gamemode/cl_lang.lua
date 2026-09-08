@@ -420,7 +420,9 @@ local styledmessages = {
 
       "tester_parts_revealed",
       "tester_parts_destroyed",
-      "tester_parts_sabotaged"
+      "tester_parts_sabotaged",
+
+      "sleeper_activated_announce"
    }
 };
 
