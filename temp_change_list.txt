@@ -1,50 +1,31 @@
-== Additions ==
-- Hush Equipment:                   A new passive items which silences your footsteps and all your kills.
-- Default Radar for Solo Traitors:  Solo traitors now receive the radar as a default item.
+== Role Variants ==
+A new system of role variants: specialized versions of the base roles, off by default (ttt_role_variants convar).
+
+- Kingpin (traitor):     Funds the traitor team from a distance. No traitor chat, and never learns who his fellow traitors are -- but they all know who he is. Starts richer and earns credits whenever the traitor side gets a kill.
+- Spy (innocent):        Appears as a traitor to the traitor team on the scoreboard, radar, and target ID. Jams traitor chat and limits every traitor to 1 credit while alive. No innocent is ever told he exists.
+- Deputy (detective):    A secret detective. Full detective shop and credits, but nobody -- not even another detective -- is ever told he's one.
+- VIP (innocent):        Every innocent is told who he is. Traitors are limited to 1 credit while he's alive, but he personally takes more damage, and if he dies, every innocent takes more damage for the rest of the round.
+- Rogue (neutral):       A third faction. Appears as an innocent to everyone, shops from the traitor list, and wins alone by being the last terrorist standing.
+- Sleeper Agent (neutral): Starts as an innocent nobody suspects. If every traitor dies while he's still alive, he secretly becomes a real traitor with fresh credits and bonus round time -- the server is told someone has woken up, but never who.
+
+Each variant's odds of appearing, minimum/maximum count, and other tuning are all server convars.
+
+== New Weapon ==
+- Cluster Grenade (traitor):  A grenade that splits into four smaller grenades on detonation, which then go off in a second wave shortly after.
+
+== New Mechanic: Traitor Tester ==
+Traitor Tester Parts spawn around the map. Innocents who gather enough of them together reveal a random traitor to the whole server. Traitors can see every part's location and can pick parts up themselves to stall or hide them, at the cost of steadily draining their own credits (or equipment, once they're out) the longer they hold one.
+
+== Other Additions ==
+- Hopper Mine:                A throwable proximity mine.
+- Victory/defeat sounds at the end of a round.
+- A dedicated Role info tab in the F1 menu explaining every role and variant, including the reasoning behind how to play them.
 
 == Changes ==
-- Incremental Credits:              Using this optional new system, traitors get a credit for themselves every time they get a kill.
-- Player Model Selector Support:    If the Enhanced Player Model Selector addon is installed, players can choose their player model with F3.
-- Insta-kill Knife:                 The solo traitor can get instant kills with the knife. Otherwise, the knife will instant kill on a backstab.
-- Improved Knife Throw:             The knife throws slightly force forcefully.
-- Improved Disguise:                You can now disguise as other players from the disguise menu, taking their player model and name. It is removed upon attacking, or dying.
+- Death messages now name the killer's specific role variant (eg. "they were a Kingpin!") instead of just their base role.
+- Round-end screen and body-search results now show role variants (eg. "Traitor - Kingpin").
+- Various notification adjustments.
 
-
-== Weapon Changes ==
-- Glock-18
-    + Now fires in three-shot bursts.
-    + Has increased firing delay.
-    + Removed headshot multiplier.
-    Gives the Glock a bit more of a utility, being a strong short-range pistol.
-
-- M16
-    + Significantly improved fire rate.
-    + Damage has been decreased.
-    + Clip size has been increased.
-    + Removed the zoom.
-    Standardizes the M16 a bit more, by making it more general purpose, as a rifle with decent damage, firing speed, and recoil, but not excelling in any aspect.
-
-- Silenced USP
-    + Improved fire rate.
-    + Slightly decreased damage.
-    + Reduced clip size.
-    An unpopular choice for traitors due to the punishingly bad fire rate, which often made it impossible to follow up any kind of damage.
-
-- SSG 08
-    + The fire rate has been slightly improved.
-    + No longer automatic.
-    Makes getting a body shot a bit less punishing.
-
-- XM1014
-    + The fire rate has been significantly increased.
-    + The damage has been significantly decreased.
-    Makes it more reflective of the weapon its based off of, while making room for the other shotgun. Now works like an auto shotgun, firing quickly but doing little damage.
-
-
-== New Weapons ==
-- M3:        High damage shotgun with a large spread and slow fire rate.
-- P228:      Fast-firing, but inaccurate pistol without a lot of ammo.
-- MP5:       Functions similarly to the MAC-10, but has increased accuracy, at the cost of lower damage, and slightly lower firing speed.
-- AK-47:     A high-damage, extremely accurate rifle, that has a high headshot multiplier, at the cost of having a low fire rate and extreme recoil.
-- IMI Galil: An inaccurate rifle with a fast fire rate and increased ammo capacity.
-- G3SG1:     A low damage auto-sniper that fires quickly, but has a normal headshot multiplier.
+== Fixes ==
+- Fixed the killer notification and a disguise bug.
+- Fixed a player model issue.

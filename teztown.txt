@@ -231,5 +231,69 @@
 			"type"		"CheckBox"
 			"default"	"1"
 		}
+
+		33
+		{
+			"name"		"ttt_role_variants"
+			"text"		"Enable Role Variants"
+			"type"		"CheckBox"
+			"default"	"0"
+		}
+
+		34
+		{
+			"name"		"ttt_variant_kingpin_chance"
+			"text"		"Kingpin Chance"
+			"type"		"Numeric"
+			"default"	"0.33"
+		}
+
+		35
+		{
+			"name"		"ttt_variant_spy_chance"
+			"text"		"Spy Chance"
+			"type"		"Numeric"
+			"default"	"0.25"
+		}
+
+		36
+		{
+			"name"		"ttt_variant_deputy_chance"
+			"text"		"Deputy Chance"
+			"type"		"Numeric"
+			"default"	"0.33"
+		}
+
+		37
+		{
+			"name"		"ttt_variant_rogue_chance"
+			"text"		"Rogue Chance"
+			"type"		"Numeric"
+			"default"	"0.2"
+		}
+
+		38
+		{
+			"name"		"ttt_variant_vip_chance"
+			"text"		"VIP Chance"
+			"type"		"Numeric"
+			"default"	"0.33"
+		}
+
+		39
+		{
+			"name"		"ttt_variant_sleeper_chance"
+			"text"		"Sleeper Agent Chance"
+			"type"		"Numeric"
+			"default"	"0.2"
+		}
+
+		40
+		{
+			"name"		"ttt_sleeper_bonus_minutes"
+			"text"		"Sleeper Agent Bonus Time"
+			"type"		"Numeric"
+			"default"	"2"
+		}
 	}
 }

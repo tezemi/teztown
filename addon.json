@@ -6,6 +6,7 @@
 	[
 		"gamemodes/*/.git/*",
 		"gamemodes/*/.vscode/*",
+		"gamemodes/*/.claude/*",
 		"gamemodes/*/*.psd",
 		"gamemodes/*/*.vcproj",
 		"gamemodes/*/.svn/*",
