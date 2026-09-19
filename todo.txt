@@ -1,0 +1,6 @@
+- Additional roles
+    - The Joker/Jester.
+- The traitor tester mechanic needs several improvements.
+- Implement support for GTV.
+- Investigate a solution for jank hitboxes.
+- 

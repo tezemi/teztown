@@ -211,7 +211,11 @@ function GM:HUDDrawTargetID()
          _, color = util.HealthToString(ent:Health(), ent:GetMaxHealth())
       end
 
-      if client:IsTraitor() and GetRoundState() == ROUND_ACTIVE then
+      -- sees_traitors (roles_shd.lua) gets the same traitor ring/label a
+      -- real traitor sees, eg. the Joker working out who to avoid -- safe
+      -- to trust ent:IsTraitor() here since the server only ever sent this
+      -- client the real traitor list if they qualify for one or the other.
+      if (client:IsTraitor() or ROLES.HasFlag(client, "sees_traitors")) and GetRoundState() == ROUND_ACTIVE then
          target_traitor = ent:IsTraitor()
       end
 

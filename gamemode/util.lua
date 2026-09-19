@@ -105,10 +105,20 @@ if CLIENT then
    -- Plays the first sound in a list (paths relative to sound/) that this
    -- client actually has content for, eg. a sound from a game they may not
    -- own mounted, with fallbacks. Silent (returns false) if none are found.
-   function util.PlayFirstAvailableSound(paths)
+   --
+   -- volume (0-1) is only honoured when given -- surface.PlaySound has no
+   -- volume control at all, so a caller that wants anything but full
+   -- volume gets it emitted from the local player instead, which sounds
+   -- the same flat, position-independent way since the listener is always
+   -- standing exactly where it's emitted from.
+   function util.PlayFirstAvailableSound(paths, volume)
       for _, path in ipairs(paths) do
          if file.Exists("sound/" .. path, "GAME") then
-            surface.PlaySound(path)
+            if volume then
+               LocalPlayer():EmitSound(path, 100, 100, volume, CHAN_STATIC)
+            else
+               surface.PlaySound(path)
+            end
             return true
          end
       end

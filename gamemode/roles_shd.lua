@@ -81,6 +81,15 @@
 --                     though their real role never changes. One-directional
 --                     and never told to anyone else. (traitor_state.lua,
 --                     init.lua's TellTraitorsAboutTraitors, radar.lua)
+--   sees_traitors  -- the mirror image of disguise_role: this player is
+--                     given the real, live traitor list even though they
+--                     aren't one -- same traitor ring/label on target ID,
+--                     same red scoreboard row, same list a real traitor
+--                     gets, but purely one-directional (traitors are never
+--                     told about them in return) -- eg. the Joker, who
+--                     needs to know who to avoid. (traitor_state.lua's
+--                     GetTeamAwareTraitorFilter/GetTeamBlindFilter,
+--                     cl_targetid.lua)
 --   suppress_team_chat_for -- a ROLE_ value: while this variant is alive,
 --                     that role's entire team chat/voice channel is down
 --                     for everyone on it, not just this player (gamemsg.lua)
@@ -129,6 +138,13 @@
 --                     squishier, on top of (not instead of) the whole-role
 --                     effect above. (roles.lua's GetDamageTakenMultiplier,
 --                     applied in player.lua's PlayerTakeDamage)
+--   deals_no_damage -- every hit this player lands on another player is
+--                     zeroed out before it applies -- no damage, no karma
+--                     penalty, no damage log entry, nothing -- eg. the
+--                     Joker, who can attack freely but can never actually
+--                     hurt anyone. Damage to props/the world is untouched,
+--                     and this player can still hurt themselves.
+--                     (player.lua's EntityTakeDamage)
 --
 -- Selection itself lives in roles.lua (server), and the whole system is off
 -- unless ttt_role_variants is 1.

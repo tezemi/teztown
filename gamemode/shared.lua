@@ -98,6 +98,7 @@ include("roles_rogue.lua") -- registers a variant, needs the registry above
 include("roles_deputy.lua") -- registers a variant, needs the registry above
 include("roles_vip.lua") -- registers a variant, needs the registry above
 include("roles_sleeper.lua") -- registers a variant, needs the registry above
+include("roles_joker.lua") -- registers a variant, needs the registry above
 
 function DetectiveMode() return GetGlobalBool("ttt_detective", false) end
 function HasteMode() return GetGlobalBool("ttt_haste", false) end

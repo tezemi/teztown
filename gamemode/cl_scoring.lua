@@ -1149,7 +1149,9 @@ function CLSCORE:PlayResultSound(events)
       won = (win == WIN_TRAITOR) == is_traitor
    end
 
-   util.PlayFirstAvailableSound(RESULT_SOUNDS[won and "won" or "lost"])
+   -- Half volume -- these jingles are noticeably louder than everything
+   -- else on the server at their normal level.
+   util.PlayFirstAvailableSound(RESULT_SOUNDS[won and "won" or "lost"], 0.5)
 end
 
 function CLSCORE:ReportEvents(events)

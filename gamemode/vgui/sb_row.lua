@@ -48,6 +48,12 @@ function PANEL:Init()
    self.nick = vgui.Create("DLabel", self)
    self.nick:SetMouseInputEnabled(false)
 
+   -- Confirmed-role label, eg. "TRAITOR" for a fellow traitor or "VIP" for
+   -- an innocent who was told (see ConfirmedRoleLabel below).
+   self.role_tag = vgui.Create("DLabel", self)
+   self.role_tag:SetText("")
+   self.role_tag:SetMouseInputEnabled(false)
+
    self.voice = vgui.Create("DImageButton", self)
    self.voice:SetSize(16,16)
 
@@ -83,6 +89,19 @@ local rolecolor = {
    detective = Color(0, 0, 255, 30)
 }
 
+-- Alpha a confirmed variant's own registered colour is drawn at as a row
+-- background, matching the translucency of the plain traitor/detective
+-- backgrounds above.
+local VARIANT_ROW_ALPHA = 30
+
+-- The variant data for ply, but only if this client actually knows it --
+-- GetRoleVariantData() is nil unless ply is the local client's own variant,
+-- or it was revealed to them (reveal_to_team/reveal_pct, roles_shd.lua) --
+-- same call as elsewhere, named here for what it means to this file.
+local function ConfirmedVariant(ply)
+   return IsValid(ply) and ply:GetRoleVariantData() or nil
+end
+
 function GM:TTTScoreboardColorForPlayer(ply)
    if not IsValid(ply) then return namecolor.default end
 
@@ -97,6 +116,14 @@ end
 function GM:TTTScoreboardRowColorForPlayer(ply)
    if not IsValid(ply) then return rolecolor.default end
 
+   -- A confirmed variant gets its own colour instead of the generic
+   -- traitor/detective one -- eg. traitors see the Kingpin's colour rather
+   -- than plain red, or a revealed innocent sees the VIP's teal.
+   local v = ConfirmedVariant(ply)
+   if v then
+      return Color(v.color.r, v.color.g, v.color.b, VARIANT_ROW_ALPHA)
+   end
+
    if ply:IsTraitor() then
       return rolecolor.traitor
    elseif ply:IsDetective() then
@@ -104,6 +131,27 @@ function GM:TTTScoreboardRowColorForPlayer(ply)
    end
 
    return rolecolor.default
+end
+
+-- Text + colour for the confirmed-role label, or nil, nil when there's
+-- nothing to confirm (the common case: a plain innocent nobody has reason
+-- to suspect). A known variant always wins over the base role, same
+-- priority as the row background above.
+local function ConfirmedRoleLabel(ply)
+   if not IsValid(ply) then return nil, nil end
+
+   local v = ConfirmedVariant(ply)
+   if v then
+      return string.upper(LANG.TryTranslation(v.name)), v.color
+   end
+
+   if ply:IsTraitor() then
+      return string.upper(ply:GetRoleString()), COLOR_RED
+   elseif ply:IsDetective() then
+      return string.upper(ply:GetRoleString()), COLOR_BLUE
+   end
+
+   return nil, nil
 end
 
 local function ColorForPlayer(ply)
@@ -196,6 +244,11 @@ function PANEL:UpdatePlayerData()
    self.nick:SizeToContents()
    self.nick:SetTextColor(ColorForPlayer(ply))
 
+   local role_text, role_color = ConfirmedRoleLabel(ply)
+   self.role_tag:SetText(role_text or "")
+   self.role_tag:SetTextColor(role_color or COLOR_WHITE)
+   self.role_tag:SizeToContents()
+
    local ptag = ply.sb_tag
    if ScoreGroup(ply) != GROUP_TERROR then
       ptag = nil
@@ -235,6 +288,10 @@ function PANEL:ApplySchemeSettings()
    self.nick:SetFont("treb_small")
    self.nick:SetTextColor(ColorForPlayer(self.Player))
 
+   self.role_tag:SetFont("treb_small")
+   local _, role_color = ConfirmedRoleLabel(self.Player)
+   self.role_tag:SetTextColor(role_color or COLOR_WHITE)
+
    local ptag = self.Player and self.Player.sb_tag
    self.tag:SetTextColor(ptag and ptag.color or COLOR_WHITE)
    self.tag:SetFont("treb_small")
@@ -250,6 +307,11 @@ function PANEL:LayoutColumns()
       cx = cx - v.Width
       v:SetPos(cx - v:GetWide()/2, (SB_ROW_HEIGHT - v:GetTall()) / 2)
    end
+
+   -- Right after the nick, so it reads as part of the player's identity
+   -- rather than a column of its own.
+   self.role_tag:SizeToContents()
+   self.role_tag:SetPos(self.nick:GetX() + self.nick:GetWide() + 8, (SB_ROW_HEIGHT - self.role_tag:GetTall()) / 2)
 
    self.tag:SizeToContents()
    cx = cx - 90

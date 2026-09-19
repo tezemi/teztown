@@ -940,6 +940,13 @@ function GM:EntityTakeDamage(ent, dmginfo)
          dmginfo:ScaleDamage(0)
          dmginfo:SetDamage(0)
       end
+   elseif ent:IsPlayer() and ent != att and IsValid(att) and att:IsPlayer() and ROLES.HasFlag(att, "deals_no_damage") then
+      -- deals_no_damage (roles_shd.lua): this attacker can never hurt
+      -- another player, full stop -- zeroed here and PlayerTakeDamage never
+      -- runs at all, so it's not just 0 HP lost, there's no karma penalty
+      -- or damage log entry either. Self-damage is untouched (ent != att).
+      dmginfo:ScaleDamage(0)
+      dmginfo:SetDamage(0)
    elseif ent:IsPlayer() then
 
       GAMEMODE:PlayerTakeDamage(ent, dmginfo:GetInflictor(), att, dmginfo:GetDamage(), dmginfo)

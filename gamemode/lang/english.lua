@@ -28,6 +28,9 @@ L.role_vip_desc = "Some innocents are told who you are, detectives first. While 
 L.role_sleeper = "Sleeper Agent"
 L.role_sleeper_desc = "For now, you're an innocent... But if every traitor dies while you're still alive, you will secretly become one yourself, with a traitor's starting credits and extra time added to the round."
 
+L.role_joker = "Joker"
+L.role_joker_desc = "You are on nobody's side, and you can't hurt anyone -- you can still attack, but it never does any damage. You know who the Traitors are and see them marked like a Traitor would. You shop from the Traitor equipment list and start with 3 credits. You win the instant an innocent kills you. Anything else -- dying any other way, or the round just ending -- is a loss."
+
 L.sleeper_activated_you = "Every traitor has fallen. You are now a Traitor! You've been given {num} credit(s), and the round clock has been extended."
 L.sleeper_activated_announce = "Every last traitor has fallen... but a sleeper agent has just woken up among the innocents."
 
@@ -370,6 +373,17 @@ If you die or the clock runs out as an innocent, you were just an innocent.]]
 L.help_role_sleeper_psych = [[Play as an innocent for as long as the traitors are alive. There's nothing to gain by acting early.
 Once you wake up, everyone still thinks you're innocent.
 The innocents weren't expecting an extra traitor in the mix. Use it to your advantage.]]
+
+L.help_role_joker_tag = "I'm da joker baby."
+L.help_role_joker_mech = [[You deal no damage to anyone.
+You know who the traitors are, avoid them!
+You shop from the traitor equipment list and start with 3 credits.
+You win the instant a genuine innocent kills you. The round ends immediately.
+Killed by a traitor, a fellow neutral, or yourself, that's just a loss.
+If the round ends normall, you also lose.]]
+L.help_role_joker_psych = [[Try to convince an innocent to kill you without being obvious.
+If a traitor kills you, it's over. If they know who you are, you're an easy target.
+If the innocents figure you out, they'll tell each other, and it's basically over.]]
 
 -- Settings
 L.set_title_gui = "Interface settings"

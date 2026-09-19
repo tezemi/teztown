@@ -148,13 +148,26 @@ function SendConfirmedTraitors(ply_or_rf)
    SendTraitorList(ply_or_rf, function(p) return p:GetNWBool("body_found") end)
 end
 
--- Traitors, minus any variant flagged no_team_list -- those never learn who
--- they're working with, so the traitor list simply isn't sent to them.
+-- True for anyone who should be sent the real, live traitor list: a
+-- traitor (minus no_team_list, who never learns who they're working with),
+-- or anyone flagged sees_traitors even though they aren't one themselves
+-- (eg. the Joker, who needs to know who to avoid). One shared predicate so
+-- the aware/blind filters below can never drift apart into disagreeing
+-- about the same player.
+local function IsTraitorAware(ply)
+   if not IsValid(ply) then return false end
+
+   if ply:GetTraitor() then
+      return not ROLES.HasFlag(ply, "no_team_list")
+   end
+
+   return ROLES.HasFlag(ply, "sees_traitors")
+end
+
 function GetTeamAwareTraitorFilter(alive_only)
    local filter = {}
    for _, ply in ipairs(player.GetAll()) do
-      if IsValid(ply) and ply:GetTraitor() and (not ROLES.HasFlag(ply, "no_team_list"))
-         and (not alive_only or ply:IsTerror()) then
+      if IsTraitorAware(ply) and (not alive_only or ply:IsTerror()) then
          table.insert(filter, ply)
       end
    end
@@ -169,7 +182,7 @@ end
 function GetTeamBlindFilter(alive_only)
    local filter = {}
    for _, ply in ipairs(player.GetAll()) do
-      if IsValid(ply) and ((not ply:GetTraitor()) or ROLES.HasFlag(ply, "no_team_list"))
+      if IsValid(ply) and not IsTraitorAware(ply)
          and (not alive_only or ply:IsTerror()) then
          table.insert(filter, ply)
       end
@@ -225,7 +238,7 @@ local function request_rolelist(ply)
          net.WriteUInt(ply:GetRole(), 2)
       net.Send(ply)
 
-      if ply:IsTraitor() and not ROLES.HasFlag(ply, "no_team_list") then
+      if IsTraitorAware(ply) then
          SendTraitorListWithDisguises(ply)
       else
          SendConfirmedTraitors(ply)
