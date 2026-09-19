@@ -23,7 +23,7 @@ L.role_deputy = "Deputy"
 L.role_deputy_desc = "You are a secret Detective. Nobody knows this but you -- not even another detective, if one exists. You have full detective equipment and credits, but no proof will convince anyone your search results are real unless they trust you."
 
 L.role_vip = "VIP"
-L.role_vip_desc = "Every innocent is told who you are. While you're alive, no traitor can hold more than 1 credit, but you take 20% more damage yourself. If you die, every innocent takes extra damage for the rest of the round."
+L.role_vip_desc = "Some innocents are told who you are, detectives first. While you're alive, no traitor can hold more than 1 credit, but you take 20% more damage yourself. If you die, every innocent takes extra damage for the rest of the round."
 
 L.role_sleeper = "Sleeper Agent"
 L.role_sleeper_desc = "For now, you're an innocent... But if every traitor dies while you're still alive, you will secretly become one yourself, with a traitor's starting credits and extra time added to the round."
@@ -351,14 +351,15 @@ L.help_role_rogue_psych = [[You need everyone dead, but you cannot fight everyon
 Nobody knows a third side is present. To innocents you may seem like just another traitor, but traitors will really be thrown off.]]
 
 L.help_role_vip_tag = "Don't let it go to your head."
-L.help_role_vip_mech = [[Every other innocent is told who you are the moment the round begins.
+L.help_role_vip_mech = [[Only some innocents are told who you are the moment the round begins -- detectives first, then a random handful of the rest.
 Traitors are never told, and nothing about you is ever broadcast to them.
 While you're alive, no traitor can hold more than 1 credit.
 You personally take 20% more damage than a normal innocent.
 Once you die, every innocent takes extra damage for the rest of the round.]]
-L.help_role_vip_psych = [[Your teammates know to protect you. Stay with those you trust.
+L.help_role_vip_psych = [[Not everyone knows who you are, so "I don't know" is a perfectly normal answer -- it doesn't have to mean the person asking is a traitor.
+Your teammates who do know, know to protect you. Stay with those you trust.
 A traitor watching the innocents can sometimes work out who you are just from how they act around you.
-You die quick. Make sure you teammates don't blow your cover.]]
+You die quick. Make sure your teammates don't blow your cover.]]
 
 L.help_role_sleeper_tag = "Wake up. Wake up and smell the ashes."
 L.help_role_sleeper_mech = [[You start as an innocent. Play like one.

@@ -36,7 +36,34 @@
 --   no_team_list   -- never told who shares their role (traitor_state.lua,
 --                     init.lua's TellTraitorsAboutTraitors)
 --   reveal_to_team -- everyone sharing their base role is told they hold
---                     this variant (roles.lua)
+--                     this variant. For an innocent-base variant, this pool
+--                     includes detectives too, on the theory that they're
+--                     on the same side even though GetRole() tells them
+--                     apart. (roles.lua)
+--   reveal_pct     -- caps reveal_to_team to a random fraction of that pool
+--                     instead of everyone (1, the default, meaning no cap).
+--                     Detectives are picked first, so a partial reveal
+--                     always favours them over ordinary teammates. Also a
+--                     ttt_variant_<id>_reveal_pct convar. (roles.lua)
+--   min_team_size  -- this variant won't spawn at all this round unless its
+--                     own base role has at least this many players in it
+--                     (1, the default, meaning no gate) -- eg. the Kingpin
+--                     needs 2 traitors so promoting one still leaves a real
+--                     traitor behind. Checked against the round's actual
+--                     role populations, not whatever a pool has been
+--                     whittled down to by other variants already promoted
+--                     this round. Also a ttt_variant_<id>_min_team_size
+--                     convar. (roles.lua's ApplyVariant)
+--   min_enemy_role -- a ROLE_ value naming the role min_enemy_size checks
+--                     the population of, for a variant whose gimmick
+--                     targets a role other than its own -- eg. the Spy
+--                     impersonating traitors while actually innocent.
+--   min_enemy_size -- this variant won't spawn at all this round unless
+--                     min_enemy_role has at least this many players (0, the
+--                     default, meaning no gate). Same round-population
+--                     snapshot as min_team_size. Also a
+--                     ttt_variant_<id>_min_enemy_size convar. (roles.lua's
+--                     ApplyVariant)
 --   credits        -- extra starting credits on top of their base role's
 --                     (player_ext.lua's SetDefaultCredits)
 --   announce       -- a language key, broadcast once at round start to
@@ -132,6 +159,9 @@ function ROLES.Register(data)
    data.min     = data.min or 1
    data.max     = data.max or 1
    data.chance  = data.chance or 1
+   data.reveal_pct = data.reveal_pct or 1
+   data.min_team_size  = data.min_team_size or 1
+   data.min_enemy_size = data.min_enemy_size or 0
 
    ROLES.Variants[data.id] = data
 

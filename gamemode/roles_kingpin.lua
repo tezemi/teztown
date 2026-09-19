@@ -9,6 +9,10 @@
 --
 -- The isolation itself is all handled by the generic variant flags (see
 -- roles_shd.lua); only the money is Kingpin-specific.
+--
+-- min_team_size keeps him from spawning off a solo traitor: funding and
+-- transferring credits to "the rest of the team" makes no sense when there
+-- is no rest of the team.
 
 ROLES.Register({
    id    = "kingpin",
@@ -21,7 +25,8 @@ ROLES.Register({
    pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
    min     = 0,
    max     = 1,
-   chance  = 0.33,  -- ttt_variant_kingpin_chance: odds he appears at all this round
+   chance  = 0.16,  -- ttt_variant_kingpin_chance: odds he appears at all this round
+   min_team_size = 2,  -- ttt_variant_kingpin_min_team_size: needs a team to fund, not just himself
 
    no_team_chat     = true,  -- no traitor chat or voice, either direction
    no_team_list     = true,  -- never learns who the other traitors are

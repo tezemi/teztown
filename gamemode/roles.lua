@@ -31,11 +31,14 @@ local function VariantCvars(v)
    local prefix = "ttt_variant_" .. v.id .. "_"
 
    local made = {
-      enabled = CreateConVar(prefix .. "enabled", v.enabled and "1" or "0", FCVAR_NOTIFY),
-      pct     = CreateConVar(prefix .. "pct",     tostring(v.pct),    FCVAR_NOTIFY),
-      min     = CreateConVar(prefix .. "min",     tostring(v.min),    FCVAR_NOTIFY),
-      max     = CreateConVar(prefix .. "max",     tostring(v.max),    FCVAR_NOTIFY),
-      chance  = CreateConVar(prefix .. "chance",  tostring(v.chance), FCVAR_NOTIFY)
+      enabled        = CreateConVar(prefix .. "enabled",        v.enabled and "1" or "0", FCVAR_NOTIFY),
+      pct            = CreateConVar(prefix .. "pct",            tostring(v.pct),            FCVAR_NOTIFY),
+      min            = CreateConVar(prefix .. "min",            tostring(v.min),            FCVAR_NOTIFY),
+      max            = CreateConVar(prefix .. "max",            tostring(v.max),            FCVAR_NOTIFY),
+      chance         = CreateConVar(prefix .. "chance",         tostring(v.chance),         FCVAR_NOTIFY),
+      reveal_pct     = CreateConVar(prefix .. "reveal_pct",     tostring(v.reveal_pct),     FCVAR_NOTIFY),
+      min_team_size  = CreateConVar(prefix .. "min_team_size",  tostring(v.min_team_size),  FCVAR_NOTIFY),
+      min_enemy_size = CreateConVar(prefix .. "min_enemy_size", tostring(v.min_enemy_size), FCVAR_NOTIFY)
    }
 
    cvars_made[v.id] = made
@@ -67,6 +70,7 @@ function ROLES.ClearAll()
    for _, ply in ipairs(player.GetAll()) do
       if IsValid(ply) then
          ply.role_variant = nil
+         ply.role_variant_revealed_to = nil
 
          -- Broadcast rather than telling just the owner: a variant may have
          -- been revealed to teammates, and they need to drop it too.
@@ -75,19 +79,69 @@ function ROLES.ClearAll()
    end
 end
 
--- Tell everyone sharing ply's base role which variant they hold. Used for
--- variants their own team is meant to be able to identify.
+-- Everyone eligible to be told ply's variant: the rest of their base role,
+-- plus detectives too when that base is innocent -- they're on the same
+-- side even though GetRole() tells them apart from plain innocents.
+local function RevealPool(ply)
+   local role = ply:GetRole()
+   local pool = {}
+
+   for _, other in ipairs(player.GetAll()) do
+      if IsValid(other) and other != ply then
+         if other:GetRole() == role or (role == ROLE_INNOCENT and other:GetRole() == ROLE_DETECTIVE) then
+            table.insert(pool, other)
+         end
+      end
+   end
+
+   return pool
+end
+
+-- Trims a reveal pool down to reveal_pct of its size (1, the default, keeps
+-- everyone). Detectives are shuffled and taken first, so a partial reveal
+-- always favours them over ordinary teammates once they're in short supply.
+local function TrimToRevealPct(pool, pct)
+   if pct >= 1 or #pool == 0 then return pool end
+   if pct <= 0 then return {} end
+
+   local detectives, rest = {}, {}
+   for _, other in ipairs(pool) do
+      table.insert(other:GetRole() == ROLE_DETECTIVE and detectives or rest, other)
+   end
+
+   table.Shuffle(detectives)
+   table.Shuffle(rest)
+
+   local count = math.Clamp(math.ceil(#pool * pct), 1, #pool)
+   local picked = {}
+
+   for i = 1, math.min(count, #detectives) do
+      table.insert(picked, detectives[i])
+   end
+
+   for i = 1, count - #picked do
+      table.insert(picked, rest[i])
+   end
+
+   return picked
+end
+
+-- Tell (some of) everyone sharing ply's base role which variant they hold.
+-- Used for variants their own team is meant to be able to identify. The
+-- chosen recipients are cached on ply so BriefHolders' spoken reveal and a
+-- reconnecting player's resend (traitor_state.lua) agree with who actually
+-- got the network data, instead of recomputing -- and possibly widening --
+-- the same pool a second time.
 function ROLES.RevealToTeam(ply)
    if not IsValid(ply) then return end
 
-   local role = ply:GetRole()
-   local mates = {}
+   local v = ply:GetRoleVariantData()
+   if not v then return end
 
-   for _, other in ipairs(player.GetAll()) do
-      if IsValid(other) and other != ply and other:GetRole() == role then
-         table.insert(mates, other)
-      end
-   end
+   local pct = VariantCvars(v).reveal_pct:GetFloat()
+   local mates = TrimToRevealPct(RevealPool(ply), pct)
+
+   ply.role_variant_revealed_to = mates
 
    if #mates > 0 then
       ROLES.NetworkVariant(ply, mates)
@@ -102,9 +156,30 @@ local function PoolFor(v, pools)
    return pools[v.base]
 end
 
-local function ApplyVariant(v, pools, total)
+-- role_counts is keyed by the real ROLE_ values only (see SelectVariants),
+-- so this does the same neutral-to-innocent mapping PoolFor does above.
+local function CountFor(role, role_counts)
+   if role == ROLE_NEUTRAL then return role_counts[ROLE_INNOCENT] or 0 end
+
+   return role_counts[role] or 0
+end
+
+local function ApplyVariant(v, pools, total, role_counts)
    local pool = PoolFor(v, pools)
    if not pool or #pool == 0 then return end
+
+   local cv = VariantCvars(v)
+
+   -- min_team_size/min_enemy_role+min_enemy_size (roles_shd.lua): gates on
+   -- the round's actual role populations, captured before any variant
+   -- promotions touch them, not the live pool -- a variant already
+   -- promoted out of its own pool this round shouldn't make a later
+   -- variant think the team is smaller than it really is.
+   if CountFor(v.base, role_counts) < cv.min_team_size:GetInt() then return end
+
+   if v.min_enemy_role and CountFor(v.min_enemy_role, role_counts) < cv.min_enemy_size:GetInt() then
+      return
+   end
 
    local count, min = WantedCount(v, total, math.Rand(0, 1))
    if count <= 0 then return end
@@ -150,6 +225,16 @@ function ROLES.SelectVariants(plys)
    end
 
    if total == 0 then return end
+
+   -- Snapshot of each role's true population this round, taken before
+   -- guarantees or random draws touch pools -- min_team_size/min_enemy_size
+   -- (roles_shd.lua) check against this, not the live pool, so one
+   -- variant's promotion doesn't shrink what a later variant sees as "how
+   -- many traitors are there".
+   local role_counts = {}
+   for role, pool in pairs(pools) do
+      role_counts[role] = #pool
+   end
 
    -- Guarantees (see GuaranteedVariants/ttt_guarantee_variant in
    -- traitor_state.lua) go first and bypass the variant's own enabled/pct/
@@ -199,7 +284,7 @@ function ROLES.SelectVariants(plys)
       -- A guaranteed variant already has its holder; skip the normal random
       -- pass for it so a max > 1 variant doesn't also roll extra ones.
       if not guaranteed_variants[v.id] then
-         ApplyVariant(v, pools, total)
+         ApplyVariant(v, pools, total, role_counts)
       end
    end
 
@@ -233,16 +318,14 @@ function ROLES.BriefHolders()
          -- reveal_to_team (roles_shd.lua) only pushes the data silently, so
          -- teammates know who to draw with the variant's colour etc, but
          -- nothing actually told them out loud who it is. Do that here,
-         -- timed with the rest of this round-start briefing.
+         -- timed with the rest of this round-start briefing -- reusing
+         -- RevealToTeam's own recipient list rather than recomputing it, so
+         -- a partial (reveal_pct) reveal doesn't get spoken to more people
+         -- than actually got the network data.
          if v.reveal_to_team then
-            local mates = {}
-            for _, other in ipairs(player.GetAll()) do
-               if IsValid(other) and other != ply and other:GetRole() == ply:GetRole() then
-                  table.insert(mates, other)
-               end
-            end
+            local mates = ply.role_variant_revealed_to
 
-            if #mates > 0 then
+            if mates and #mates > 0 then
                LANG.Msg(mates, "variant_revealed", {player = ply:Nick(), variant = LANG.NameParam(v.name)})
             end
          end

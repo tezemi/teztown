@@ -232,10 +232,13 @@ local function request_rolelist(ply)
       end
 
       -- Re-send any variant their team is meant to be able to identify, so
-      -- reconnecting doesn't lose it.
+      -- reconnecting doesn't lose it. Checked against the recipient list
+      -- RevealToTeam actually picked (roles.lua), not recomputed from role
+      -- alone -- a partial (reveal_pct) reveal shouldn't hand a reconnect a
+      -- reveal they were never one of the chosen recipients of.
       for _, other in ipairs(player.GetAll()) do
-         if IsValid(other) and other != ply and other:GetRole() == ply:GetRole()
-            and ROLES.HasFlag(other, "reveal_to_team") then
+         if IsValid(other) and other != ply and ROLES.HasFlag(other, "reveal_to_team")
+            and other.role_variant_revealed_to and table.HasValue(other.role_variant_revealed_to, ply) then
             ROLES.NetworkVariant(other, ply)
          end
       end

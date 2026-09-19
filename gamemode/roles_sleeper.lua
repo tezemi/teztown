@@ -39,7 +39,7 @@ ROLES.Register({
    pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
    min     = 0,
    max     = 1,
-   chance  = 0.2,   -- ttt_variant_sleeper_chance: odds he appears at all this round
+   chance  = 0.1,   -- ttt_variant_sleeper_chance: odds he appears at all this round
 
    -- No disguise_role, no reveal_to_team, no announce -- total silence
    -- until activation. shop_as_role isn't set either: a dormant Sleeper

@@ -31,7 +31,7 @@ ROLES.Register({
    pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
    min     = 0,
    max     = 1,
-   chance  = 0.33,  -- ttt_variant_deputy_chance: odds he appears at all this round
+   chance  = 0.17,  -- ttt_variant_deputy_chance: odds he appears at all this round
 
    hide_role    = true, -- never revealed as a detective, by anyone, ever
    no_team_chat = true  -- closes the detective-team-chat leak to a 2nd detective

@@ -13,6 +13,10 @@
 -- there's no other custom logic here: the whole variant is expressible with
 -- the generic disguise_role / suppress_team_chat_for / credit_cap_role /
 -- announce flags (see roles_shd.lua).
+--
+-- min_enemy_role/min_enemy_size keep her from spawning against a solo
+-- traitor: impersonating "one of the traitors" and jamming "their" team
+-- chat is meaningless when there's only one of them to imitate.
 
 ROLES.Register({
    id    = "spy",
@@ -25,7 +29,10 @@ ROLES.Register({
    pct     = 0.34,  -- min 0 / max 1 means this only matters if max is raised
    min     = 0,
    max     = 1,
-   chance  = 0.25,  -- ttt_variant_spy_chance: odds he appears at all this round
+   chance  = 0.17,  -- ttt_variant_spy_chance: odds he appears at all this round
+
+   min_enemy_role = ROLE_TRAITOR,
+   min_enemy_size = 2,  -- ttt_variant_spy_min_enemy_size: needs traitors to actually impersonate
 
    disguise_role          = ROLE_TRAITOR,
    suppress_team_chat_for = ROLE_TRAITOR,
