@@ -3,4 +3,4 @@
 - The traitor tester mechanic needs several improvements.
 - Implement support for GTV.
 - Investigate a solution for jank hitboxes.
-- 
+- Innocent shop. Special new shop for innocents with mostly silly items. Maybe a few good items at higher cost. - Innocents get credits from killing traitors and finding innocent bodies.

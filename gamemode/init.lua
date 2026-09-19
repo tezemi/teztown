@@ -34,6 +34,7 @@ AddCSLuaFile("roles_deputy.lua")
 AddCSLuaFile("roles_vip.lua")
 AddCSLuaFile("roles_sleeper.lua")
 AddCSLuaFile("roles_joker.lua")
+AddCSLuaFile("roles_hitman.lua")
 AddCSLuaFile("cl_radio.lua")
 AddCSLuaFile("cl_radar.lua")
 AddCSLuaFile("cl_tbuttons.lua")
@@ -177,6 +178,7 @@ util.AddNetworkString("TTT_Disguise")
 util.AddNetworkString("TTT_SuicideBombArm")
 util.AddNetworkString("TTT_LifesignUpdate")
 util.AddNetworkString("TTT_TesterScanResult")
+util.AddNetworkString("TTT_HitmanTarget") -- roles_hitman.lua
 
 -- Custom content clients need in order to hear it
 resource.AddFile("sound/ttt/kirk.wav")

@@ -525,6 +525,18 @@ local function CheckCreditAward(victim, attacker)
    if GetRoundState() != ROUND_ACTIVE then return end
    if not IsValid(victim) then return end
 
+   -- Hitman-specific (roles_hitman.lua): an off-target kill earns him and
+   -- his team nothing at all, not even a share of the normal awards below
+   -- -- only a kill on his current target pays out, and that payout is
+   -- handled entirely separately, by roles_hitman.lua's own DoPlayerDeath
+   -- hook. attacker.hitman_target is still the pre-death value here --
+   -- roles_hitman.lua deliberately defers picking a new one by a tick so
+   -- this check keeps working.
+   if IsValid(attacker) and attacker:IsPlayer() and attacker:HasRoleVariant("hitman")
+      and (not victim:IsTraitor()) and victim != attacker.hitman_target then
+      return
+   end
+
    -- DETECTIVE AWARD
    if IsValid(attacker) and attacker:IsPlayer() and attacker:IsActiveDetective() and victim:IsTraitor() then
       local amt = GetConVarNumber("ttt_det_credits_traitordead") or 1

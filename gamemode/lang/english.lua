@@ -31,6 +31,9 @@ L.role_sleeper_desc = "For now, you're an innocent... But if every traitor dies 
 L.role_joker = "Joker"
 L.role_joker_desc = "You are on nobody's side, and you can't hurt anyone -- you can still attack, but it never does any damage. You know who the Traitors are and see them marked like a Traitor would. You shop from the Traitor equipment list and start with 3 credits. You win the instant an innocent kills you. Anything else -- dying any other way, or the round just ending -- is a loss."
 
+L.role_hitman = "Hitman"
+L.role_hitman_desc = "You have a target. Kill them to gain bonus credits for you and your team."
+
 L.sleeper_activated_you = "Every traitor has fallen. You are now a Traitor! You've been given {num} credit(s), and the round clock has been extended."
 L.sleeper_activated_announce = "Every last traitor has fallen... but a sleeper agent has just woken up among the innocents."
 
@@ -49,6 +52,17 @@ L.kingpin_kill_credits = "Your organisation collected {num} credit(s) from a kil
 L.kingpin_funded       = "You sent {num} credit(s) to one of your traitors."
 L.kingpin_received     = "The Kingpin sent you {num} credit(s)."
 L.kingpin_no_recipient = "There is no one left to send credits to."
+
+L.hitman_new_target        = "Your new target is {player}."
+L.hitman_you_are_target    = "A Hitman has marked you as their target. Watch your back."
+L.hitman_target_killed_you = "You collected {num} credit(s) for eliminating your target."
+L.hitman_target_killed_team = "The Hitman eliminated their target. Every Traitor collects {num} credit(s)."
+
+-- Drawn constantly on the target's/Hitman's own HUD, not sent as a chat
+-- message (see roles_hitman.lua's HUDPaint hook). {time} is a MM:SS
+-- countdown to the next target rotation.
+L.hitman_hud_target      = "A HITMAN IS HUNTING YOU ({time})"
+L.hitman_hud_your_target = "Your target: {player} ({time})"
 
 L.terrorists = "Terrorists"
 L.spectators = "Spectators"
@@ -384,6 +398,16 @@ If the round ends normall, you also lose.]]
 L.help_role_joker_psych = [[Try to convince an innocent to kill you without being obvious.
 If a traitor kills you, it's over. If they know who you are, you're an easy target.
 If the innocents figure you out, they'll tell each other, and it's basically over.]]
+
+L.help_role_hitman_tag = "It's just business."
+L.help_role_hitman_mech = [[You always have a target to kill.
+Your target rotates on a timer.
+Your target is told they're being hunted.
+Kill your current target and you get bonus credits, plus every Traitor gets a flat share.
+Kill anyone who isn't your target and you get nothing.]]
+L.help_role_hitman_psych = [[Your target will probably tell their team they're being targeted!
+If your target is too hard to kill, killing someone else is fine, you just won't get any rewards.
+Your target changes on its own eventually, so if one's proving too difficult to reach in time.]]
 
 -- Settings
 L.set_title_gui = "Interface settings"
